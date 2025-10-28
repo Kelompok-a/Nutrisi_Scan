@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'screens/home_page.dart';
+import 'screens/main_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -8,11 +8,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.dark().copyWith(
-        primaryColor: Color(0xFF0A0E21),
-        scaffoldBackgroundColor: Color(0xFF0A0E21),
+      debugShowCheckedModeBanner: false,
+      title: 'SugarChecker',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.white,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(),
+      home: MainScreen(),
     );
   }
 }
