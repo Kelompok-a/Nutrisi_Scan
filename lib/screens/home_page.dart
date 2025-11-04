@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
@@ -27,7 +29,7 @@ class _HomePageState extends State<HomePage> {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: NetworkImage('https://sugarchecker.id/wp-content/uploads/2023/11/dedi-sutanto-p-2-1.jpg'),
+                image: const NetworkImage('https://sugarchecker.id/wp-content/uploads/2023/11/dedi-sutanto-p-2-1.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -39,16 +41,16 @@ class _HomePageState extends State<HomePage> {
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20.0),
               child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 400),
+                constraints: const BoxConstraints(maxWidth: 400),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(
+                    const Text(
                       'Cek Kadar Gula Darah Anda',
                       style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     TextField(
                       controller: _controller,
                       keyboardType: TextInputType.number,
@@ -65,24 +67,24 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: _checkSugarLevel,
-                        child: Text('Periksa Sekarang'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF0056b3),
+                          backgroundColor: const Color(0xFF0056b3),
                           foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
+                        onPressed: _checkSugarLevel,
+                        child: const Text('Periksa Sekarang'),
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     if (_sugarLevel != null) ResultWidget(sugarLevel: _sugarLevel!),
                   ],
                 ),
@@ -104,7 +106,7 @@ class _HomePageState extends State<HomePage> {
 class ResultWidget extends StatelessWidget {
   final int sugarLevel;
 
-  const ResultWidget({Key? key, required this.sugarLevel}) : super(key: key);
+  const ResultWidget({super.key, required this.sugarLevel});
 
   String getResult() {
     if (sugarLevel < 70) return 'Rendah';
@@ -138,17 +140,17 @@ class ResultWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: color,
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(8),
                 topRight: Radius.circular(8),
               ),
             ),
             child: Text(
               'Hasil: $result',
-              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
           ),
@@ -160,11 +162,11 @@ class ResultWidget extends StatelessWidget {
                   '$sugarLevel mg/dL',
                   style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: color),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   getInterpretation(),
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ],
             ),

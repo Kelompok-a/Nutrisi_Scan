@@ -4,6 +4,8 @@ import 'home_page.dart';
 import 'article_page.dart';
 import 'faq_page.dart';
 import 'about_page.dart';
+import 'login_page.dart';
+import 'register_page.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -37,12 +39,30 @@ class _MainScreenState extends State<MainScreen> {
           _buildNavButton('Artikel', 1),
           _buildNavButton('Tanya Jawab', 2),
           _buildNavButton('Tentang', 3),
-          SizedBox(width: 20), // Add some spacing to the right
+          SizedBox(width: 20),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginPage()));
+            },
+            child: Text('Login'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF0056b3),
+              foregroundColor: Colors.white,
+            ),
+          ),
+          SizedBox(width: 10),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => RegisterPage()));
+            },
+            child: Text('Daftar'),
+          ),
+          SizedBox(width: 20),
         ],
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 1200), // Max width for web layout
+          constraints: BoxConstraints(maxWidth: 1200),
           child: _pages[_selectedIndex],
         ),
       ),

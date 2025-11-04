@@ -2,11 +2,13 @@
 import 'package:flutter/material.dart';
 
 class ArticlePage extends StatelessWidget {
+  const ArticlePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         children: <Widget>[
           _buildArticleCard(
             'Penyebab Gula Darah Tinggi',
@@ -28,21 +30,21 @@ class ArticlePage extends StatelessWidget {
   Widget _buildArticleCard(String title, String content) {
     return Card(
       elevation: 2.0,
-      margin: EdgeInsets.only(bottom: 16.0),
+      margin: const EdgeInsets.only(bottom: 16.0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
               title,
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             Text(
               content,
-              style: TextStyle(fontSize: 16.0, color: Colors.black54),
+              style: const TextStyle(fontSize: 16.0, color: Colors.black54),
             ),
           ],
         ),
