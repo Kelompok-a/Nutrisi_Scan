@@ -12,6 +12,8 @@ import 'product_search_page.dart';
 import 'search_history_page.dart';
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key}); // added const
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -37,6 +39,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent, // allow app-level gradient to show
       appBar: AppBar(
         title: Text(
           'SugarChecker',
