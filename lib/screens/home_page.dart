@@ -1,6 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
+import 'login_page.dart';
+import 'profile_page.dart';
+
+const Color kPrimaryColor = Color(0xFF0056b3);
+const Color kOverlayColor = Color.fromRGBO(0, 0, 0, 0.6);
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,6 +21,7 @@ class _HomePageState extends State<HomePage> {
   int? _sugarLevel;
 
   void _checkSugarLevel() {
+    FocusScope.of(context).unfocus();
     if (_controller.text.isNotEmpty) {
       setState(() {
         _sugarLevel = int.tryParse(_controller.text);
@@ -21,78 +29,138 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // Helper to create a slide-in animation
+  Route _createSlideRoute(Widget page) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(-1.0, 0.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+
+        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: const NetworkImage('https://sugarchecker.id/wp-content/uploads/2023/11/dedi-sutanto-p-2-1.jpg'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Container(
-            color: Colors.black.withOpacity(0.6),
-          ),
-          Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20.0),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 400),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Text(
-                      'Cek Kadar Gula Darah Anda',
-                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 30),
-                    TextField(
-                      controller: _controller,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: 'Kadar Gula Darah (mg/dL)',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Nutriscan'),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            actions: authProvider.isLoggedIn
+                ? [
+                    Tooltip(
+                      message: 'Profil',
+                      child: IconButton(
+                        icon: const Icon(Icons.person),
+                        onPressed: () {
+                          Navigator.of(context).push(_createSlideRoute(const ProfilePage()));
+                        },
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0056b3),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        onPressed: _checkSugarLevel,
-                        child: const Text('Periksa Sekarang'),
-                      ),
+                  ]
+                : [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(_createSlideRoute(const LoginPage()));
+                      },
+                      child: const Text('Login', style: TextStyle(color: Colors.white)),
                     ),
-                    const SizedBox(height: 30),
-                    if (_sugarLevel != null) ResultWidget(sugarLevel: _sugarLevel!),
+                    TextButton(
+                      onPressed: () {
+                        // Placeholder for Signup functionality
+                      },
+                      child: const Text('Signup', style: TextStyle(color: Colors.white)),
+                    ),
                   ],
+          ),
+          extendBodyBehindAppBar: true,
+          body: Stack(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/background.jpg'),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
+              Container(
+                color: kOverlayColor,
+              ),
+              Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20.0),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Text(
+                          'Cek Kadar Gula Darah Anda',
+                          style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 30),
+                        TextField(
+                          controller: _controller,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText: 'Kadar Gula Darah (mg/dL)',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: kPrimaryColor,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              textStyle: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            onPressed: _checkSugarLevel,
+                            child: const Text('Periksa Sekarang'),
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                        if (_sugarLevel != null)
+                          ResultWidget(sugarLevel: _sugarLevel!),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
