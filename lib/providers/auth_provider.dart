@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
-import '../services/api_service.dart';
 
 class AuthProvider with ChangeNotifier {
-  final ApiService _apiService = ApiService();
   User? _user;
   bool _isLoading = false;
   String? _errorMessage;
@@ -13,20 +11,25 @@ class AuthProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> login(String name) async {
+  // Mengembalikan ke fungsi login simulasi untuk sementara
+  Future<void> login(String name, String password) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
-    try {
-      final user = await _apiService.login(name);
-      _user = user;
-    } catch (e) {
-      _errorMessage = e.toString().replaceFirst('Exception: ', '');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+    // Simulasi jeda jaringan
+    await Future.delayed(const Duration(seconds: 1));
+
+    // Logika simulasi: login berhasil jika nama tidak kosong
+    if (name.isNotEmpty && password.isNotEmpty) {
+      _user = User(name: name);
+      _errorMessage = null;
+    } else {
+      _errorMessage = "Nama dan password tidak boleh kosong.";
     }
+
+    _isLoading = false;
+    notifyListeners();
   }
 
   void logout() {

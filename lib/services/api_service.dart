@@ -1,50 +1,44 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/user.dart';
-import '../models/product.dart';
+import '../models/produk.dart';
+import '../models/komposisi_gizi.dart';
 
 class ApiService {
-  static const String _baseUrl = 'http://10.0.2.2:3000/api';
-
-  Future<User> login(String name) async {
-    final response = await http.post(
-      Uri.parse('$_baseUrl/login'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'name': name,
-      }),
-    );
+  // Mengubah Base URL ke port 3001
+  static const String _baseUrl = 'http://localhost:3001/api';
+  // Mengambil semua produk dari backend
+  Future<List<Produk>> getAllProduk() async {
+    final uri = Uri.parse('$_baseUrl/produk');
+    final response = await http.get(uri);
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return User(name: data['user']['name']);
+      final body = jsonDecode(response.body);
+      if (body['success'] == true) {
+        List<dynamic> data = body['data'];
+        return data.map((json) => Produk.fromJson(json)).toList();
+      } else {
+        throw Exception(body['message'] ?? 'Gagal mengambil data produk');
+      }
     } else {
-      final error = jsonDecode(response.body);
-      throw Exception(error['message'] ?? 'Gagal untuk login');
+      throw Exception('Gagal terhubung ke server');
     }
   }
 
-  Future<List<Product>> searchProducts(String query) async {
-    // Buat URI dengan query parameter
-    final uri = Uri.parse('$_baseUrl/products').replace(queryParameters: {'search': query});
-
-    final response = await http.get(
-      uri,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
+  // Mengambil semua komposisi gizi dari backend
+  Future<List<KomposisiGizi>> getAllKomposisi() async {
+    final uri = Uri.parse('$_baseUrl/komposisi');
+    final response = await http.get(uri);
 
     if (response.statusCode == 200) {
-      // Jika server mengembalikan 200 OK, parse JSON
-      final List<dynamic> data = jsonDecode(response.body);
-      // Ubah setiap item di list menjadi objek Product
-      return data.map((json) => Product.fromJson(json)).toList();
+      final body = jsonDecode(response.body);
+      if (body['success'] == true) {
+        List<dynamic> data = body['data'];
+        return data.map((json) => KomposisiGizi.fromJson(json)).toList();
+      } else {
+        throw Exception(body['message'] ?? 'Gagal mengambil data komposisi');
+      }
     } else {
-      // Jika terjadi error, lempar exception
-      throw Exception('Gagal memuat produk');
+      throw Exception('Gagal terhubung ke server');
     }
   }
 }

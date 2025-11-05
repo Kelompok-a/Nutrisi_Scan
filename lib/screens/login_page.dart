@@ -15,18 +15,9 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscureText = true;
 
   Future<void> _login() async {
-    if (_nameController.text.isEmpty || _passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Nama dan Password tidak boleh kosong.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    await authProvider.login(_nameController.text);
+    // Mengirim nama dan password ke AuthProvider
+    await authProvider.login(_nameController.text, _passwordController.text);
 
     // Check if the widget is still in the widget tree and if login was successful
     if (mounted && authProvider.isLoggedIn) {
@@ -42,6 +33,18 @@ class _LoginPageState extends State<LoginPage> {
         padding: const EdgeInsets.all(20.0),
         child: Consumer<AuthProvider>(
           builder: (context, authProvider, child) {
+            // Menampilkan pesan error dari provider jika ada
+            if (authProvider.errorMessage != null && !authProvider.isLoading) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(authProvider.errorMessage!),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              });
+            }
+
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -53,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                     prefixIcon: Icon(Icons.person),
                   ),
                   autofocus: true,
-                  enabled: !authProvider.isLoading, // Disable when loading
+                  enabled: !authProvider.isLoading,
                 ),
                 const SizedBox(height: 20),
                 TextField(
@@ -74,21 +77,9 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                   ),
-                  enabled: !authProvider.isLoading, // Disable when loading
+                  enabled: !authProvider.isLoading,
                 ),
-                const SizedBox(height: 20),
-                // Show error message if it exists
-                if (authProvider.errorMessage != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: Text(
-                      authProvider.errorMessage!,
-                      style: const TextStyle(color: Colors.red, fontSize: 14),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                const SizedBox(height: 10),
-                // Show loading indicator or button
+                const SizedBox(height: 30),
                 if (authProvider.isLoading)
                   const CircularProgressIndicator()
                 else
