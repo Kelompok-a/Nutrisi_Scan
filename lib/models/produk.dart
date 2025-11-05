@@ -64,45 +64,47 @@ class Produk {
     required this.persenAkgNatrium,
   });
 
+  // Factory constructor untuk membuat instance dari JSON
   factory Produk.fromJson(Map<String, dynamic> json) {
-    // Helper untuk parsing double dengan aman
-    double parseDouble(dynamic value) => double.tryParse(value.toString()) ?? 0.0;
+    // Helper untuk parsing, memberikan nilai default jika null
+    double _parseToDouble(dynamic value) => double.tryParse(value.toString()) ?? 0.0;
+    String _parseToString(dynamic value) => value?.toString() ?? '-';
 
     return Produk(
       // Info Utama
       id: json['id_produk'] ?? 0,
-      namaProduk: json['nama_produk'] ?? 'Tanpa Nama',
-      kategori: json['kategori'] ?? 'Tanpa Kategori',
-      gambarUrl: json['gambar_url'],
-      barcodeUrl: json['barcode_url'],
+      namaProduk: _parseToString(json['product_name']),
+      kategori: _parseToString(json['kategori']),
+      gambarUrl: json['gambarUrl'], // Kunci JSON sudah sesuai
+      barcodeUrl: json['barcodeUrl'], // Kunci JSON sudah sesuai
 
-      // Komposisi Utama
-      energi: parseDouble(json['energi']),
-      lemak: parseDouble(json['lemak']),
-      protein: parseDouble(json['protein']),
-      karbohidrat: parseDouble(json['karbohidrat']),
-      gula: parseDouble(json['gula']),
-      garam: parseDouble(json['garam']),
+      // Komposisi Utama (diterjemahkan dari JSON)
+      energi: _parseToDouble(json['energi']),
+      lemak: _parseToDouble(json['lemak']),
+      protein: _parseToDouble(json['protein']),
+      karbohidrat: _parseToDouble(json['karbohidrat']),
+      gula: _parseToDouble(json['gula']),
+      garam: _parseToDouble(json['garam']),
 
       // Jumlah Rinci
-      lemakTotalJumlah: json['lemak_total_jumlah'] ?? '-',
-      kolesterolJumlah: json['kolesterol_jumlah'] ?? '-',
-      lemakJenuhJumlah: json['lemak_jenuh_jumlah'] ?? '-',
-      proteinRinciJumlah: json['protein_rinci_jumlah'] ?? '-',
-      karbohidratTotalJumlah: json['karbohidrat_total_jumlah'] ?? '-',
-      seratPanganJumlah: json['serat_pangan_jumlah'] ?? '-',
-      gulaRinciJumlah: json['gula_rinci_jumlah'] ?? '-',
-      natriumJumlah: json['natrium_jumlah'] ?? '-',
+      lemakTotalJumlah: _parseToString(json['lemakTotalJumlah']),
+      kolesterolJumlah: _parseToString(json['kolesterolJumlah']),
+      lemakJenuhJumlah: _parseToString(json['lemakJenuhJumlah']),
+      proteinRinciJumlah: _parseToString(json['proteinRinciJumlah']),
+      karbohidratTotalJumlah: _parseToString(json['karbohidratTotalJumlah']),
+      seratPanganJumlah: _parseToString(json['seratPanganJumlah']),
+      gulaRinciJumlah: _parseToString(json['gulaRinciJumlah']),
+      natriumJumlah: _parseToString(json['natriumJumlah']),
 
       // % AKG Rinci
-      persenAkgLemakTotal: json['persen_akg_lemak_total'] ?? '-',
-      persenAkgKolesterol: json['persen_akg_kolesterol'] ?? '-',
-      persenAkgLemakJenuh: json['persen_akg_lemak_jenuh'] ?? '-',
-      persenAkgProtein: json['persen_akg_protein'] ?? '-',
-      persenAkgKarbohidratTotal: json['persen_akg_karbohidrat_total'] ?? '-',
-      persenAkgSeratPangan: json['persen_akg_serat_pangan'] ?? '-',
-      persenAkgGula: json['persen_akg_gula'] ?? '-',
-      persenAkgNatrium: json['persen_akg_natrium'] ?? '-',
+      persenAkgLemakTotal: _parseToString(json['persenAkgLemakTotal']),
+      persenAkgKolesterol: _parseToString(json['persenAkgKolesterol']),
+      persenAkgLemakJenuh: _parseToString(json['persenAkgLemakJenuh']),
+      persenAkgProtein: _parseToString(json['persenAkgProtein']),
+      persenAkgKarbohidratTotal: _parseToString(json['persenAkgKarbohidratTotal']),
+      persenAkgSeratPangan: _parseToString(json['persenAkgSeratPangan']),
+      persenAkgGula: _parseToString(json['persenAkgGula']),
+      persenAkgNatrium: _parseToString(json['persenAkgNatrium']),
     );
   }
 }

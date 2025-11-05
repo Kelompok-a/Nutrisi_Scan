@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import '../models/produk.dart';
 import '../theme/app_theme.dart';
-import '../services/api_service.dart'; // Impor ApiService untuk base URL
+import '../services/api_service.dart'; // Impor untuk base URL proxy
 
 class ProductDetailPage extends StatelessWidget {
   final Produk produk;
 
   const ProductDetailPage({super.key, required this.produk});
 
-  // Helper untuk membangun URL proxy
+  // Helper untuk membangun URL proxy gambar
   String? _buildProxyUrl(String? originalUrl) {
     if (originalUrl == null || originalUrl.isEmpty) {
       return null;
     }
-    // Menggunakan baseUrl dari ApiService dan menambahkan endpoint proxy
-    // URL asli di-encode agar aman saat dikirim sebagai parameter
     return '${ApiService.baseUrl}/image-proxy?url=${Uri.encodeComponent(originalUrl)}';
   }
 
@@ -41,6 +39,7 @@ class ProductDetailPage extends StatelessWidget {
     );
   }
 
+  // Helper untuk membuat baris informasi nutrisi dengan progress bar
   Widget _buildNutritionRow(String label, String value, double progress, Color color) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -71,7 +70,6 @@ class ProductDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Membuat URL proxy untuk gambar produk dan barcode
     final proxyGambarUrl = _buildProxyUrl(produk.gambarUrl);
     final proxyBarcodeUrl = _buildProxyUrl(produk.barcodeUrl);
 
@@ -92,7 +90,7 @@ class ProductDetailPage extends StatelessWidget {
               ),
               centerTitle: true,
               titlePadding: const EdgeInsets.only(left: 48, right: 48, bottom: 16),
-              background: _buildImageFromUrl(proxyGambarUrl), // Menggunakan URL proxy
+              background: _buildImageFromUrl(proxyGambarUrl),
               stretchModes: const [StretchMode.zoomBackground],
             ),
           ),
@@ -141,7 +139,7 @@ class ProductDetailPage extends StatelessWidget {
                       DataRow(cells: [const DataCell(Text('Protein')), DataCell(Text(produk.proteinRinciJumlah)), DataCell(Text(produk.persenAkgProtein))]),
                       DataRow(cells: [const DataCell(Text('Karbohidrat Total')), DataCell(Text(produk.karbohidratTotalJumlah)), DataCell(Text(produk.persenAkgKarbohidratTotal))]),
                       DataRow(cells: [const DataCell(Text('Serat Pangan')), DataCell(Text(produk.seratPanganJumlah)), DataCell(Text(produk.persenAkgSeratPangan))]),
-                      DataCell(Text(produk.gulaRinciJumlah)), DataCell(Text(produk.persenAkgGula))]),
+                      DataRow(cells: [const DataCell(Text('Gula')), DataCell(Text(produk.gulaRinciJumlah)), DataCell(Text(produk.persenAkgGula))]),
                       DataRow(cells: [const DataCell(Text('Natrium')), DataCell(Text(produk.natriumJumlah)), DataCell(Text(produk.persenAkgNatrium))]),
                     ],
                   ),
@@ -159,7 +157,7 @@ class ProductDetailPage extends StatelessWidget {
                       border: Border.all(color: Colors.grey.shade300),
                     ),
                     height: 120,
-                    child: _buildImageFromUrl(proxyBarcodeUrl), // Menggunakan URL proxy
+                    child: _buildImageFromUrl(proxyBarcodeUrl),
                   ),
                 ],
               ),
