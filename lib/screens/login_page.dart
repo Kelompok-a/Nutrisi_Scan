@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
             TextField(
               controller: _nameController,
               decoration: const InputDecoration(
-                labelText: 'Nama Pengguna (atau Email)', // Label diganti
+                labelText: 'Nama Pengguna (atau Email)',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.person),
               ),
@@ -87,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void dispose() {
     _nameController.dispose();
-    _passwordController.dispose(); // <-- 5. Jangan lupa di-dispose
+    _passwordController.dispose(); 
     super.dispose();
   }
 }

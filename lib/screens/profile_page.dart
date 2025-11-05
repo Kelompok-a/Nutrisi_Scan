@@ -18,7 +18,7 @@ class ProfilePage extends StatelessWidget {
             icon: const Icon(Icons.logout),
             onPressed: () {
               authProvider.logout();
-              Navigator.of(context).pop(); // Close the profile page
+              Navigator.of(context).pop(); 
             },
           ),
         ],

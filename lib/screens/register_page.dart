@@ -1,22 +1,22 @@
-// register_page.dart
-
+import 'package:basis_data/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 import 'login_page.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Hapus Stack, Container(Image), dan Container(Overlay)
-    return Scaffold(
-      // backgroundColor: Colors.transparent, // Tidak perlu, sudah di-handle theme
+  State<RegisterPage> createState() => _RegisterPageState();
+}
 
-      // Gunakan AppBar transparan untuk tombol kembali
+class _RegisterPageState extends State<RegisterPage> {
+  bool _isObscure = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
       appBar: AppBar(
-         // backgroundColor: Colors.transparent, // Tidak perlu, sudah di-handle theme
-         // elevation: 0, // Tidak perlu, sudah di-handle theme
+        leading: BackButton(color: AppTheme.kTextColor),
       ),
       
       body: Center(
@@ -31,7 +31,7 @@ class RegisterPage extends StatelessWidget {
                   'Buat Akun Baru',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.kTextColor, // Ganti warna teks
+                        color: AppTheme.kTextColor,
                       ),
                   textAlign: TextAlign.center,
                 ),
@@ -40,14 +40,31 @@ class RegisterPage extends StatelessWidget {
                 const SizedBox(height: 20),
                 _buildTextField(label: 'Email'),
                 const SizedBox(height: 20),
-                _buildTextField(label: 'Password', obscureText: true),
+
+                TextField(
+                  obscureText: _isObscure, 
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isObscure ? Icons.visibility : Icons.visibility_off,
+                        color: AppTheme.kTextLightColor,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isObscure = !_isObscure;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+
                 const SizedBox(height: 30),
                 SizedBox(
                   width: double.infinity,
-                  // Tombol ini akan otomatis mengambil style dari ElevatedButtonTheme
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pop(); // Simulate registration
+                      Navigator.of(context).pop(); 
                     },
                     child: const Text('Daftar'),
                   ),
@@ -59,7 +76,6 @@ class RegisterPage extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => const LoginPage()),
                     );
                   },
-                  // Teks ini akan otomatis mengambil style dari TextButtonTheme
                   child: const Text('Sudah punya akun? Login di sini'),
                 ),
               ],
@@ -67,18 +83,13 @@ class RegisterPage extends StatelessWidget {
           ),
         ),
       ),
-      // Hapus Positioned back button
     );
   }
 
-  // Widget ini sekarang akan otomatis mengambil style dari InputDecorationTheme
-  Widget _buildTextField({required String label, bool obscureText = false}) {
+  Widget _buildTextField({required String label}) {
     return TextField(
-      obscureText: obscureText,
       decoration: InputDecoration(
         labelText: label,
-        // Style lain (fillColor, border, etc)
-        // otomatis diambil dari AppTheme.lightTheme
       ),
     );
   }
