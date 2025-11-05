@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import '../services/api_service.dart';
 import '../models/product.dart';
-import '../services/product_service.dart';
-import '../providers/search_history_provider.dart';
+import 'dart:async';
 
 class ProductSearchPage extends StatefulWidget {
   const ProductSearchPage({super.key});
@@ -12,41 +11,42 @@ class ProductSearchPage extends StatefulWidget {
 }
 
 class _ProductSearchPageState extends State<ProductSearchPage> {
-  final _searchController = TextEditingController();
-  final _productService = ProductService();
-  
-  List<Product> _searchResults = [];
-  bool _isLoading = false; 
-  String _errorMessage = ''; 
+  final ApiService _apiService = ApiService();
+  final TextEditingController _searchController = TextEditingController();
+  List<Product> _products = [];
+  bool _isLoading = false;
+  String? _errorMessage;
+  Timer? _debounce;
 
-  void _performSearch(String query) async {
-    if (query.isEmpty) {
-      setState(() {
-        _searchResults = [];
-        _isLoading = false;
-        _errorMessage = '';
-      });
-      return;
-    }
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
 
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (_searchController.text.isNotEmpty) {
+        _searchProducts(_searchController.text);
+      }
+    });
+  }
+
+  Future<void> _searchProducts(String query) async {
     setState(() {
       _isLoading = true;
-      _errorMessage = '';
+      _errorMessage = null;
     });
 
     try {
-      final results = await _productService.searchProducts(query);
-      
+      final products = await _apiService.searchProducts(query);
       setState(() {
-        _searchResults = results;
+        _products = products;
       });
-
-      Provider.of<SearchHistoryProvider>(context, listen: false)
-          .addSearchQuery(query);
-
     } catch (e) {
       setState(() {
-        _errorMessage = 'Gagal memuat data. Periksa koneksi Anda.';
+        _errorMessage = e.toString().replaceFirst('Exception: ', '');
       });
     } finally {
       setState(() {
@@ -56,88 +56,65 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
   }
 
   @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
+      appBar: AppBar(
+        title: const Text('Cari Produk'),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
               controller: _searchController,
               autofocus: true,
               decoration: InputDecoration(
-                hintText: 'Cari produk (mis: Coca-Cola, Roti)...',
+                hintText: 'Contoh: Indomie, Coca-cola...',
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchController.clear();
-                    _performSearch('');
-                  },
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              onSubmitted: (value) {
-                _performSearch(value);
-              },
             ),
-            const SizedBox(height: 16.0),
-            Expanded(
-              child: _buildResultView(),
-            ),
-          ],
-        ),
+          ),
+          Expanded(
+            child: _buildResults(),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildResultView() {
+  Widget _buildResults() {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    
-    if (_errorMessage.isNotEmpty) {
-      return Center(child: Text(_errorMessage, style: const TextStyle(color: Colors.red)));
+
+    if (_errorMessage != null) {
+      return Center(child: Text('Error: $_errorMessage'));
     }
 
-    if (_searchResults.isEmpty) {
-      return Center(
-        child: Text(
-          _searchController.text.isEmpty
-              ? 'Masukkan nama produk untuk mencari.'
-              : 'Produk tidak ditemukan.',
-          style: const TextStyle(color: Colors.grey, fontSize: 16),
-        ),
-      );
+    if (_products.isEmpty && _searchController.text.isNotEmpty) {
+      return const Center(child: Text('Produk tidak ditemukan.'));
     }
 
     return ListView.builder(
-      itemCount: _searchResults.length,
+      itemCount: _products.length,
       itemBuilder: (context, index) {
-        final product = _searchResults[index];
-        return Card(
-          margin: const EdgeInsets.only(bottom: 8.0),
-          child: ListTile(
-            title: Text(product.name),
-            subtitle: Text('Kategori: ${product.category}'),
-            trailing: Text(
-              '${product.sugarPer100g}g Gula',
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.redAccent,
-                  fontSize: 15),
-            ),
-          ),
+        final product = _products[index];
+        return ListTile(
+          title: Text(product.name),
+          subtitle: Text(
+              'Kalori: ${product.calories ?? 'N/A'} kcal, Gula: ${product.sugarContent ?? 'N/A'} g'),
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
   }
 }

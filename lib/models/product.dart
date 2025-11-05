@@ -1,22 +1,24 @@
 class Product {
-  final String id;
+  final int id;
   final String name;
-  final String category;
-  final double sugarPer100g;
+  final int? calories;
+  final double? sugarContent;
 
   Product({
     required this.id,
     required this.name,
-    required this.category,
-    required this.sugarPer100g,
+    this.calories,
+    this.sugarContent,
   });
 
+  // Factory constructor untuk membuat instance Product dari JSON
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      id: json['id_produk'].toString(), 
-      name: json['nama_produk'],        
-      category: json['kategori'],         
-      sugarPer100g: (json['kadar_gula'] as num).toDouble(), 
+      id: json['id'],
+      name: json['name'],
+      calories: json['calories'] as int?,
+      // Pastikan tipe data dari SQL/JSON cocok
+      sugarContent: (json['sugar_content'] as num?)?.toDouble(),
     );
   }
 }
