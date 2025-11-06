@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
 import '../models/produk.dart';
 import '../theme/app_theme.dart';
-import '../services/api_service.dart'; // Impor untuk base URL proxy
+import '../services/api_service.dart';
 
 class ProductDetailPage extends StatelessWidget {
   final Produk produk;
 
   const ProductDetailPage({super.key, required this.produk});
 
-  // Helper untuk membangun URL proxy gambar
   String? _buildProxyUrl(String? originalUrl) {
-    if (originalUrl == null || originalUrl.isEmpty) {
-      return null;
-    }
+    if (originalUrl == null || originalUrl.isEmpty) return null;
     return '${ApiService.baseUrl}/image-proxy?url=${Uri.encodeComponent(originalUrl)}';
   }
 
-  // Helper untuk menampilkan gambar dari URL proxy
   Widget _buildImageFromUrl(String? proxyUrl) {
     if (proxyUrl == null) {
       return Container(
@@ -39,7 +35,6 @@ class ProductDetailPage extends StatelessWidget {
     );
   }
 
-  // Helper untuk membuat baris informasi nutrisi dengan progress bar
   Widget _buildNutritionRow(String label, String value, double progress, Color color) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -84,8 +79,9 @@ class ProductDetailPage extends StatelessWidget {
             foregroundColor: Colors.white,
             iconTheme: const IconThemeData(color: Colors.white),
             flexibleSpace: FlexibleSpaceBar(
+              // PENYESUAIAN: Menggunakan productName
               title: Text(
-                produk.namaProduk,
+                produk.productName,
                 style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.white),
               ),
               centerTitle: true,
@@ -100,8 +96,9 @@ class ProductDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // PENYESUAIAN: Menggunakan productName dan kategori
                   Text(
-                    produk.namaProduk,
+                    produk.productName,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
@@ -110,18 +107,20 @@ class ProductDetailPage extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
                   ),
                   const Divider(height: 32, thickness: 1),
+                  // PENYESUAIAN: Menggunakan properti baru untuk progress bar
                   _buildNutritionRow('Energi', '${produk.energi.toStringAsFixed(1)} kcal', produk.energi / 2000, Colors.orange),
                   _buildNutritionRow('Lemak', '${produk.lemak.toStringAsFixed(1)} g', produk.lemak / 70, Colors.red),
                   _buildNutritionRow('Protein', '${produk.protein.toStringAsFixed(1)} g', produk.protein / 50, Colors.green),
                   _buildNutritionRow('Karbohidrat', '${produk.karbohidrat.toStringAsFixed(1)} g', produk.karbohidrat / 300, Colors.blue),
                   _buildNutritionRow('Gula', '${produk.gula.toStringAsFixed(1)} g', produk.gula / 25, Colors.pink),
-                  _buildNutritionRow('Garam', '${produk.garam.toStringAsFixed(1)} g', produk.garam / 6, Colors.grey),
+                  _buildNutritionRow('Garam', '${produk.garam.toStringAsFixed(1)} mg', produk.garam / 2300, Colors.grey), // Asumsi garam dalam mg
                   const Divider(height: 32, thickness: 1),
                   Text(
                     'Informasi Nilai Gizi per 100g',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
+                  // PENYESUAIAN: Menggunakan properti baru untuk DataTable
                   DataTable(
                     columnSpacing: 20,
                     headingRowHeight: 40,
