@@ -7,6 +7,7 @@ import 'article_page.dart';
 import 'faq_page.dart';
 import 'about_page.dart';
 import 'login_page.dart';
+import 'register_page.dart'; // Pastikan import ini ada dan benar
 import 'product_search_page.dart';
 import 'search_history_page.dart';
 
@@ -85,6 +86,17 @@ class _MainScreenState extends State<MainScreen> {
                         backgroundColor: Color(0xFF0056b3),
                         foregroundColor: Colors.white,
                       ),
+                    ),
+                    SizedBox(width: 10),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const RegisterPage(), // Pastikan dipanggil sebagai konstruktor
+                          ),
+                        );
+                      },
+                      child: Text('Daftar'),
                     ),
                     SizedBox(width: 20),
                   ],

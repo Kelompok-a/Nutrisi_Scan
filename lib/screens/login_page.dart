@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import './main_screen.dart';
+import './register_page.dart'; // Import halaman registrasi
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -117,7 +118,22 @@ class _LoginPageState extends State<LoginPage> {
                           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
-                // Tombol registrasi dihapus
+                const SizedBox(height: 16),
+                // Tombol untuk ke halaman registrasi
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Belum punya akun?'),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => const RegisterPage()),
+                        );
+                      },
+                      child: const Text('Daftar di sini'),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
