@@ -7,11 +7,11 @@ class AuthProvider with ChangeNotifier {
   final _storage = const FlutterSecureStorage();
 
   String? _token;
-  String? _namaPengguna; // Diubah dari _username ke _namaPengguna
+  String? _namaPengguna;
   bool _isAuthenticated = false;
 
   bool get isAuthenticated => _isAuthenticated;
-  String? get namaPengguna => _namaPengguna; // Getter baru
+  String? get namaPengguna => _namaPengguna;
 
   Future<bool> tryAutoLogin() async {
     final token = await _storage.read(key: 'jwt_token');
@@ -19,7 +19,7 @@ class AuthProvider with ChangeNotifier {
       return false;
     }
     _token = token;
-    _namaPengguna = await _storage.read(key: 'user_nama'); // Baca nama pengguna
+    _namaPengguna = await _storage.read(key: 'user_nama');
     _isAuthenticated = true;
     notifyListeners();
     return true;
@@ -28,7 +28,7 @@ class AuthProvider with ChangeNotifier {
   Future<Map<String, dynamic>> login(String email, String password) async {
     final result = await _authService.login(email, password);
     if (result['success'] == true) {
-      await tryAutoLogin(); // Panggil tryAutoLogin untuk set state
+      await tryAutoLogin();
     }
     return result;
   }

@@ -4,7 +4,6 @@ List<Produk> produkListFromJson(String str) =>
     List<Produk>.from(json.decode(str).map((x) => Produk.fromJson(x)));
 
 class Produk {
-  // Properti disesuaikan 100% dengan output server.js Anda
   final String barcodeId;
   final String namaProduk;
   final double? ukuranNilai;

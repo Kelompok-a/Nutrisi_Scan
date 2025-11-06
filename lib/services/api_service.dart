@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import '../models/produk.dart';
 
 class ApiService {
-  // Pastikan baseUrl ini benar. Gunakan 'http://10.0.2.2:3001' untuk emulator Android.
   static const String baseUrl = 'http://localhost:3001';
 
   Future<List<Produk>> getAllProduk() async {

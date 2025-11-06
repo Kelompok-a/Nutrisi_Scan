@@ -21,10 +21,8 @@ class KomposisiGizi {
 
   factory KomposisiGizi.fromJson(Map<String, dynamic> json) {
     return KomposisiGizi(
-      // PERBAIKAN: Gunakan operator '??' untuk nilai default
       id: json['id_komposisi'] ?? 0,
       idProduk: json['id_produk'] ?? 0,
-      // Menggunakan double.tryParse tetap merupakan praktik yang baik untuk keamanan tipe
       energi: double.tryParse(json['energi'].toString()) ?? 0.0,
       lemak: double.tryParse(json['lemak'].toString()) ?? 0.0,
       protein: double.tryParse(json['protein'].toString()) ?? 0.0,
