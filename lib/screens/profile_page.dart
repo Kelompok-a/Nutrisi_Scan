@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import './splash_screen.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -8,17 +9,22 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    final user = authProvider.user;
+    // Menggunakan getter 'namaPengguna' yang baru
+    final namaPengguna = authProvider.namaPengguna;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profil'),
+        title: const Text('Profil Pengguna'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
             onPressed: () {
               authProvider.logout();
-              Navigator.of(context).pop(); 
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const SplashScreen()),
+                (Route<dynamic> route) => false,
+              );
             },
           ),
         ],
@@ -33,7 +39,8 @@ class ProfilePage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              user?.name ?? 'Pengguna',
+              // Menampilkan nama pengguna
+              namaPengguna ?? 'Pengguna', 
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ],

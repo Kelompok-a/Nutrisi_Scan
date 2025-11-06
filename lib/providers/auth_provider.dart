@@ -1,39 +1,43 @@
 import 'package:flutter/material.dart';
-import '../models/user.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../services/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
-  User? _user;
-  bool _isLoading = false;
-  String? _errorMessage;
+  final AuthService _authService = AuthService();
+  final _storage = const FlutterSecureStorage();
 
-  User? get user => _user;
-  bool get isLoggedIn => _user != null;
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
+  String? _token;
+  String? _namaPengguna; // Diubah dari _username ke _namaPengguna
+  bool _isAuthenticated = false;
 
-  // Mengembalikan ke fungsi login simulasi untuk sementara
-  Future<void> login(String name, String password) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+  bool get isAuthenticated => _isAuthenticated;
+  String? get namaPengguna => _namaPengguna; // Getter baru
 
-    // Simulasi jeda jaringan
-    await Future.delayed(const Duration(seconds: 1));
-
-    // Logika simulasi: login berhasil jika nama tidak kosong
-    if (name.isNotEmpty && password.isNotEmpty) {
-      _user = User(name: name);
-      _errorMessage = null;
-    } else {
-      _errorMessage = "Nama dan password tidak boleh kosong.";
+  Future<bool> tryAutoLogin() async {
+    final token = await _storage.read(key: 'jwt_token');
+    if (token == null) {
+      return false;
     }
-
-    _isLoading = false;
+    _token = token;
+    _namaPengguna = await _storage.read(key: 'user_nama'); // Baca nama pengguna
+    _isAuthenticated = true;
     notifyListeners();
+    return true;
   }
 
-  void logout() {
-    _user = null;
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final result = await _authService.login(email, password);
+    if (result['success'] == true) {
+      await tryAutoLogin(); // Panggil tryAutoLogin untuk set state
+    }
+    return result;
+  }
+
+  Future<void> logout() async {
+    _token = null;
+    _namaPengguna = null;
+    _isAuthenticated = false;
+    await _authService.logout();
     notifyListeners();
   }
 }

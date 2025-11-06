@@ -65,7 +65,7 @@ class ProductDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final proxyGambarUrl = _buildProxyUrl(produk.gambarUrl);
+    final proxyGambarUrl = _buildProxyUrl(produk.imageProductLink); // Menggunakan imageProductLink
     final proxyBarcodeUrl = _buildProxyUrl(produk.barcodeUrl);
 
     return Scaffold(
@@ -79,9 +79,8 @@ class ProductDetailPage extends StatelessWidget {
             foregroundColor: Colors.white,
             iconTheme: const IconThemeData(color: Colors.white),
             flexibleSpace: FlexibleSpaceBar(
-              // PENYESUAIAN: Menggunakan productName
               title: Text(
-                produk.productName,
+                produk.namaProduk,
                 style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.white),
               ),
               centerTitle: true,
@@ -96,31 +95,31 @@ class ProductDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // PENYESUAIAN: Menggunakan productName dan kategori
                   Text(
-                    produk.productName,
+                    produk.namaProduk,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Kategori: ${produk.kategori}',
+                    'Kategori: ${produk.namaKategori ?? 'N/A'}', // Menggunakan namaKategori
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
                   ),
                   const Divider(height: 32, thickness: 1),
-                  // PENYESUAIAN: Menggunakan properti baru untuk progress bar
-                  _buildNutritionRow('Energi', '${produk.energi.toStringAsFixed(1)} kcal', produk.energi / 2000, Colors.orange),
-                  _buildNutritionRow('Lemak', '${produk.lemak.toStringAsFixed(1)} g', produk.lemak / 70, Colors.red),
-                  _buildNutritionRow('Protein', '${produk.protein.toStringAsFixed(1)} g', produk.protein / 50, Colors.green),
-                  _buildNutritionRow('Karbohidrat', '${produk.karbohidrat.toStringAsFixed(1)} g', produk.karbohidrat / 300, Colors.blue),
-                  _buildNutritionRow('Gula', '${produk.gula.toStringAsFixed(1)} g', produk.gula / 25, Colors.pink),
-                  _buildNutritionRow('Garam', '${produk.garam.toStringAsFixed(1)} mg', produk.garam / 2300, Colors.grey), // Asumsi garam dalam mg
+                  // Ringkasan Gizi
+                  _buildNutritionRow('Kalori', '${produk.totalCalories.toStringAsFixed(1)} kcal', produk.totalCalories / 2000, Colors.orange), // totalCalories
+                  _buildNutritionRow('Lemak Total', '${produk.totalFat.toStringAsFixed(1)} g', produk.totalFat / 70, Colors.red), // totalFat
+                  _buildNutritionRow('Lemak Jenuh', '${produk.saturatedFat.toStringAsFixed(1)} g', produk.saturatedFat / 20, Colors.redAccent), // saturatedFat
+                  _buildNutritionRow('Karbohidrat Total', '${produk.totalCarbohydrates.toStringAsFixed(1)} g', produk.totalCarbohydrates / 300, Colors.blue), // totalCarbohydrates
+                  _buildNutritionRow('Gula', '${produk.totalSugar.toStringAsFixed(1)} g', produk.totalSugar / 25, Colors.pink), // totalSugar
+                  _buildNutritionRow('Protein', '${produk.protein.toStringAsFixed(1)} g', produk.protein / 50, Colors.green), // protein
+                  // Garam/Natrium tidak ada di server.js baru
+
                   const Divider(height: 32, thickness: 1),
                   Text(
                     'Informasi Nilai Gizi per 100g',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  // PENYESUAIAN: Menggunakan properti baru untuk DataTable
                   DataTable(
                     columnSpacing: 20,
                     headingRowHeight: 40,
@@ -132,14 +131,13 @@ class ProductDetailPage extends StatelessWidget {
                       DataColumn(label: Text('% AKG', style: TextStyle(fontWeight: FontWeight.bold)), numeric: true),
                     ],
                     rows: [
-                      DataRow(cells: [const DataCell(Text('Lemak Total')), DataCell(Text(produk.lemakTotalJumlah)), DataCell(Text(produk.persenAkgLemakTotal))]),
-                      DataRow(cells: [const DataCell(Text('Kolesterol')), DataCell(Text(produk.kolesterolJumlah)), DataCell(Text(produk.persenAkgKolesterol))]),
-                      DataRow(cells: [const DataCell(Text('Lemak Jenuh')), DataCell(Text(produk.lemakJenuhJumlah)), DataCell(Text(produk.persenAkgLemakJenuh))]),
-                      DataRow(cells: [const DataCell(Text('Protein')), DataCell(Text(produk.proteinRinciJumlah)), DataCell(Text(produk.persenAkgProtein))]),
-                      DataRow(cells: [const DataCell(Text('Karbohidrat Total')), DataCell(Text(produk.karbohidratTotalJumlah)), DataCell(Text(produk.persenAkgKarbohidratTotal))]),
-                      DataRow(cells: [const DataCell(Text('Serat Pangan')), DataCell(Text(produk.seratPanganJumlah)), DataCell(Text(produk.persenAkgSeratPangan))]),
-                      DataRow(cells: [const DataCell(Text('Gula')), DataCell(Text(produk.gulaRinciJumlah)), DataCell(Text(produk.persenAkgGula))]),
-                      DataRow(cells: [const DataCell(Text('Natrium')), DataCell(Text(produk.natriumJumlah)), DataCell(Text(produk.persenAkgNatrium))]),
+                      DataRow(cells: [const DataCell(Text('Kalori')), DataCell(Text(produk.totalCalories.toStringAsFixed(1))), const DataCell(Text('-'))]),
+                      DataRow(cells: [const DataCell(Text('Lemak Total')), DataCell(Text(produk.totalFat.toStringAsFixed(1))), const DataCell(Text('-'))]),
+                      DataRow(cells: [const DataCell(Text('Lemak Jenuh')), DataCell(Text(produk.saturatedFat.toStringAsFixed(1))), DataCell(Text(produk.akgSaturatedFat.toStringAsFixed(1)))]), // akgSaturatedFat
+                      DataRow(cells: [const DataCell(Text('Karbohidrat Total')), DataCell(Text(produk.totalCarbohydrates.toStringAsFixed(1))), DataCell(Text(produk.akgCarbohydrates.toStringAsFixed(1)))]), // akgCarbohydrates
+                      DataRow(cells: [const DataCell(Text('Gula')), DataCell(Text(produk.totalSugar.toStringAsFixed(1))), const DataCell(Text('-'))]),
+                      DataRow(cells: [const DataCell(Text('Protein')), DataCell(Text(produk.protein.toStringAsFixed(1))), DataCell(Text(produk.akgProtein.toStringAsFixed(1)))]), // akgProtein
+                      // Kolesterol, Serat Pangan, Natrium tidak ada di server.js baru
                     ],
                   ),
                   const Divider(height: 32, thickness: 1),

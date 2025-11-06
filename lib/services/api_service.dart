@@ -3,47 +3,41 @@ import 'package:http/http.dart' as http;
 import '../models/produk.dart';
 
 class ApiService {
-  // DIKEMBALIKAN: Sesuai instruksi, tidak akan diubah lagi.
-  static const String baseUrl = 'http://localhost:3001/api';
+  // Pastikan baseUrl ini benar. Gunakan 'http://10.0.2.2:3001' untuk emulator Android.
+  static const String baseUrl = 'http://localhost:3001';
 
-  // FUNGSI LAMA: Mengambil SATU produk berdasarkan barcode
-  Future<Produk> getProduk(String barcode) async {
-    final uri = Uri.parse('$baseUrl/produk/$barcode');
+  Future<List<Produk>> getAllProduk() async {
+    final uri = Uri.parse('$baseUrl/api/produk');
     try {
       final response = await http.get(uri);
-      if (response.statusCode == 200) {
-        final body = jsonDecode(response.body);
-        if (body['success'] == true && body['data'] != null) {
-          return Produk.fromJson(body['data']);
-        } else {
-          throw Exception(body['message'] ?? 'Produk tidak ditemukan');
-        }
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && body['success'] == true) {
+        // Parsing data dari key 'data'
+        List<dynamic> data = body['data'];
+        return data.map((json) => Produk.fromJson(json)).toList();
       } else {
-        throw Exception('Gagal terhubung ke server. Status code: ${response.statusCode}');
+        throw Exception(body['message'] ?? 'Gagal mengambil data produk');
       }
     } catch (e) {
-      throw Exception('Terjadi kesalahan: ${e.toString()}');
+      throw Exception('Kesalahan jaringan: ${e.toString()}');
     }
   }
 
-  // FUNGSI BARU: Mengambil SEMUA produk untuk dropdown pencarian
-  Future<List<Produk>> getAllProduk() async {
-    final uri = Uri.parse('$baseUrl/produk');
+  Future<Produk> getProdukByBarcode(String barcode) async {
+    final uri = Uri.parse('$baseUrl/api/produk/$barcode');
     try {
       final response = await http.get(uri);
-      if (response.statusCode == 200) {
-        final body = jsonDecode(response.body);
-        if (body['success'] == true && body['data'] != null) {
-          List<dynamic> data = body['data'];
-          return data.map((json) => Produk.fromJson(json)).toList();
-        } else {
-          throw Exception(body['message'] ?? 'Gagal memuat daftar produk');
-        }
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && body['success'] == true) {
+        // Parsing data dari key 'data'
+        return Produk.fromJson(body['data']);
       } else {
-        throw Exception('Gagal terhubung ke server. Status code: ${response.statusCode}');
+        throw Exception(body['message'] ?? 'Gagal mengambil detail produk');
       }
     } catch (e) {
-      throw Exception('Terjadi kesalahan: ${e.toString()}');
+      throw Exception('Kesalahan jaringan: ${e.toString()}');
     }
   }
 }

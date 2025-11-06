@@ -62,9 +62,10 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                 if (keyword.isEmpty) return [];
 
                 final filteredProduk = _allProduk.where((produk) {
-                  // PENYESUAIAN: Menggunakan properti baru dari model Produk
-                  final namaMatch = produk.productName.toLowerCase().contains(keyword);
-                  final barcodeMatch = produk.barcodeId?.toLowerCase().contains(keyword) ?? false;
+                  // PERBAIKAN: Menggunakan `namaProduk` dari model baru
+                  final namaMatch = produk.namaProduk.toLowerCase().contains(keyword);
+                  // PERBAIKAN: Menghilangkan null-aware operator yang tidak perlu
+                  final barcodeMatch = produk.barcodeId.toLowerCase().contains(keyword);
                   return namaMatch || barcodeMatch;
                 }).toList();
 
@@ -72,12 +73,13 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                   final item = filteredProduk[index];
                   return ListTile(
                     leading: const Icon(Icons.fastfood_outlined),
-                    // PENYESUAIAN: Menggunakan properti productName
-                    title: Text(item.productName),
+                    // PERBAIKAN: Menggunakan `namaProduk`
+                    title: Text(item.namaProduk),
                     subtitle: Text('Barcode: ${item.barcodeId}'),
                     onTap: () {
                       setState(() {
-                        controller.closeView(item.productName);
+                        // PERBAIKAN: Menggunakan `namaProduk`
+                        controller.closeView(item.namaProduk);
                       });
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => ProductDetailPage(produk: item),
