@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 
 class AuthBackground extends StatelessWidget {
   final Widget child;
-  final String imagePath;
 
   const AuthBackground({
     super.key, 
     required this.child,
-    this.imagePath = 'assets/images/background1.jpg', // Default background
   });
 
   @override
@@ -17,20 +15,20 @@ class AuthBackground extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Gambar Latar Belakang
+          // Latar Belakang Gradien Hijau (Pengganti Gambar)
           Container(
             width: screenSize.width,
             height: screenSize.height,
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(imagePath),
-                fit: BoxFit.cover,
+              gradient: LinearGradient(
+                colors: [
+                  Colors.green.shade200,
+                  Colors.green.shade400,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
-          ),
-          // Lapisan Gelap untuk Kontras
-          Container(
-            color: Colors.black.withOpacity(0.3),
           ),
           
           // Layout Responsif

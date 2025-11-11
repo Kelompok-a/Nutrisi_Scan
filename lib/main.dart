@@ -3,8 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart'; 
 import 'providers/auth_provider.dart';
 import 'providers/search_history_provider.dart';
-import 'screens/splash_screen.dart'; // Import SplashScreen
+import 'screens/splash_screen.dart';
 import 'theme/app_theme.dart'; 
+import 'theme/no_scrollbar_behavior.dart'; // Import aturan baru
 
 void main() => runApp(const MyApp());
 
@@ -21,6 +22,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => SearchHistoryProvider()),
       ],
       child: MaterialApp(
+        // PERBAIKAN: Terapkan aturan untuk menyembunyikan scrollbar
+        scrollBehavior: NoScrollbarBehavior(), 
         debugShowCheckedModeBanner: false,
         title: 'Nutriscan',
 
@@ -40,7 +43,6 @@ class MyApp extends StatelessWidget {
             child: child ?? const SizedBox.shrink(),
           );
         },
-        // Atur SplashScreen sebagai halaman utama
         home: const SplashScreen(),
       ),
     );
