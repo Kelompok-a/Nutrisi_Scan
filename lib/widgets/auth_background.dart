@@ -15,7 +15,7 @@ class AuthBackground extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Latar Belakang Gradien Hijau (Pengganti Gambar)
+          // Latar Belakang Gradien Hijau
           Container(
             width: screenSize.width,
             height: screenSize.height,
@@ -31,54 +31,29 @@ class AuthBackground extends StatelessWidget {
             ),
           ),
           
-          // Layout Responsif
-          LayoutBuilder(
-            builder: (context, constraints) {
-              if (constraints.maxWidth > 800) {
-                // Tampilan Web/Desktop (Split-Screen)
-                return Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 1200),
-                    child: Row(
-                      children: [
-                        const Expanded(
-                          flex: 3,
-                          child: SizedBox(), // Sisi kiri kosong, hanya background
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Center(child: _buildFormCard(context)),
-                        ),
-                      ],
-                    ),
+          // PERBAIKAN: Menggunakan Center untuk memastikan posisi tengah
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: ConstrainedBox(
+                // PERBAIKAN: Box dibuat lebih besar (extended)
+                constraints: const BoxConstraints(maxWidth: 500), 
+                child: Card(
+                  elevation: 12,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20), // Sudut lebih bulat
+                    side: BorderSide(color: Colors.white.withOpacity(0.5), width: 1),
                   ),
-                );
-              } else {
-                // Tampilan Mobile (Vertikal)
-                return Center(
-                  child: SingleChildScrollView(
-                    child: _buildFormCard(context),
+                  child: Padding(
+                    // Padding di dalam card juga disesuaikan
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+                    child: child,
                   ),
-                );
-              }
-            },
+                ),
+              ),
+            ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildFormCard(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 400),
-      child: Card(
-        elevation: 8,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        margin: const EdgeInsets.all(24),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          child: child, // Di sini form login/register akan ditampilkan
-        ),
       ),
     );
   }

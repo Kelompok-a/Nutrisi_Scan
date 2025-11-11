@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
-import '../widgets/auth_background.dart'; // Import widget background baru
+import '../widgets/auth_background.dart';
 import './main_screen.dart';
 import './register_page.dart';
 
@@ -16,9 +16,23 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _emailFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
   bool _isLoading = false;
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
+
   Future<void> _login() async {
+    // Pindahkan fokus dari text field untuk menyembunyikan keyboard
+    FocusScope.of(context).unfocus();
+
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -54,7 +68,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Tema warna hijau
     final Color primaryColor = Colors.green.shade700;
     final Color accentColor = Colors.green.shade500;
 
@@ -65,33 +78,36 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header Form
             Text(
               'Selamat Datang Kembali',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 26,
+                fontSize: 28, // Sedikit lebih besar
                 fontWeight: FontWeight.bold,
                 color: primaryColor,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             const Text(
               'Login untuk melanjutkan ke NutriScan',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.black54),
+              style: TextStyle(color: Colors.black54, fontSize: 16),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 40),
 
-            // Form Email
             TextFormField(
               controller: _emailController,
+              focusNode: _emailFocusNode,
               decoration: InputDecoration(
                 labelText: 'Email',
                 prefixIcon: Icon(Icons.email_outlined, color: primaryColor),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
               keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next, // Pindah ke field berikutnya saat enter
+              onFieldSubmitted: (_) {
+                FocusScope.of(context).requestFocus(_passwordFocusNode);
+              },
               validator: (value) {
                 if (value == null || value.isEmpty || !value.contains('@')) {
                   return 'Masukkan email yang valid';
@@ -99,17 +115,20 @@ class _LoginPageState extends State<LoginPage> {
                 return null;
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
-            // Form Password
+            // PERBAIKAN: Fungsionalitas "Enter to Login"
             TextFormField(
               controller: _passwordController,
+              focusNode: _passwordFocusNode,
               decoration: InputDecoration(
                 labelText: 'Password',
                 prefixIcon: Icon(Icons.lock_outline, color: primaryColor),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
               obscureText: true,
+              textInputAction: TextInputAction.done, // Tombol "Done" di keyboard
+              onFieldSubmitted: (_) => _login(), // Panggil fungsi login saat enter
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Password tidak boleh kosong';
@@ -117,9 +136,8 @@ class _LoginPageState extends State<LoginPage> {
                 return null;
               },
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
 
-            // Tombol Login
             _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : ElevatedButton(
@@ -127,16 +145,15 @@ class _LoginPageState extends State<LoginPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryColor,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 18), // Tombol lebih tinggi
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text('LOGIN', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text('LOGIN', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
-            // Link ke Halaman Registrasi
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
