@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/produk.dart';
-import '../theme/app_theme.dart';
 import '../services/api_service.dart';
 
 class ProductDetailPage extends StatelessWidget {
@@ -8,160 +7,211 @@ class ProductDetailPage extends StatelessWidget {
 
   const ProductDetailPage({super.key, required this.produk});
 
-  String? _buildProxyUrl(String? originalUrl) {
-    if (originalUrl == null || originalUrl.isEmpty) return null;
-    return '${ApiService.baseUrl}/image-proxy?url=${Uri.encodeComponent(originalUrl)}';
-  }
-
-  Widget _buildImageFromUrl(String? proxyUrl) {
-    if (proxyUrl == null) {
-      return Container(
-        color: Colors.grey[200],
-        child: const Center(
-          child: Icon(Icons.hide_image_outlined, color: Colors.grey, size: 60),
-        ),
-      );
-    }
-    return Image.network(
-      proxyUrl,
-      fit: BoxFit.cover,
-      loadingBuilder: (context, child, progress) => progress == null ? child : const Center(child: CircularProgressIndicator()),
-      errorBuilder: (context, error, stack) => Container(
-        color: Colors.grey[200],
-        child: const Center(
-          child: Icon(Icons.broken_image_outlined, color: Colors.red, size: 60),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(produk.namaProduk),
+        backgroundColor: Colors.white,
+        elevation: 1,
+      ),
+      body: SingleChildScrollView(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1200),
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              // LayoutBuilder untuk membuat tampilan responsif
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  if (constraints.maxWidth > 800) {
+                    // Tampilan untuk layar lebar (web)
+                    return _buildWideLayout();
+                  } else {
+                    // Tampilan untuk layar sempit (mobile)
+                    return _buildNarrowLayout();
+                  }
+                },
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildNutritionRow(String label, String value, double progress, Color color) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
+  // --- WIDGET UNTUK TAMPILAN LEBAR (2 KOLOM) ---
+  Widget _buildWideLayout() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 2,
+          child: _buildProductImage(),
+        ),
+        const SizedBox(width: 40),
+        Expanded(
+          flex: 3,
+          child: _buildProductInfo(),
+        ),
+      ],
+    );
+  }
+
+  // --- WIDGET UNTUK TAMPILAN SEMPIT (1 KOLOM) ---
+  Widget _buildNarrowLayout() {
+    return Column(
+      children: [
+        _buildProductImage(),
+        const SizedBox(height: 30),
+        _buildProductInfo(),
+      ],
+    );
+  }
+
+  // --- BAGIAN-BAGIAN UI YANG BISA DIGUNAKAN KEMBALI ---
+
+  // Widget untuk menampilkan gambar produk
+  Widget _buildProductImage() {
+    final proxyImageUrl = _buildProxyUrl(produk.imageProductLink);
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Container(
+          color: Colors.grey[200],
+          child: proxyImageUrl != null
+              ? Image.network(
+                  proxyImageUrl,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, progress) =>
+                      progress == null ? child : const Center(child: CircularProgressIndicator()),
+                  errorBuilder: (context, error, stack) =>
+                      const Icon(Icons.broken_image_outlined, color: Colors.red, size: 60),
+                )
+              : const Icon(Icons.hide_image_outlined, color: Colors.grey, size: 60),
+        ),
+      ),
+    );
+  }
+
+  // Widget untuk menampilkan semua informasi teks di sisi kanan
+  Widget _buildProductInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Judul dan Kategori
+        Text(
+          produk.namaKategori ?? 'Produk',
+          style: TextStyle(color: Colors.green.shade700, fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          produk.namaProduk,
+          style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold, height: 1.2),
+        ),
+        const SizedBox(height: 24),
+
+        // Sorotan Nutrisi
+        _buildNutritionHighlights(),
+        const SizedBox(height: 32),
+
+        // Tabel Fakta Nutrisi
+        _buildNutritionFactsTable(),
+      ],
+    );
+  }
+
+  // Widget untuk kartu-kartu sorotan nutrisi
+  Widget _buildNutritionHighlights() {
+    return Wrap(
+      spacing: 16,
+      runSpacing: 16,
+      children: [
+        _buildHighlightCard('Kalori', produk.totalCalories, 'kcal', Colors.orange),
+        _buildHighlightCard('Lemak', produk.totalFat, 'g', Colors.red),
+        _buildHighlightCard('Karbohidrat', produk.totalCarbohydrates, 'g', Colors.blue),
+        _buildHighlightCard('Protein', produk.protein, 'g', Colors.green),
+        _buildHighlightCard('Gula', produk.totalSugar, 'g', Colors.pink),
+      ],
+    );
+  }
+
+  // Widget untuk tabel fakta nutrisi
+  Widget _buildNutritionFactsTable() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300, width: 2),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-              Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            ],
+          const Text(
+            'Fakta Nutrisi',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: LinearProgressIndicator(
-              value: progress.clamp(0.0, 1.0),
-              minHeight: 10,
-              backgroundColor: color.withOpacity(0.2),
-              valueColor: AlwaysStoppedAnimation<Color>(color),
-            ),
-          ),
+          const Text('Ukuran Sajian 100g'),
+          const Divider(thickness: 2, height: 24),
+          _buildFactRow('Lemak Total', '${produk.totalFat.toStringAsFixed(1)}g', ''),
+          _buildFactRow('  Lemak Jenuh', '${produk.saturatedFat.toStringAsFixed(1)}g', '${produk.akgSaturatedFat.toStringAsFixed(0)}%'),
+          _buildFactRow('Karbohidrat Total', '${produk.totalCarbohydrates.toStringAsFixed(1)}g', '${produk.akgCarbohydrates.toStringAsFixed(0)}%'),
+          _buildFactRow('  Gula', '${produk.totalSugar.toStringAsFixed(1)}g', ''),
+          _buildFactRow('Protein', '${produk.protein.toStringAsFixed(1)}g', '${produk.akgProtein.toStringAsFixed(0)}%'),
+          const Divider(thickness: 1, height: 24),
+          const Text('*Persen AKG berdasarkan pada kebutuhan energi 2150 kkal.'),
         ],
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final proxyGambarUrl = _buildProxyUrl(produk.imageProductLink); // Menggunakan imageProductLink
-    final proxyBarcodeUrl = _buildProxyUrl(produk.barcodeUrl);
+  // --- WIDGET HELPER KECIL ---
 
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 250.0,
-            pinned: true,
-            stretch: true,
-            backgroundColor: AppTheme.kPrimaryColor,
-            foregroundColor: Colors.white,
-            iconTheme: const IconThemeData(color: Colors.white),
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                produk.namaProduk,
-                style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.white),
+  // Helper untuk membuat satu kartu sorotan
+  Widget _buildHighlightCard(String label, double value, String unit, Color color) {
+    return SizedBox(
+      width: 120,
+      child: Card(
+        elevation: 0,
+        color: color.withOpacity(0.1),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            children: [
+              Text(label, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Text(
+                value.toStringAsFixed(1),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color),
               ),
-              centerTitle: true,
-              titlePadding: const EdgeInsets.only(left: 48, right: 48, bottom: 16),
-              background: _buildImageFromUrl(proxyGambarUrl),
-              stretchModes: const [StretchMode.zoomBackground],
-            ),
+              Text(unit, style: TextStyle(color: color)),
+            ],
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    produk.namaProduk,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Kategori: ${produk.namaKategori ?? 'N/A'}', // Menggunakan namaKategori
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
-                  ),
-                  const Divider(height: 32, thickness: 1),
-                  // Ringkasan Gizi
-                  _buildNutritionRow('Kalori', '${produk.totalCalories.toStringAsFixed(1)} kcal', produk.totalCalories / 2000, Colors.orange), // totalCalories
-                  _buildNutritionRow('Lemak Total', '${produk.totalFat.toStringAsFixed(1)} g', produk.totalFat / 70, Colors.red), // totalFat
-                  _buildNutritionRow('Lemak Jenuh', '${produk.saturatedFat.toStringAsFixed(1)} g', produk.saturatedFat / 20, Colors.redAccent), // saturatedFat
-                  _buildNutritionRow('Karbohidrat Total', '${produk.totalCarbohydrates.toStringAsFixed(1)} g', produk.totalCarbohydrates / 300, Colors.blue), // totalCarbohydrates
-                  _buildNutritionRow('Gula', '${produk.totalSugar.toStringAsFixed(1)} g', produk.totalSugar / 25, Colors.pink), // totalSugar
-                  _buildNutritionRow('Protein', '${produk.protein.toStringAsFixed(1)} g', produk.protein / 50, Colors.green), // protein
-                  // Garam/Natrium tidak ada di server.js baru
+        ),
+      ),
+    );
+  }
 
-                  const Divider(height: 32, thickness: 1),
-                  Text(
-                    'Informasi Nilai Gizi per 100g',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  DataTable(
-                    columnSpacing: 20,
-                    headingRowHeight: 40,
-                    dataRowMinHeight: 40,
-                    dataRowMaxHeight: 50,
-                    columns: const [
-                      DataColumn(label: Text('Nama Gizi', style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(label: Text('Jumlah', style: TextStyle(fontWeight: FontWeight.bold)), numeric: true),
-                      DataColumn(label: Text('% AKG', style: TextStyle(fontWeight: FontWeight.bold)), numeric: true),
-                    ],
-                    rows: [
-                      DataRow(cells: [const DataCell(Text('Kalori')), DataCell(Text(produk.totalCalories.toStringAsFixed(1))), const DataCell(Text('-'))]),
-                      DataRow(cells: [const DataCell(Text('Lemak Total')), DataCell(Text(produk.totalFat.toStringAsFixed(1))), const DataCell(Text('-'))]),
-                      DataRow(cells: [const DataCell(Text('Lemak Jenuh')), DataCell(Text(produk.saturatedFat.toStringAsFixed(1))), DataCell(Text(produk.akgSaturatedFat.toStringAsFixed(1)))]), // akgSaturatedFat
-                      DataRow(cells: [const DataCell(Text('Karbohidrat Total')), DataCell(Text(produk.totalCarbohydrates.toStringAsFixed(1))), DataCell(Text(produk.akgCarbohydrates.toStringAsFixed(1)))]), // akgCarbohydrates
-                      DataRow(cells: [const DataCell(Text('Gula')), DataCell(Text(produk.totalSugar.toStringAsFixed(1))), const DataCell(Text('-'))]),
-                      DataRow(cells: [const DataCell(Text('Protein')), DataCell(Text(produk.protein.toStringAsFixed(1))), DataCell(Text(produk.akgProtein.toStringAsFixed(1)))]), // akgProtein
-                      // Kolesterol, Serat Pangan, Natrium tidak ada di server.js baru
-                    ],
-                  ),
-                  const Divider(height: 32, thickness: 1),
-                  Text(
-                    'Barcode',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    height: 120,
-                    child: _buildImageFromUrl(proxyBarcodeUrl),
-                  ),
-                ],
-              ),
-            ),
-          ),
+  // Helper untuk membuat satu baris di tabel fakta nutrisi
+  Widget _buildFactRow(String label, String amount, String dailyValue) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          Expanded(flex: 5, child: Text(label, style: const TextStyle(fontSize: 16))),
+          Expanded(flex: 2, child: Text(amount, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+          Expanded(flex: 2, child: Text(dailyValue, textAlign: TextAlign.right, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
         ],
       ),
     );
+  }
+
+  // Helper untuk URL proxy gambar (tidak berubah)
+  String? _buildProxyUrl(String? originalUrl) {
+    if (originalUrl == null || originalUrl.isEmpty) return null;
+    // Asumsi ApiService.baseUrl sudah benar
+    return 'http://localhost:3001/api/image-proxy?url=${Uri.encodeComponent(originalUrl)}';
   }
 }
