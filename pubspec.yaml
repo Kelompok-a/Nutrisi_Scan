@@ -15,7 +15,7 @@ dependencies:
   http: ^1.2.1
   google_fonts: ^6.2.1 # Added Google Fonts package
   flutter_secure_storage: ^9.0.0 # Ditambahkan untuk menyimpan token dengan aman
-
+  shared_preferences: ^2.2.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
