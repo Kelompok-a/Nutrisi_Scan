@@ -11,12 +11,12 @@ class SearchHistoryPage extends StatelessWidget {
     final historyProvider = Provider.of<SearchHistoryProvider>(context);
     final history = historyProvider.history;
     
-    // Hitung statistik
+    // Hitung statistik gabungan
     final stats = historyProvider.getStatistics();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Riwayat Pencarian'),
+        title: const Text('Riwayat Aktivitas'),
         backgroundColor: Colors.white,
         elevation: 1,
         foregroundColor: Colors.black,
@@ -65,34 +65,100 @@ class SearchHistoryPage extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.search_off, size: 80, color: Colors.grey),
+                        Icon(Icons.inbox_outlined, size: 80, color: Colors.grey),
                         SizedBox(height: 16),
                         Text(
-                          'Belum ada riwayat pencarian.',
-                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                          'Belum ada riwayat.',
+                          style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'Scan atau cari produk untuk memulai',
+                          style: TextStyle(color: Colors.grey, fontSize: 14),
                         ),
                       ],
                     ),
                   )
                 : ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     itemCount: history.length,
                     itemBuilder: (context, index) {
                       final item = history[index];
-                      return ListTile(
-                        leading: const Icon(Icons.history, color: AppTheme.kPrimaryColor),
-                        title: Text(item['query']),
-                        subtitle: Text(
-                          _formatTime(item['timestamp']),
-                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      final isScan = item['type'] == 'scan';
+                      
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                        onTap: () {
-                          // TODO: Handle tap - search again atau navigate ke detail
-                        },
-                        trailing: IconButton(
-                          icon: const Icon(Icons.close, color: Colors.grey),
-                          onPressed: () {
-                            historyProvider.removeSearchQuery(item['query']);
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                          leading: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              gradient: isScan 
+                                ? LinearGradient(
+                                    colors: [Colors.green.shade400, Colors.green.shade600],
+                                  )
+                                : AppTheme.kBackgroundGradient,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(
+                              isScan ? Icons.qr_code_scanner : Icons.search,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
+                          title: Text(
+                            item['query'],
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                            ),
+                          ),
+                          subtitle: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: isScan 
+                                    ? Colors.green.shade50 
+                                    : AppTheme.kPrimaryColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  isScan ? 'Scan' : 'Cari',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: isScan ? Colors.green.shade700 : AppTheme.kPrimaryColor,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _formatTime(item['timestamp']),
+                                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                          onTap: () {
+                            // TODO: Handle tap - navigate ke detail produk
                           },
+                          trailing: IconButton(
+                            icon: const Icon(Icons.close, color: Colors.grey, size: 20),
+                            onPressed: () {
+                              historyProvider.removeHistoryItem(index);
+                            },
+                          ),
                         ),
                       );
                     },
@@ -137,7 +203,7 @@ class SearchHistoryPage extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               const Text(
-                'Statistik Pencarian',
+                'Statistik Aktivitas',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -218,11 +284,11 @@ class SearchHistoryPage extends StatelessWidget {
     if (difference.inMinutes < 1) {
       return 'Baru saja';
     } else if (difference.inHours < 1) {
-      return '${difference.inMinutes} menit yang lalu';
+      return '${difference.inMinutes} menit lalu';
     } else if (difference.inDays < 1) {
-      return '${difference.inHours} jam yang lalu';
+      return '${difference.inHours} jam lalu';
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} hari yang lalu';
+      return '${difference.inDays} hari lalu';
     } else {
       return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
     }

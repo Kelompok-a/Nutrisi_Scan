@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 import '../models/produk.dart';
+import '../providers/search_history_provider.dart';
 import 'product_detail_page.dart';
 
 class ProductSearchPage extends StatefulWidget {
@@ -16,6 +18,7 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
   List<Produk> _allProduk = [];
   List<Produk> _filteredProduk = [];
   final SearchController _searchController = SearchController();
+  String _lastSearchQuery = '';
 
   @override
   void initState() {
@@ -50,6 +53,18 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
         }).toList();
       }
     });
+
+    // Simpan ke history hanya jika keyword tidak kosong dan berbeda dari sebelumnya
+    if (keyword.isNotEmpty && keyword != _lastSearchQuery) {
+      _lastSearchQuery = keyword;
+      // Debounce: simpan setelah 500ms berhenti mengetik
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (keyword == _searchController.text.toLowerCase() && keyword.isNotEmpty) {
+          final historyProvider = Provider.of<SearchHistoryProvider>(context, listen: false);
+          historyProvider.addSearchQuery(keyword);
+        }
+      });
+    }
   }
 
   void _navigateToDetail(Produk produk) {
@@ -95,6 +110,23 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                   }
 
                   // Tampilkan daftar produk yang sudah difilter
+                  if (_filteredProduk.isEmpty && _searchController.text.isNotEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.search_off, size: 60, color: Colors.grey),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Tidak ditemukan produk "${_searchController.text}"',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
                   return ListView.builder(
                     itemCount: _filteredProduk.length,
                     itemBuilder: (context, index) {
@@ -104,7 +136,10 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                         child: ListTile(
                           contentPadding: const EdgeInsets.all(12.0),
                           leading: const Icon(Icons.fastfood_outlined, size: 40),
-                          title: Text(produk.namaProduk, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          title: Text(
+                            produk.namaProduk, 
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
                           subtitle: Text('Barcode: ${produk.barcodeId}'),
                           onTap: () => _navigateToDetail(produk),
                         ),
