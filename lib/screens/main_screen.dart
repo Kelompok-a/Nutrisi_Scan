@@ -7,9 +7,10 @@ import 'article_page.dart';
 import 'faq_page.dart';
 import 'about_page.dart';
 import 'login_page.dart';
-import 'register_page.dart'; // Pastikan import ini ada dan benar
+import 'register_page.dart';
 import 'product_search_page.dart';
 import 'search_history_page.dart';
+import 'favorites_page.dart'; 
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key}); 
@@ -27,7 +28,8 @@ class _MainScreenState extends State<MainScreen> {
     ArticlePage(),
     FaqPage(),
     AboutPage(),
-    SearchHistoryPage(),
+    FavoritesPage(),        
+    SearchHistoryPage(),    
   ];
 
   void _onItemTapped(int index) {
@@ -53,7 +55,8 @@ class _MainScreenState extends State<MainScreen> {
           _buildNavButton('Artikel', 2),
           _buildNavButton('Tanya Jawab', 3),
           _buildNavButton('Tentang', 4),
-          _buildNavButton('Riwayat', 5),
+          _buildNavButton('Favorit', 5),    
+          _buildNavButton('Riwayat', 6),    
           SizedBox(width: 20),
 
           Consumer<AuthProvider>(
@@ -92,7 +95,7 @@ class _MainScreenState extends State<MainScreen> {
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => const RegisterPage(), // Pastikan dipanggil sebagai konstruktor
+                            builder: (context) => const RegisterPage(),
                           ),
                         );
                       },

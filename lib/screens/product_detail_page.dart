@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/produk.dart';
-import '../services/api_service.dart';
+import '../providers/favorites_provider.dart';
 
 class ProductDetailPage extends StatelessWidget {
   final Produk produk;
@@ -14,6 +15,36 @@ class ProductDetailPage extends StatelessWidget {
         title: Text(produk.namaProduk),
         backgroundColor: Colors.white,
         elevation: 1,
+        actions: [
+          // Favorite Button
+          Consumer<FavoritesProvider>(
+            builder: (context, favoritesProvider, child) {
+              final isFavorite = favoritesProvider.isFavorite(produk.barcodeId);
+              return IconButton(
+                icon: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: isFavorite ? Colors.red : Colors.grey,
+                ),
+                tooltip: isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit',
+                onPressed: () {
+                  favoritesProvider.toggleFavorite(produk);
+                  
+                  // Show snackbar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        isFavorite 
+                          ? '${produk.namaProduk} dihapus dari favorit'
+                          : '${produk.namaProduk} ditambahkan ke favorit',
+                      ),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Center(
