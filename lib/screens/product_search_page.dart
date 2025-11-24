@@ -4,6 +4,7 @@ import '../services/api_service.dart';
 import '../models/produk.dart';
 import '../providers/search_history_provider.dart';
 import 'product_detail_page.dart';
+import 'scanner_page.dart'; // ← IMPORT BARU
 
 class ProductSearchPage extends StatefulWidget {
   const ProductSearchPage({super.key});
@@ -75,6 +76,14 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
     );
   }
 
+  void _openScanner() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ScannerPage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,14 +94,45 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            SearchBar(
-              controller: _searchController,
-              padding: const MaterialStatePropertyAll<EdgeInsets>(
-                EdgeInsets.symmetric(horizontal: 16.0),
-              ),
-              leading: const Icon(Icons.search),
-              hintText: 'Ketik nama produk atau barcode...',
-              onChanged: (_) => _onSearchChanged(),
+            // Search Bar dengan Tombol Kamera
+            Row(
+              children: [
+                Expanded(
+                  child: SearchBar(
+                    controller: _searchController,
+                    padding: const MaterialStatePropertyAll<EdgeInsets>(
+                      EdgeInsets.symmetric(horizontal: 16.0),
+                    ),
+                    leading: const Icon(Icons.search),
+                    hintText: 'Ketik nama produk atau barcode...',
+                    onChanged: (_) => _onSearchChanged(),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Tombol Kamera
+                Container(
+                  height: 56,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                    ),
+                    borderRadius: BorderRadius.circular(28),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF6366F1).withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
+                    iconSize: 28,
+                    tooltip: 'Scan Barcode',
+                    onPressed: _openScanner,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             Expanded(
