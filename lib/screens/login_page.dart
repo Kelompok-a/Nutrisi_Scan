@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/auth_background.dart';
+import '../theme/app_theme.dart'; // Import tema
 import './main_screen.dart';
 import './register_page.dart';
 
@@ -16,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  // FocusNode untuk UX yang lebih baik (Enter pindah kolom)
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
   bool _isLoading = false;
@@ -30,7 +32,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login() async {
-    // Pindahkan fokus dari text field untuk menyembunyikan keyboard
     FocusScope.of(context).unfocus();
 
     if (_formKey.currentState!.validate()) {
@@ -59,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Login Gagal: ${result['message']}'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppTheme.kErrorColor,
           ),
         );
       }
@@ -68,8 +69,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Color primaryColor = Colors.green.shade700;
-    final Color accentColor = Colors.green.shade500;
+    // Mengambil warna langsung dari AppTheme agar konsisten
+    final Color primaryColor = AppTheme.kPrimaryColor;
 
     return AuthBackground(
       child: Form(
@@ -79,21 +80,21 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Selamat Datang Kembali',
+              'Selamat Datang',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 28, // Sedikit lebih besar
+                fontSize: 26,
                 fontWeight: FontWeight.bold,
-                color: primaryColor,
+                color: AppTheme.kTextColor, // Warna teks hijau gelap
               ),
             ),
-            const SizedBox(height: 12),
-            const Text(
-              'Login untuk melanjutkan ke NutriScan',
+            const SizedBox(height: 8),
+            Text(
+              'Masuk untuk melanjutkan ke NutriScan',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.black54, fontSize: 16),
+              style: TextStyle(color: Colors.grey[600], fontSize: 14),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 32),
 
             TextFormField(
               controller: _emailController,
@@ -101,10 +102,10 @@ class _LoginPageState extends State<LoginPage> {
               decoration: InputDecoration(
                 labelText: 'Email',
                 prefixIcon: Icon(Icons.email_outlined, color: primaryColor),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                // Border otomatis mengikuti AppTheme (bulat & hijau)
               ),
               keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.next, // Pindah ke field berikutnya saat enter
+              textInputAction: TextInputAction.next,
               onFieldSubmitted: (_) {
                 FocusScope.of(context).requestFocus(_passwordFocusNode);
               },
@@ -115,20 +116,18 @@ class _LoginPageState extends State<LoginPage> {
                 return null;
               },
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
-            // PERBAIKAN: Fungsionalitas "Enter to Login"
             TextFormField(
               controller: _passwordController,
               focusNode: _passwordFocusNode,
               decoration: InputDecoration(
                 labelText: 'Password',
                 prefixIcon: Icon(Icons.lock_outline, color: primaryColor),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
               obscureText: true,
-              textInputAction: TextInputAction.done, // Tombol "Done" di keyboard
-              onFieldSubmitted: (_) => _login(), // Panggil fungsi login saat enter
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (_) => _login(),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Password tidak boleh kosong';
@@ -142,31 +141,32 @@ class _LoginPageState extends State<LoginPage> {
                 ? const Center(child: CircularProgressIndicator())
                 : ElevatedButton(
                     onPressed: _login,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 18), // Tombol lebih tinggi
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text('LOGIN', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    // Style tombol otomatis mengikuti AppTheme (Hijau, Bulat)
+                    child: const Text('MASUK'),
                   ),
             const SizedBox(height: 20),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Belum punya akun?'),
+                Text(
+                  'Belum punya akun?',
+                  style: TextStyle(color: Colors.grey[700]),
+                ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const RegisterPage()),
+                      MaterialPageRoute(
+                        builder: (context) => const RegisterPage(),
+                      ),
                     );
                   },
                   child: Text(
                     'Daftar Sekarang',
-                    style: TextStyle(color: accentColor, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],

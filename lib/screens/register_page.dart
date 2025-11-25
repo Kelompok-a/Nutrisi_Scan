@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
-import '../widgets/auth_background.dart'; // Import widget background baru
+import '../widgets/auth_background.dart';
+import '../theme/app_theme.dart'; // Import tema
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -46,7 +47,7 @@ class _RegisterPageState extends State<RegisterPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(result['message'] ?? 'Terjadi kesalahan'),
-          backgroundColor: result['success'] == true ? Colors.green : Colors.red,
+          backgroundColor: result['success'] == true ? AppTheme.kPrimaryColor : AppTheme.kErrorColor,
         ),
       );
 
@@ -58,9 +59,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Tema warna hijau
-    final Color primaryColor = Colors.green.shade700;
-    final Color accentColor = Colors.green.shade500;
+    final Color primaryColor = AppTheme.kPrimaryColor;
 
     return AuthBackground(
       child: Form(
@@ -69,31 +68,28 @@ class _RegisterPageState extends State<RegisterPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header Form
             Text(
               'Buat Akun Baru',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
-                color: primaryColor,
+                color: AppTheme.kTextColor, // Warna hijau gelap
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Mulai perjalanan sehatmu bersama NutriScan',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.black54),
+              style: TextStyle(color: Colors.grey[600], fontSize: 14),
             ),
             const SizedBox(height: 32),
 
-            // Form Nama
             TextFormField(
               controller: _namaController,
               decoration: InputDecoration(
                 labelText: 'Nama Lengkap',
                 prefixIcon: Icon(Icons.person_outline, color: primaryColor),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -104,13 +100,11 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             const SizedBox(height: 16),
 
-            // Form Email
             TextFormField(
               controller: _emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
                 prefixIcon: Icon(Icons.email_outlined, color: primaryColor),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
@@ -122,13 +116,11 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             const SizedBox(height: 16),
 
-            // Form Password
             TextFormField(
               controller: _passwordController,
               decoration: InputDecoration(
                 labelText: 'Password',
                 prefixIcon: Icon(Icons.lock_outline, color: primaryColor),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
               obscureText: true,
               validator: (value) {
@@ -140,33 +132,23 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             const SizedBox(height: 24),
 
-            // Tombol Daftar
             _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : ElevatedButton(
                     onPressed: _register,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text('DAFTAR', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text('DAFTAR'),
                   ),
             const SizedBox(height: 16),
 
-            // Link kembali ke Halaman Login
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Sudah punya akun?'),
+                Text('Sudah punya akun?', style: TextStyle(color: Colors.grey[700])),
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
                   child: Text(
                     'Login di Sini',
-                    style: TextStyle(color: accentColor, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],

@@ -11,6 +11,7 @@ import 'register_page.dart';
 import 'product_search_page.dart';
 import 'search_history_page.dart';
 import 'favorites_page.dart'; 
+import '../theme/app_theme.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key}); 
@@ -23,13 +24,13 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    HomePage(),
-    ProductSearchPage(),
-    ArticlePage(),
-    FaqPage(),
-    AboutPage(),
-    FavoritesPage(),        
-    SearchHistoryPage(),    
+    const HomePage(),
+    const ProductSearchPage(),
+    const ArticlePage(),
+    const FaqPage(),
+    const AboutPage(),
+    const FavoritesPage(),        
+    const SearchHistoryPage(),    
   ];
 
   void _onItemTapped(int index) {
@@ -41,77 +42,91 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent, 
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'SugarChecker',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
         ),
         backgroundColor: Colors.white,
         elevation: 1,
-        actions: <Widget>[
-          _buildNavButton('Beranda', 0),
-          _buildNavButton('Cari Produk', 1),
-          _buildNavButton('Artikel', 2),
-          _buildNavButton('Tanya Jawab', 3),
-          _buildNavButton('Tentang', 4),
-          _buildNavButton('Favorit', 5),    
-          _buildNavButton('Riwayat', 6),    
-          SizedBox(width: 20),
+        // --- PERBAIKAN DI SINI (Actions dibungkus agar bisa discroll) ---
+        actions: [
+          // Gunakan Container dengan constraint lebar maksimal layar
+          Container(
+            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal, // Scroll ke samping jika tidak muat
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildNavButton('Beranda', 0),
+                  _buildNavButton('Cari Produk', 1),
+                  _buildNavButton('Artikel', 2),
+                  _buildNavButton('Tanya Jawab', 3),
+                  _buildNavButton('Tentang', 4),
+                  _buildNavButton('Favorit', 5),    
+                  _buildNavButton('Riwayat', 6),    
+                  const SizedBox(width: 20),
 
-          Consumer<AuthProvider>(
-            builder: (context, authProvider, child) {
-              if (authProvider.isAuthenticated) {
-                return Tooltip(
-                  message: 'Profil',
-                  child: IconButton(
-                    icon: const Icon(Icons.person, color: Colors.black87),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const ProfilePage(),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              } else {
-                return Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                        );
-                      },
-                      child: Text('Login'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF0056b3),
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const RegisterPage(),
+                  Consumer<AuthProvider>(
+                    builder: (context, authProvider, child) {
+                      if (authProvider.isAuthenticated) {
+                        return Tooltip(
+                          message: 'Profil',
+                          child: IconButton(
+                            icon: const Icon(Icons.person, color: Colors.black87),
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const ProfilePage(),
+                                ),
+                              );
+                            },
                           ),
                         );
-                      },
-                      child: Text('Daftar'),
-                    ),
-                    SizedBox(width: 20),
-                  ],
-                );
-              }
-            },
+                      } else {
+                        return Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.kPrimaryColor,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                minimumSize: const Size(0, 36)
+                              ),
+                              child: const Text('Login'),
+                            ),
+                            const SizedBox(width: 10),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => const RegisterPage(),
+                                  ),
+                                );
+                              },
+                              child: const Text('Daftar'),
+                            ),
+                            const SizedBox(width: 20),
+                          ],
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 1200),
+          constraints: const BoxConstraints(maxWidth: 1200),
           child: IndexedStack(index: _selectedIndex, children: _pages),
         ),
       ),
@@ -124,7 +139,7 @@ class _MainScreenState extends State<MainScreen> {
       child: Text(
         text,
         style: TextStyle(
-          color: _selectedIndex == index ? Color(0xFF0056b3) : Colors.black54,
+          color: _selectedIndex == index ? AppTheme.kPrimaryColor : Colors.black54,
           fontWeight: _selectedIndex == index
               ? FontWeight.bold
               : FontWeight.normal,

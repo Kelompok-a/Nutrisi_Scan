@@ -4,7 +4,8 @@ import '../services/api_service.dart';
 import '../models/produk.dart';
 import '../providers/search_history_provider.dart';
 import 'product_detail_page.dart';
-import 'scanner_page.dart'; // ← IMPORT BARU
+import 'scanner_page.dart';
+import '../theme/app_theme.dart'; // Import theme untuk warna
 
 class ProductSearchPage extends StatefulWidget {
   const ProductSearchPage({super.key});
@@ -26,10 +27,12 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
     super.initState();
     _produkFuture = _apiService.getAllProduk();
     _produkFuture.then((produk) {
-      setState(() {
-        _allProduk = produk;
-        _filteredProduk = produk;
-      });
+      if (mounted) {
+        setState(() {
+          _allProduk = produk;
+          _filteredProduk = produk;
+        });
+      }
     });
     _searchController.addListener(_onSearchChanged);
   }
@@ -55,13 +58,16 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
       }
     });
 
-    // Simpan ke history hanya jika keyword tidak kosong dan berbeda dari sebelumnya
     if (keyword.isNotEmpty && keyword != _lastSearchQuery) {
       _lastSearchQuery = keyword;
-      // Debounce: simpan setelah 500ms berhenti mengetik
       Future.delayed(const Duration(milliseconds: 500), () {
-        if (keyword == _searchController.text.toLowerCase() && keyword.isNotEmpty) {
-          final historyProvider = Provider.of<SearchHistoryProvider>(context, listen: false);
+        if (!mounted) return;
+        if (keyword == _searchController.text.toLowerCase() &&
+            keyword.isNotEmpty) {
+          final historyProvider = Provider.of<SearchHistoryProvider>(
+            context,
+            listen: false,
+          );
           historyProvider.addSearchQuery(keyword);
         }
       });
@@ -77,64 +83,54 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
   }
 
   void _openScanner() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ScannerPage(),
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const ScannerPage()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cari Produk'),
-      ),
+      appBar: AppBar(title: const Text('Cari Produk')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Search Bar dengan Tombol Kamera
-            Row(
-              children: [
-                Expanded(
-                  child: SearchBar(
-                    controller: _searchController,
-                    padding: const MaterialStatePropertyAll<EdgeInsets>(
-                      EdgeInsets.symmetric(horizontal: 16.0),
-                    ),
-                    leading: const Icon(Icons.search),
-                    hintText: 'Ketik nama produk atau barcode...',
-                    onChanged: (_) => _onSearchChanged(),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                // Tombol Kamera
-                Container(
-                  height: 56,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-                    ),
-                    borderRadius: BorderRadius.circular(28),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF6366F1).withOpacity(0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
+            // --- PERUBAHAN DI SINI ---
+            // Scanner dimasukkan ke dalam SearchBar (seperti Google Lens)
+            SearchBar(
+              controller: _searchController,
+              // Jarak padding dalam
+              padding: const MaterialStatePropertyAll<EdgeInsets>(
+                EdgeInsets.symmetric(horizontal: 16.0),
+              ),
+              // Ikon Kaca Pembesar di Kiri
+              leading: const Icon(Icons.search, color: Colors.grey),
+
+              // Placeholder Text
+              hintText: 'Ketik nama produk atau barcode...',
+
+              // Ikon Scanner di Kanan (Trailing)
+              trailing: [
+                Tooltip(
+                  message: 'Scan Barcode',
                   child: IconButton(
-                    icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
-                    iconSize: 28,
-                    tooltip: 'Scan Barcode',
+                    // Ikon Scanner berwarna Biru (sesuai tema)
+                    icon: const Icon(
+                      Icons.qr_code_scanner,
+                      color: AppTheme.kPrimaryColor,
+                    ),
                     onPressed: _openScanner,
                   ),
                 ),
               ],
+
+              onChanged: (_) => _onSearchChanged(),
             ),
+
+            // -------------------------
             const SizedBox(height: 16),
+
             Expanded(
               child: FutureBuilder<List<Produk>>(
                 future: _produkFuture,
@@ -143,24 +139,27 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError) {
-                    return Center(child: Text('Error memuat data: ${snapshot.error}'));
+                    return Center(
+                      child: Text('Error memuat data: ${snapshot.error}'),
+                    );
                   }
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text('Tidak ada produk di database.'));
+                    return const Center(
+                      child: Text('Tidak ada produk di database.'),
+                    );
                   }
 
-                  // Tampilkan daftar produk yang sudah difilter
-                  if (_filteredProduk.isEmpty && _searchController.text.isNotEmpty) {
-                    return Center(
+                  if (_filteredProduk.isEmpty &&
+                      _searchController.text.isNotEmpty) {
+                    return const Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.search_off, size: 60, color: Colors.grey),
-                          const SizedBox(height: 16),
+                          Icon(Icons.search_off, size: 60, color: Colors.grey),
+                          SizedBox(height: 16),
                           Text(
-                            'Tidak ditemukan produk "${_searchController.text}"',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(color: Colors.grey),
+                            'Produk tidak ditemukan',
+                            style: TextStyle(color: Colors.grey),
                           ),
                         ],
                       ),
@@ -175,9 +174,15 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                         margin: const EdgeInsets.symmetric(vertical: 8.0),
                         child: ListTile(
                           contentPadding: const EdgeInsets.all(12.0),
-                          leading: const Icon(Icons.fastfood_outlined, size: 40),
+                          leading: CircleAvatar(
+                            backgroundColor: Colors.blue.shade50,
+                            child: const Icon(
+                              Icons.fastfood_outlined,
+                              color: AppTheme.kPrimaryColor,
+                            ),
+                          ),
                           title: Text(
-                            produk.namaProduk, 
+                            produk.namaProduk,
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text('Barcode: ${produk.barcodeId}'),
