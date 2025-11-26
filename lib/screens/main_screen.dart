@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/theme_provider.dart';
 import 'profile_page.dart';
 import 'home_page.dart';
 import 'article_page.dart';
@@ -11,7 +12,6 @@ import 'register_page.dart';
 import 'product_search_page.dart';
 import 'search_history_page.dart';
 import 'favorites_page.dart';
-import '../theme/app_theme.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -41,24 +41,37 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'NutriScan',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.onSurface,
+          ),
         ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        // --- PERBAIKAN DI SINI (Actions dibungkus agar bisa discroll) ---
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: isDarkMode ? Colors.grey[800]! : Colors.grey[200]!,
+                width: 1,
+              ),
+            ),
+          ),
+        ),
         actions: [
-          // Gunakan Container dengan constraint lebar maksimal layar
           Container(
             constraints: BoxConstraints(
               maxWidth: MediaQuery.of(context).size.width * 0.7,
             ),
             child: SingleChildScrollView(
-              scrollDirection:
-                  Axis.horizontal, // Scroll ke samping jika tidak muat
+              scrollDirection: Axis.horizontal,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -70,17 +83,13 @@ class _MainScreenState extends State<MainScreen> {
                   _buildNavButton('Favorit', 5),
                   _buildNavButton('Riwayat', 6),
                   const SizedBox(width: 20),
-
                   Consumer<AuthProvider>(
                     builder: (context, authProvider, child) {
                       if (authProvider.isAuthenticated) {
                         return Tooltip(
                           message: 'Profil',
                           child: IconButton(
-                            icon: const Icon(
-                              Icons.person,
-                              color: Colors.black87,
-                            ),
+                            icon: const Icon(Icons.person),
                             onPressed: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
@@ -101,15 +110,6 @@ class _MainScreenState extends State<MainScreen> {
                                   ),
                                 );
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppTheme.kPrimaryColor,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                minimumSize: const Size(0, 36),
-                              ),
                               child: const Text('Login'),
                             ),
                             const SizedBox(width: 10),
@@ -123,12 +123,21 @@ class _MainScreenState extends State<MainScreen> {
                               },
                               child: const Text('Daftar'),
                             ),
-                            const SizedBox(width: 20),
                           ],
                         );
                       }
                     },
                   ),
+                  IconButton(
+                    icon: Icon(
+                      isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                    ),
+                    onPressed: () {
+                      Provider.of<ThemeProvider>(context, listen: false)
+                          .toggleTheme();
+                    },
+                  ),
+                  const SizedBox(width: 20),
                 ],
               ),
             ),
@@ -145,18 +154,26 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildNavButton(String text, int index) {
-    return TextButton(
-      onPressed: () => _onItemTapped(index),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: _selectedIndex == index
-              ? AppTheme.kPrimaryColor
-              : Colors.black54,
-          fontWeight: _selectedIndex == index
-              ? FontWeight.bold
-              : FontWeight.normal,
-          fontSize: 16,
+    final theme = Theme.of(context);
+    final isSelected = _selectedIndex == index;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: TextButton(
+        onPressed: () => _onItemTapped(index),
+        style: TextButton.styleFrom(
+          backgroundColor: isSelected ? theme.primaryColor.withOpacity(0.1) : Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: isSelected ? theme.primaryColor : theme.colorScheme.onSurface,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            fontSize: 16,
+          ),
         ),
       ),
     );

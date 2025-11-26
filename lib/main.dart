@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart'; 
+import 'package:google_fonts/google_fonts.dart';
 import 'providers/auth_provider.dart';
 import 'providers/search_history_provider.dart';
-import 'providers/favorites_provider.dart'; 
+import 'providers/favorites_provider.dart';
+import 'providers/theme_provider.dart';
 import 'screens/main_screen.dart';
-import 'theme/app_theme.dart'; 
+import 'theme/app_theme.dart';
 import 'theme/no_scrollbar_behavior.dart';
 
 void main() {
@@ -15,6 +16,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => AuthProvider()..tryAutoLogin()),
         ChangeNotifierProvider(create: (context) => SearchHistoryProvider()),
         ChangeNotifierProvider(create: (context) => FavoritesProvider()),
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
       ],
       child: const MyApp(),
     ),
@@ -26,30 +28,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData baseTheme = AppTheme.lightTheme;
-
-    return MaterialApp(
-      scrollBehavior: NoScrollbarBehavior(), 
-      debugShowCheckedModeBanner: false,
-      title: 'Nutriscan',
-
-      theme: baseTheme.copyWith(
-        textTheme: GoogleFonts.poppinsTextTheme(baseTheme.textTheme)
-            .apply(
-              bodyColor: AppTheme.kTextColor, 
-              displayColor: AppTheme.kTextColor,
-            ),
-      ),
-      
-      builder: (context, child) {
-        return Container(
-          decoration: const BoxDecoration(
-            gradient: AppTheme.kBackgroundGradient,
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          scrollBehavior: NoScrollbarBehavior(),
+          debugShowCheckedModeBanner: false,
+          title: 'Nutriscan',
+          theme: AppTheme.lightTheme.copyWith(
+            textTheme: GoogleFonts.poppinsTextTheme(AppTheme.lightTheme.textTheme),
           ),
-          child: child ?? const SizedBox.shrink(),
+          darkTheme: AppTheme.darkTheme.copyWith(
+            textTheme: GoogleFonts.poppinsTextTheme(AppTheme.darkTheme.textTheme),
+          ),
+          themeMode: themeProvider.themeMode,
+          home: const MainScreen(),
         );
       },
-      home: const MainScreen(),
     );
   }
 }

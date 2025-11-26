@@ -1,87 +1,60 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  AppTheme._();
+  // Colors
+  static const Color kPrimaryColor = Color(0xFF0D47A1); // Deep Blue
+  static const Color kSecondaryColor = Color(0xFF1976D2); // Bright Blue
+  static const Color kTextColor = Color(0xFF333333); // Dark Grey for text
+  static const Color kErrorColor = Color(0xFFD32F2F); // Red for errors
 
-  // --- WARNA SAYA KEMBALIKAN KE BIRU (Sesuai gambar Login) ---
-  static const Color kPrimaryColor = Color(0xFF0056b3); // Biru Utama
-  static const Color kSecondaryColor = Color(0xFF007BFF); // Biru Terang
-  static const Color kBackgroundColor = Color(0xFFF0F4F8); // Putih Kebiruan (Background)
-  static const Color kTextColor = Color(0xFF212121); // Hitam untuk teks
-  static const Color kErrorColor = Color(0xFFD32F2F);
-
-  // Gradien Background (Biru Muda Halus)
+  // Gradient
   static const LinearGradient kBackgroundGradient = LinearGradient(
-    colors: [Color(0xFFE3F2FD), Color(0xFFF8FBFF)],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
+    colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)], // Light blue gradient
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
   );
 
   static final ThemeData lightTheme = ThemeData(
-    useMaterial3: true,
+    primarySwatch: Colors.blue,
+    brightness: Brightness.light,
     primaryColor: kPrimaryColor,
-    scaffoldBackgroundColor: kBackgroundColor,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: kPrimaryColor,
+    colorScheme: ColorScheme.light(
       primary: kPrimaryColor,
       secondary: kSecondaryColor,
-      background: kBackgroundColor,
       error: kErrorColor,
     ),
-    
+    scaffoldBackgroundColor: Colors.white,
     appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.white, // AppBar Putih
-      elevation: 1, // Ada bayangan sedikit
-      centerTitle: false,
-      iconTheme: IconThemeData(color: Colors.black87),
-      titleTextStyle: TextStyle(
-        color: Colors.black87,
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-      ),
+      backgroundColor: Colors.white,
+      elevation: 0,
+      iconTheme: IconThemeData(color: Colors.black),
+      titleTextStyle: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
     ),
-
-    cardTheme: CardThemeData(
-      elevation: 2,
-      shadowColor: Colors.black12,
-      color: Colors.white,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(color: kTextColor),
+      bodyMedium: TextStyle(color: kTextColor),
     ),
+  );
 
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: kPrimaryColor,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-      ),
+  static final ThemeData darkTheme = ThemeData(
+    primarySwatch: Colors.blue,
+    brightness: Brightness.dark,
+    primaryColor: kPrimaryColor,
+    colorScheme: ColorScheme.dark(
+      primary: kPrimaryColor,
+      secondary: kSecondaryColor,
+      error: kErrorColor,
     ),
-
-    // --- INPUT FIELD DENGAN GARIS (Sesuai request sebelumnya) ---
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: Colors.grey, width: 1),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: kPrimaryColor, width: 2),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: kErrorColor, width: 1),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: kErrorColor, width: 2),
-      ),
-      labelStyle: TextStyle(color: Colors.grey.shade600),
-      prefixIconColor: kPrimaryColor,
+    scaffoldBackgroundColor: Colors.black,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.black,
+      elevation: 0,
+      iconTheme: IconThemeData(color: Colors.white),
+      titleTextStyle: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+    ),
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(color: Colors.white),
+      bodyMedium: TextStyle(color: Colors.white),
     ),
   );
 }

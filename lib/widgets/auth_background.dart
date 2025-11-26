@@ -5,7 +5,7 @@ class AuthBackground extends StatelessWidget {
   final Widget child;
 
   const AuthBackground({
-    super.key, 
+    super.key,
     required this.child,
   });
 
