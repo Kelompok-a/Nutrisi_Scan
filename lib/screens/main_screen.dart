@@ -10,11 +10,11 @@ import 'login_page.dart';
 import 'register_page.dart';
 import 'product_search_page.dart';
 import 'search_history_page.dart';
-import 'favorites_page.dart'; 
+import 'favorites_page.dart';
 import '../theme/app_theme.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key}); 
+  const MainScreen({super.key});
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -29,8 +29,8 @@ class _MainScreenState extends State<MainScreen> {
     const ArticlePage(),
     const FaqPage(),
     const AboutPage(),
-    const FavoritesPage(),        
-    const SearchHistoryPage(),    
+    const FavoritesPage(),
+    const SearchHistoryPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -44,7 +44,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'SugarChecker',
+          'NutriScan',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
         ),
         backgroundColor: Colors.white,
@@ -53,9 +53,12 @@ class _MainScreenState extends State<MainScreen> {
         actions: [
           // Gunakan Container dengan constraint lebar maksimal layar
           Container(
-            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.7,
+            ),
             child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal, // Scroll ke samping jika tidak muat
+              scrollDirection:
+                  Axis.horizontal, // Scroll ke samping jika tidak muat
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -64,8 +67,8 @@ class _MainScreenState extends State<MainScreen> {
                   _buildNavButton('Artikel', 2),
                   _buildNavButton('Tanya Jawab', 3),
                   _buildNavButton('Tentang', 4),
-                  _buildNavButton('Favorit', 5),    
-                  _buildNavButton('Riwayat', 6),    
+                  _buildNavButton('Favorit', 5),
+                  _buildNavButton('Riwayat', 6),
                   const SizedBox(width: 20),
 
                   Consumer<AuthProvider>(
@@ -74,7 +77,10 @@ class _MainScreenState extends State<MainScreen> {
                         return Tooltip(
                           message: 'Profil',
                           child: IconButton(
-                            icon: const Icon(Icons.person, color: Colors.black87),
+                            icon: const Icon(
+                              Icons.person,
+                              color: Colors.black87,
+                            ),
                             onPressed: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
@@ -90,14 +96,19 @@ class _MainScreenState extends State<MainScreen> {
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                                  MaterialPageRoute(
+                                    builder: (context) => const LoginPage(),
+                                  ),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppTheme.kPrimaryColor,
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                minimumSize: const Size(0, 36)
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                minimumSize: const Size(0, 36),
                               ),
                               child: const Text('Login'),
                             ),
@@ -139,7 +150,9 @@ class _MainScreenState extends State<MainScreen> {
       child: Text(
         text,
         style: TextStyle(
-          color: _selectedIndex == index ? AppTheme.kPrimaryColor : Colors.black54,
+          color: _selectedIndex == index
+              ? AppTheme.kPrimaryColor
+              : Colors.black54,
           fontWeight: _selectedIndex == index
               ? FontWeight.bold
               : FontWeight.normal,
