@@ -121,6 +121,26 @@ class FavoritesProvider with ChangeNotifier {
     }
   }
 
+  // Hapus produk dari favorites (Explicit remove)
+  Future<void> removeFavorite(String barcodeId) async {
+    final token = await _getToken();
+    if (token == null) return;
+
+    try {
+      final response = await http.delete(
+        Uri.parse('$_baseUrl/api/favorites/$barcodeId'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        _favorites.removeWhere((p) => p.barcodeId == barcodeId);
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Error removing favorite: $e');
+    }
+  }
+
   // Helper untuk cek lokal (untuk UI update instan)
   bool isFavorite(String barcodeId) {
     return _favorites.any((produk) => produk.barcodeId == barcodeId);
