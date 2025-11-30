@@ -306,6 +306,89 @@ app.get('/api/favorites/check/:barcode', authenticateToken, async (req, res) => 
     }
 });
 
+// --- HISTORY ENDPOINTS ---
+
+// Add to history
+app.post('/api/history', authenticateToken, async (req, res) => {
+    try {
+        const { query, type } = req.body;
+        const userId = req.user.user.id;
+
+        if (!query) {
+            return res.status(400).json({ success: false, message: 'Query diperlukan' });
+        }
+
+        // Remove duplicate if exists (to move it to top)
+        await db.query(
+            'DELETE FROM history WHERE user_id = ? AND query = ? AND type = ?',
+            [userId, query, type || 'search']
+        );
+
+        // Insert new
+        await db.query(
+            'INSERT INTO history (user_id, query, type, timestamp) VALUES (?, ?, ?, NOW())',
+            [userId, query, type || 'search']
+        );
+
+        // Limit history to 100 items per user
+        // (Optional: Implement cleanup job or trigger, but for now simple insert is fine)
+
+        res.json({ success: true, message: 'Riwayat disimpan' });
+    } catch (error) {
+        console.error('Add history error:', error);
+        res.status(500).json({ success: false, message: 'Gagal menyimpan riwayat' });
+    }
+});
+
+// Get history
+app.get('/api/history', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.user.id;
+
+        const [rows] = await db.query(
+            'SELECT id_history, query, type, timestamp FROM history WHERE user_id = ? ORDER BY timestamp DESC LIMIT 100',
+            [userId]
+        );
+
+        res.json({ success: true, data: rows });
+    } catch (error) {
+        console.error('Get history error:', error);
+        res.status(500).json({ success: false, message: 'Gagal mengambil riwayat' });
+    }
+});
+
+// Delete specific history
+app.delete('/api/history/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user.user.id;
+
+        await db.query(
+            'DELETE FROM history WHERE id_history = ? AND user_id = ?',
+            [id, userId]
+        );
+
+        res.json({ success: true, message: 'Riwayat dihapus' });
+    } catch (error) {
+        console.error('Delete history error:', error);
+        res.status(500).json({ success: false, message: 'Gagal menghapus riwayat' });
+    }
+});
+
+// Clear all history
+app.delete('/api/history', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.user.id;
+
+        await db.query('DELETE FROM history WHERE user_id = ?', [userId]);
+
+        res.json({ success: true, message: 'Semua riwayat dihapus' });
+    } catch (error) {
+        console.error('Clear history error:', error);
+        res.status(500).json({ success: false, message: 'Gagal menghapus semua riwayat' });
+    }
+});
+
 app.get('/api/image-proxy', async (req, res) => {
     const { url } = req.query;
     if (!url) {
