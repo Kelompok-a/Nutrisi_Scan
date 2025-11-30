@@ -203,6 +203,109 @@ app.put('/api/profile/password', authenticateToken, async (req, res) => {
     }
 });
 
+// --- FAVORITES ENDPOINTS ---
+
+// Add to favorites
+app.post('/api/favorites', authenticateToken, async (req, res) => {
+    try {
+        const { barcodeId } = req.body;
+        const userId = req.user.user.id;
+
+        if (!barcodeId) {
+            return res.status(400).json({ success: false, message: 'Barcode ID diperlukan' });
+        }
+
+        // Check if already exists
+        const [existing] = await db.query(
+            'SELECT id_favorite FROM favorite WHERE user_id = ? AND barcode_id = ?',
+            [userId, barcodeId]
+        );
+
+        if (existing.length > 0) {
+            return res.status(400).json({ success: false, message: 'Produk sudah ada di favorit' });
+        }
+
+        await db.query(
+            'INSERT INTO favorite (user_id, barcode_id, tanggal_disimpan) VALUES (?, ?, NOW())',
+            [userId, barcodeId]
+        );
+
+        res.json({ success: true, message: 'Berhasil ditambahkan ke favorit' });
+    } catch (error) {
+        console.error('Add favorite error:', error);
+        res.status(500).json({ success: false, message: 'Gagal menambahkan favorit' });
+    }
+});
+
+// Remove from favorites
+app.delete('/api/favorites/:barcode', authenticateToken, async (req, res) => {
+    try {
+        const { barcode } = req.params;
+        const userId = req.user.user.id;
+
+        await db.query(
+            'DELETE FROM favorite WHERE user_id = ? AND barcode_id = ?',
+            [userId, barcode]
+        );
+
+        res.json({ success: true, message: 'Berhasil dihapus dari favorit' });
+    } catch (error) {
+        console.error('Remove favorite error:', error);
+        res.status(500).json({ success: false, message: 'Gagal menghapus favorit' });
+    }
+});
+
+// Get all favorites
+app.get('/api/favorites', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.user.id;
+
+        // Join with produk and komposisi_gizi to get full details
+        const query = `
+            SELECT 
+                p.nama_produk AS product_name,
+                p.image_product_link AS gambarUrl,
+                p.barcode_url AS barcodeUrl,
+                p.barcode_id,
+                cg.total_calories AS energi,
+                cg.total_fat AS lemak,
+                cg.protein AS protein,
+                cg.total_carbohydrates AS karbohidrat,
+                cg.total_sugar AS gula,
+                cg.saturated_fat AS lemak_jenuh
+            FROM favorite f
+            JOIN produk p ON f.barcode_id = p.barcode_id
+            LEFT JOIN komposisi_gizi cg ON p.barcode_id = cg.barcode_id
+            WHERE f.user_id = ?
+            ORDER BY f.tanggal_disimpan DESC
+        `;
+
+        const [rows] = await db.query(query, [userId]);
+        res.json({ success: true, data: rows });
+    } catch (error) {
+        console.error('Get favorites error:', error);
+        res.status(500).json({ success: false, message: 'Gagal mengambil data favorit' });
+    }
+});
+
+// Check if favorite
+app.get('/api/favorites/check/:barcode', authenticateToken, async (req, res) => {
+    try {
+        const { barcode } = req.params;
+        const userId = req.user.user.id;
+
+        const [rows] = await db.query(
+            'SELECT id_favorite FROM favorite WHERE user_id = ? AND barcode_id = ?',
+            [userId, barcode]
+        );
+
+        res.json({ success: true, isFavorite: rows.length > 0 });
+    } catch (error) {
+        console.error('Check favorite error:', error);
+        res.status(500).json({ success: false, message: 'Gagal mengecek status favorit' });
+    }
+});
+
 app.get('/api/image-proxy', async (req, res) => {
     const { url } = req.query;
     if (!url) {

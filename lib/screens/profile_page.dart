@@ -12,6 +12,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  // ... (Existing dialog methods: _showEditProfileDialog, _showChangePasswordDialog) ...
   void _showEditProfileDialog(BuildContext context, String currentName) {
     final nameController = TextEditingController(text: currentName);
     
@@ -134,99 +135,159 @@ class _ProfilePageState extends State<ProfilePage> {
     final namaPengguna = authProvider.namaPengguna;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profil Pengguna'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
-            onPressed: () {
-              authProvider.logout();
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const SplashScreen()),
-                (Route<dynamic> route) => false,
-              );
-            },
-          ),
-        ],
-      ),
+      backgroundColor: Colors.grey[100], // Light background for contrast
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            const SizedBox(height: 20),
+            // Header Section with Curve
             Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
               children: [
-                const CircleAvatar(
-                  radius: 60,
-                  backgroundColor: AppTheme.kSecondaryColor,
-                  child: Icon(Icons.person, size: 60, color: Colors.white),
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
+                ClipPath(
+                  clipper: HeaderClipper(),
                   child: Container(
+                    height: 250,
                     decoration: const BoxDecoration(
-                      color: AppTheme.kPrimaryColor,
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF81D4FA), Color(0xFF29B6F6)], // Light Blue Gradient
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                  ),
+                ),
+                // Back Button
+                Positioned(
+                  top: MediaQuery.of(context).padding.top + 10, // Adjust for safe area
+                  left: 16,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.8),
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Fitur ganti foto akan segera hadir!')),
-                        );
-                      },
+                      icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 20),
+                      onPressed: () => Navigator.pop(context),
                     ),
+                  ),
+                ),
+                // Title
+                Positioned(
+                  top: MediaQuery.of(context).padding.top + 20,
+                  left: 0,
+                  right: 0,
+                  child: const Center(
+                    child: Text(
+                      'Profile',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ),
+                // Profile Picture
+                Positioned(
+                  bottom: -50,
+                  child: Column(
+                    children: [
+                      Stack(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 4),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            child: const CircleAvatar(
+                              radius: 50,
+                              backgroundColor: Colors.white,
+                              backgroundImage: AssetImage('assets/images/placeholder_profile.png'),
+                              child: Icon(Icons.person, size: 50, color: Colors.grey),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.camera_alt, color: AppTheme.kPrimaryColor, size: 20),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        namaPengguna ?? 'User Name',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const Text(
+                        'View full profile',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 24),
-            Text(
-              namaPengguna ?? 'Pengguna',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Member sejak 2024',
-              style: TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 40),
-            
-            // Menu Options
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            const SizedBox(height: 70), // Space for overlapping profile pic
+
+            // Menu Items
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  ListTile(
-                    leading: const Icon(Icons.edit, color: AppTheme.kPrimaryColor),
-                    title: const Text('Edit Nama'),
-                    trailing: const Icon(Icons.chevron_right),
+                  _buildMenuItem(
+                    icon: Icons.person_outline,
+                    text: 'Account Information',
                     onTap: () => _showEditProfileDialog(context, namaPengguna ?? ''),
                   ),
-                  const Divider(height: 1),
-                  ListTile(
-                    leading: const Icon(Icons.lock, color: AppTheme.kPrimaryColor),
-                    title: const Text('Ganti Password'),
-                    trailing: const Icon(Icons.chevron_right),
+                  const SizedBox(height: 16),
+                  _buildMenuItem(
+                    icon: Icons.lock_outline,
+                    text: 'Password',
                     onTap: () => _showChangePasswordDialog(context),
                   ),
-                  const Divider(height: 1),
-                  ListTile(
-                    leading: const Icon(Icons.info_outline, color: AppTheme.kPrimaryColor),
-                    title: const Text('Tentang Aplikasi'),
-                    trailing: const Icon(Icons.chevron_right),
+                  const SizedBox(height: 16),
+                  _buildMenuItem(
+                    icon: Icons.settings_outlined,
+                    text: 'Settings',
+                    onTap: () => _showSettingsDialog(context),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildMenuItem(
+                    icon: Icons.logout,
+                    text: 'Log out',
+                    textColor: Colors.red,
+                    iconColor: Colors.red,
                     onTap: () {
-                      showAboutDialog(
-                        context: context,
-                        applicationName: 'NutriScan',
-                        applicationVersion: '1.0.0',
-                        applicationLegalese: '© 2024 NutriScan Team',
+                      authProvider.logout();
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => const SplashScreen()),
+                        (Route<dynamic> route) => false,
                       );
                     },
                   ),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),
@@ -235,4 +296,126 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
+
+  void _showSettingsDialog(BuildContext context) {
+    String selectedLanguage = 'Bahasa Indonesia'; // Default
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Settings'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Bahasa / Language', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              RadioListTile<String>(
+                title: const Text('Bahasa Indonesia'),
+                value: 'Bahasa Indonesia',
+                groupValue: selectedLanguage,
+                onChanged: (value) {
+                  setState(() => selectedLanguage = value!);
+                },
+              ),
+              RadioListTile<String>(
+                title: const Text('English'),
+                value: 'English',
+                groupValue: selectedLanguage,
+                onChanged: (value) {
+                  setState(() => selectedLanguage = value!);
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Tutup'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Bahasa diubah ke $selectedLanguage')),
+                );
+              },
+              child: const Text('Simpan'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuItem({
+    required IconData icon,
+    required String text,
+    required VoidCallback onTap,
+    Color textColor = Colors.black87,
+    Color iconColor = Colors.black54,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: iconColor),
+        title: Text(
+          text,
+          style: TextStyle(
+            color: textColor,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+        onTap: onTap,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      ),
+    );
+  }
+}
+
+class HeaderClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.lineTo(0, size.height - 50);
+    
+    // Create a smooth curve
+    final firstControlPoint = Offset(size.width / 4, size.height);
+    final firstEndPoint = Offset(size.width / 2, size.height - 30);
+    path.quadraticBezierTo(
+      firstControlPoint.dx,
+      firstControlPoint.dy,
+      firstEndPoint.dx,
+      firstEndPoint.dy,
+    );
+
+    final secondControlPoint = Offset(size.width * 3 / 4, size.height - 80);
+    final secondEndPoint = Offset(size.width, size.height - 40);
+    path.quadraticBezierTo(
+      secondControlPoint.dx,
+      secondControlPoint.dy,
+      secondEndPoint.dx,
+      secondEndPoint.dy,
+    );
+
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }

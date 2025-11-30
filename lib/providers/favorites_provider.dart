@@ -1,91 +1,143 @@
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/produk.dart';
 
 class FavoritesProvider with ChangeNotifier {
   List<Produk> _favorites = [];
+  final _storage = const FlutterSecureStorage();
+  final String _baseUrl = 'http://localhost:3001'; // Sesuaikan dengan URL server
 
   List<Produk> get favorites => _favorites;
 
   FavoritesProvider() {
-    _loadFavorites();
+    fetchFavorites();
   }
 
-  // Load favorites dari SharedPreferences
-  Future<void> _loadFavorites() async {
-    final prefs = await SharedPreferences.getInstance();
-    final favoritesJson = prefs.getString('favorites');
-    
-    if (favoritesJson != null) {
-      final List<dynamic> decoded = jsonDecode(favoritesJson);
-      _favorites = decoded.map((item) => Produk.fromJson(item)).toList();
-      notifyListeners();
+  Future<String?> _getToken() async {
+    return await _storage.read(key: 'jwt_token');
+  }
+
+  // Fetch favorites from API
+  Future<void> fetchFavorites() async {
+    final token = await _getToken();
+    if (token == null) return;
+
+    try {
+      final response = await http.get(
+        Uri.parse('$_baseUrl/api/favorites'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        if (body['success'] == true) {
+          final List<dynamic> data = body['data'];
+          _favorites = data.map((item) {
+            // Map API response to Produk model
+            return Produk(
+              barcodeId: item['barcode_id'].toString(),
+              namaProduk: item['product_name'],
+              ukuranNilai: 0, // Default or from API if available
+              ukuranSatuan: '',
+              barcodeUrl: item['barcodeUrl'],
+              imageProductLink: item['gambarUrl'],
+              namaKategori: 'Favorit',
+              totalCalories: (item['energi'] ?? 0).toDouble(),
+              totalFat: (item['lemak'] ?? 0).toDouble(),
+              saturatedFat: (item['lemak_jenuh'] ?? 0).toDouble(),
+              totalSugar: (item['gula'] ?? 0).toDouble(),
+              protein: (item['protein'] ?? 0).toDouble(),
+              akgProtein: 0,
+              totalCarbohydrates: (item['karbohidrat'] ?? 0).toDouble(),
+              akgCarbohydrates: 0,
+              akgSaturatedFat: 0,
+            );
+          }).toList();
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      print('Error fetching favorites: $e');
     }
   }
 
-  // Save favorites ke SharedPreferences
-  Future<void> _saveFavorites() async {
-    final prefs = await SharedPreferences.getInstance();
-    final favoritesJson = jsonEncode(
-      _favorites.map((produk) => _produkToJson(produk)).toList(),
-    );
-    await prefs.setString('favorites', favoritesJson);
-  }
+  // Cek status favorit dari API
+  Future<bool> checkFavoriteStatus(String barcodeId) async {
+    final token = await _getToken();
+    if (token == null) return false;
 
-  // Convert Produk to JSON
-  Map<String, dynamic> _produkToJson(Produk produk) {
-    return {
-      'barcode_id': produk.barcodeId,
-      'nama_produk': produk.namaProduk,
-      'ukuran_nilai': produk.ukuranNilai,
-      'ukuran_satuan': produk.ukuranSatuan,
-      'barcode_url': produk.barcodeUrl,
-      'image_product_link': produk.imageProductLink,
-      'nama_kategori': produk.namaKategori,
-      'total_calories': produk.totalCalories,
-      'total_fat': produk.totalFat,
-      'saturated_fat': produk.saturatedFat,
-      'total_sugar': produk.totalSugar,
-      'protein': produk.protein,
-      'akg_protein': produk.akgProtein,
-      'total_carbohydrates': produk.totalCarbohydrates,
-      'akg_carbohydrates': produk.akgCarbohydrates,
-      'akg_saturated_fat': produk.akgSaturatedFat,
-    };
-  }
+    try {
+      final response = await http.get(
+        Uri.parse('$_baseUrl/api/favorites/check/$barcodeId'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
 
-  // Cek apakah produk sudah di-favorite
-  bool isFavorite(String barcodeId) {
-    return _favorites.any((produk) => produk.barcodeId == barcodeId);
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        return body['isFavorite'] == true;
+      }
+    } catch (e) {
+      print('Error checking favorite: $e');
+    }
+    return false;
   }
 
   // Toggle favorite (add/remove)
   Future<void> toggleFavorite(Produk produk) async {
-    if (isFavorite(produk.barcodeId)) {
-      _favorites.removeWhere((p) => p.barcodeId == produk.barcodeId);
-    } else {
-      _favorites.add(produk);
+    final token = await _getToken();
+    if (token == null) return;
+
+    final isFav = isFavorite(produk.barcodeId);
+
+    try {
+      if (isFav) {
+        // Remove
+        final response = await http.delete(
+          Uri.parse('$_baseUrl/api/favorites/${produk.barcodeId}'),
+          headers: {'Authorization': 'Bearer $token'},
+        );
+        if (response.statusCode == 200) {
+          _favorites.removeWhere((p) => p.barcodeId == produk.barcodeId);
+        }
+      } else {
+        // Add
+        final response = await http.post(
+          Uri.parse('$_baseUrl/api/favorites'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode({'barcodeId': produk.barcodeId}),
+        );
+        if (response.statusCode == 200) {
+          _favorites.add(produk);
+        }
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error toggling favorite: $e');
     }
-    
-    await _saveFavorites();
-    notifyListeners();
   }
 
-  // Hapus produk dari favorites
-  Future<void> removeFavorite(String barcodeId) async {
-    _favorites.removeWhere((p) => p.barcodeId == barcodeId);
-    await _saveFavorites();
-    notifyListeners();
+  // Helper untuk cek lokal (untuk UI update instan)
+  bool isFavorite(String barcodeId) {
+    return _favorites.any((produk) => produk.barcodeId == barcodeId);
   }
 
-  // Hapus semua favorites
+  // Hapus semua favorites (looping delete API)
   Future<void> clearFavorites() async {
+    final token = await _getToken();
+    if (token == null) return;
+
+    // Note: Idealnya ada endpoint DELETE /api/favorites/all
+    // Untuk sekarang kita clear list lokal dulu
     _favorites.clear();
-    await _saveFavorites();
     notifyListeners();
+    
+    // TODO: Implement clear all API if needed
   }
 
-  // Get total favorites count
   int get favoritesCount => _favorites.length;
 }
