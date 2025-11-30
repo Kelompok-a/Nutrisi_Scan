@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 import '../services/api_service.dart';
 import '../providers/search_history_provider.dart';
 import '../models/produk.dart';
@@ -19,6 +20,7 @@ class _ScannerPageState extends State<ScannerPage> {
     facing: CameraFacing.back,
   );
   
+  final ImagePicker _picker = ImagePicker();
   bool _isProcessing = false;
   bool _flashOn = false;
   final ApiService _apiService = ApiService();
@@ -34,6 +36,10 @@ class _ScannerPageState extends State<ScannerPage> {
       _flashOn = !_flashOn;
     });
     _controller.toggleTorch();
+  }
+
+  void _switchCamera() {
+    _controller.switchCamera();
   }
 
   Future<void> _processBarcode(String barcode) async {
@@ -118,6 +124,54 @@ class _ScannerPageState extends State<ScannerPage> {
     }
   }
 
+  Future<void> _scanFromGallery() async {
+    try {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+
+      setState(() {
+        _isProcessing = true;
+      });
+
+      // Analyze image using MobileScanner
+      final BarcodeCapture? capture = await _controller.analyzeImage(image.path);
+      
+      if (capture != null && capture.barcodes.isNotEmpty) {
+        final barcode = capture.barcodes.first.rawValue;
+        if (barcode != null) {
+          await _processBarcode(barcode);
+        } else {
+          _showErrorDialog('Barcode tidak terbaca dari gambar ini.');
+        }
+      } else {
+        _showErrorDialog('Tidak ditemukan barcode pada gambar.');
+      }
+    } catch (e) {
+      _showErrorDialog('Gagal memproses gambar: $e');
+    } finally {
+      setState(() {
+        _isProcessing = false;
+      });
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,6 +185,11 @@ class _ScannerPageState extends State<ScannerPage> {
             icon: Icon(_flashOn ? Icons.flash_on : Icons.flash_off),
             onPressed: _toggleFlash,
             tooltip: 'Flash',
+          ),
+          IconButton(
+            icon: const Icon(Icons.cameraswitch),
+            onPressed: _switchCamera,
+            tooltip: 'Ganti Kamera',
           ),
         ],
       ),
@@ -158,7 +217,7 @@ class _ScannerPageState extends State<ScannerPage> {
           
           // Instructions
           Positioned(
-            bottom: 100,
+            bottom: 80,
             left: 0,
             right: 0,
             child: Container(
@@ -180,17 +239,34 @@ class _ScannerPageState extends State<ScannerPage> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      _showManualInputDialog();
-                    },
-                    icon: const Icon(Icons.keyboard),
-                    label: const Text('Input Manual'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                    ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          _showManualInputDialog();
+                        },
+                        icon: const Icon(Icons.keyboard),
+                        label: const Text('Input Manual'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton.icon(
+                        onPressed: _scanFromGallery,
+                        icon: const Icon(Icons.image),
+                        label: const Text('Galeri'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

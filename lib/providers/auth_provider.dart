@@ -40,4 +40,17 @@ class AuthProvider with ChangeNotifier {
     await _authService.logout();
     notifyListeners();
   }
+
+  Future<Map<String, dynamic>> updateProfile(String nama) async {
+    final result = await _authService.updateProfile(nama);
+    if (result['success'] == true) {
+      _namaPengguna = nama;
+      notifyListeners();
+    }
+    return result;
+  }
+
+  Future<Map<String, dynamic>> changePassword(String oldPassword, String newPassword) async {
+    return await _authService.changePassword(oldPassword, newPassword);
+  }
 }

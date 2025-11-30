@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
-import '../widgets/auth_background.dart';
-import '../theme/app_theme.dart'; // Import tema
+import '../theme/app_theme.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -17,6 +16,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final AuthService _authService = AuthService();
   bool _isLoading = false;
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -59,101 +59,184 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Color primaryColor = AppTheme.kPrimaryColor;
-
-    return AuthBackground(
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Buat Akun Baru',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.kTextColor, // Warna hijau gelap
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: AppTheme.kBackgroundGradient,
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Mulai perjalanan sehatmu bersama NutriScan',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
-            ),
-            const SizedBox(height: 32),
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 400),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Text(
+                          'Create Account',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Sign up to get started!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 32),
 
-            TextFormField(
-              controller: _namaController,
-              decoration: InputDecoration(
-                labelText: 'Nama Lengkap',
-                prefixIcon: Icon(Icons.person_outline, color: primaryColor),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Nama tidak boleh kosong';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
+                        // Nama Input
+                        const Text(
+                          'Full Name',
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _namaController,
+                          decoration: InputDecoration(
+                            hintText: 'Enter your Name',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Name is required';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
 
-            TextFormField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                prefixIcon: Icon(Icons.email_outlined, color: primaryColor),
-              ),
-              keyboardType: TextInputType.emailAddress,
-              validator: (value) {
-                if (value == null || value.isEmpty || !value.contains('@')) {
-                  return 'Masukkan email yang valid';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
+                        // Email Input
+                        const Text(
+                          'Email',
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            hintText: 'Enter your Email',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value == null || value.isEmpty || !value.contains('@')) {
+                              return 'Please enter a valid email';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
 
-            TextFormField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                prefixIcon: Icon(Icons.lock_outline, color: primaryColor),
-              ),
-              obscureText: true,
-              validator: (value) {
-                if (value == null || value.isEmpty || value.length < 6) {
-                  return 'Password minimal 6 karakter';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 24),
+                        // Password Input
+                        const Text(
+                          'Password',
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: _obscurePassword,
+                          decoration: InputDecoration(
+                            hintText: 'Enter Password',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty || value.length < 6) {
+                              return 'Password must be at least 6 characters';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 32),
 
-            _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : ElevatedButton(
-                    onPressed: _register,
-                    child: const Text('DAFTAR'),
-                  ),
-            const SizedBox(height: 16),
+                        // Sign Up Button
+                        _isLoading
+                            ? const Center(child: CircularProgressIndicator())
+                            : ElevatedButton(
+                                onPressed: _register,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppTheme.kPrimaryColor,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 2,
+                                ),
+                                child: const Text(
+                                  'Sign up',
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                        const SizedBox(height: 24),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Sudah punya akun?', style: TextStyle(color: Colors.grey[700])),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(
-                    'Login di Sini',
-                    style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+                        // Login Link
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Already have an account? ",
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                'Sign in',
+                                style: TextStyle(
+                                  color: AppTheme.kPrimaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ],
+              ),
             ),
-          ],
+          ),
         ),
       ),
     );

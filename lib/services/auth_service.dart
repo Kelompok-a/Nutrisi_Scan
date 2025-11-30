@@ -39,8 +39,9 @@ class AuthService {
 
       final body = jsonDecode(response.body);
       if (body['success'] == true) {
-        await _storage.write(key: 'jwt_token', value: body['token']);
-        await _storage.write(key: 'user_nama', value: body['user']['nama']);
+        final data = body['data'];
+        await _storage.write(key: 'jwt_token', value: data['token']);
+        await _storage.write(key: 'user_nama', value: data['user']['nama']);
       }
       return body;
     } catch (e) {
@@ -55,5 +56,50 @@ class AuthService {
 
   Future<String?> getToken() async {
     return await _storage.read(key: 'jwt_token');
+  }
+
+  Future<Map<String, dynamic>> updateProfile(String nama) async {
+    final uri = Uri.parse('$_baseUrl/api/profile');
+    final token = await getToken();
+    try {
+      final response = await http.put(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'nama': nama}),
+      );
+
+      final body = jsonDecode(response.body);
+      if (body['success'] == true) {
+        final data = body['data'];
+        await _storage.write(key: 'user_nama', value: data['user']['nama']);
+      }
+      return body;
+    } catch (e) {
+      return {'success': false, 'message': 'Kesalahan jaringan: ${e.toString()}'};
+    }
+  }
+
+  Future<Map<String, dynamic>> changePassword(String oldPassword, String newPassword) async {
+    final uri = Uri.parse('$_baseUrl/api/profile/password');
+    final token = await getToken();
+    try {
+      final response = await http.put(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'oldPassword': oldPassword,
+          'newPassword': newPassword,
+        }),
+      );
+      return jsonDecode(response.body);
+    } catch (e) {
+      return {'success': false, 'message': 'Kesalahan jaringan: ${e.toString()}'};
+    }
   }
 }

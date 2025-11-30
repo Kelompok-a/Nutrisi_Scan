@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Colors
-  static const Color kPrimaryColor = Color(0xFF0D47A1); // Deep Blue
-  static const Color kSecondaryColor = Color(0xFF1976D2); // Bright Blue
+  static const Color kPrimaryColor = Color(0xFF536DFE); // Indigo Accent
+  static const Color kSecondaryColor = Color(0xFF8C9EFF); // Lighter Indigo
   static const Color kTextColor = Color(0xFF333333); // Dark Grey for text
   static const Color kErrorColor = Color(0xFFD32F2F); // Red for errors
 
   // Gradient
   static const LinearGradient kBackgroundGradient = LinearGradient(
-    colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)], // Light blue gradient
+    colors: [Color(0xFF64B5F6), Color(0xFF9575CD)], // Blue to Purple gradient
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );

@@ -92,18 +92,19 @@ app.get('/api/produk/:barcode', async (req, res) => {
 
 app.post('/api/register', async (req, res) => {
     try {
-        const { username, email, password } = req.body;
-        if (!username || !email || !password) {
+        const { nama, email, password } = req.body; // Changed username to nama
+        if (!nama || !email || !password) {
             return res.status(400).json({ success: false, message: 'Input tidak boleh kosong' });
         }
-        const [existingUsers] = await db.query('SELECT email, username FROM users WHERE email = ? OR username = ?', [email, username]);
+        const [existingUsers] = await db.query('SELECT email, nama FROM users WHERE email = ?', [email]); // Removed OR username check for simplicity/correctness
         if (existingUsers.length > 0) {
-            return res.status(400).json({ success: false, message: 'Email atau username sudah terdaftar' });
+            return res.status(400).json({ success: false, message: 'Email sudah terdaftar' });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        await db.query('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [username, email, hashedPassword]);
+        await db.query('INSERT INTO users (nama, email, password, role) VALUES (?, ?, ?, ?)', [nama, email, hashedPassword, 'user']); // Added role default
         res.status(201).json({ success: true, message: 'Registrasi berhasil' });
     } catch (error) {
+        console.error('Register error:', error);
         res.status(500).json({ success: false, message: 'Kesalahan server saat registrasi' });
     }
 });
@@ -123,11 +124,82 @@ app.post('/api/login', async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ success: false, message: 'Password salah' });
         }
-        const payload = { user: { id: user.id, email: user.email, username: user.username } };
+        // Fix: Use correct column names (user_id, nama)
+        const payload = { user: { id: user.user_id, email: user.email, nama: user.nama } };
         const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
         res.json({ success: true, message: 'Login berhasil', data: { token, user: payload.user } });
     } catch (error) {
+        console.error('Login error:', error);
         res.status(500).json({ success: false, message: 'Kesalahan server saat login' });
+    }
+});
+
+// Middleware untuk verifikasi token
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Akses ditolak' });
+
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) return res.status(403).json({ success: false, message: 'Token tidak valid' });
+        req.user = user;
+        next();
+    });
+};
+
+app.put('/api/profile', authenticateToken, async (req, res) => {
+    try {
+        const { nama } = req.body;
+        const userId = req.user.user.id;
+
+        if (!nama) {
+            return res.status(400).json({ success: false, message: 'Nama tidak boleh kosong' });
+        }
+
+        await db.query('UPDATE users SET nama = ? WHERE user_id = ?', [nama, userId]);
+
+        // Ambil data user terbaru
+        const [users] = await db.query('SELECT user_id, email, nama FROM users WHERE user_id = ?', [userId]);
+        const updatedUser = users[0];
+
+        res.json({
+            success: true,
+            message: 'Profil berhasil diperbarui',
+            data: {
+                user: { id: updatedUser.user_id, email: updatedUser.email, nama: updatedUser.nama }
+            }
+        });
+    } catch (error) {
+        console.error('Update profile error:', error);
+        res.status(500).json({ success: false, message: 'Gagal memperbarui profil' });
+    }
+});
+
+app.put('/api/profile/password', authenticateToken, async (req, res) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+        const userId = req.user.user.id;
+
+        if (!oldPassword || !newPassword) {
+            return res.status(400).json({ success: false, message: 'Password lama dan baru harus diisi' });
+        }
+
+        // Ambil password lama dari DB
+        const [users] = await db.query('SELECT password FROM users WHERE user_id = ?', [userId]);
+        const user = users[0];
+
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ success: false, message: 'Password lama salah' });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await db.query('UPDATE users SET password = ? WHERE user_id = ?', [hashedPassword, userId]);
+
+        res.json({ success: true, message: 'Password berhasil diubah' });
+    } catch (error) {
+        console.error('Change password error:', error);
+        res.status(500).json({ success: false, message: 'Gagal mengubah password' });
     }
 });
 
