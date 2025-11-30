@@ -17,7 +17,7 @@ const db = mysql.createPool({
     host: 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com',
     user: '4HDiYTpxo4XPCdX.root',
     password: 'LWPPf02KXP13x70h',
-    database: 'test',
+    database: 'nutriscan_db',
     port: 4000,
     ssl: {
         rejectUnauthorized: true
@@ -128,6 +128,32 @@ app.post('/api/login', async (req, res) => {
         res.json({ success: true, message: 'Login berhasil', data: { token, user: payload.user } });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Kesalahan server saat login' });
+    }
+});
+
+app.get('/api/image-proxy', async (req, res) => {
+    const { url } = req.query;
+    if (!url) {
+        return res.status(400).send('URL parameter is required');
+    }
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            return res.status(response.status).send('Failed to fetch image');
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (contentType) {
+            res.setHeader('Content-Type', contentType);
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        res.send(buffer);
+    } catch (error) {
+        console.error('Image proxy error:', error);
+        res.status(500).send('Error fetching image');
     }
 });
 
