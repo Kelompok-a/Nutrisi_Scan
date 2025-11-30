@@ -14,11 +14,33 @@ app.use(cors());
 app.use(express.json());
 
 const db = mysql.createPool({
-    host: '127.0.0.1',
-    user: 'root',
-    password: '',
-    database: 'nutriscan_db'
+    host: 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com',
+    user: '4HDiYTpxo4XPCdX.root',
+    password: 'LWPPf02KXP13x70h',
+    database: 'test',
+    port: 4000,
+    ssl: {
+        rejectUnauthorized: true
+    }
 }).promise();
+
+// Cek koneksi database saat startup
+db.getConnection()
+    .then(conn => {
+        console.log("Database connected successfully");
+        conn.release();
+    })
+    .catch(err => {
+        console.error("Database connection failed:", err);
+    });
+
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
 
 // --- QUERY SEMENTARA UNTUK DEBUGGING ---
 // Kolom dari 'komposisi_gizi' dinonaktifkan untuk mencegah error.
@@ -29,13 +51,12 @@ const getProductQuery = `
         p.image_product_link AS gambarUrl,
         p.barcode_url AS barcodeUrl,
         p.barcode_id
-        /*
-        -- Kolom gizi dinonaktifkan sementara. Akan diperbaiki setelah mendapat nama kolom yang benar.
-        , cg.NAMA_KOLOM_ENERGI_ANDA AS energi
-        , cg.lemak_total_g AS lemak
-        , cg.protein_g AS protein
-        , cg.karbohidrat_total_g AS karbohidrat
-        */
+        , cg.total_calories AS energi
+        , cg.total_fat AS lemak
+        , cg.protein AS protein
+        , cg.total_carbohydrates AS karbohidrat
+        , cg.total_sugar AS gula
+        , cg.saturated_fat AS lemak_jenuh
     FROM
         produk p
     LEFT JOIN
