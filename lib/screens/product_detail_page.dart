@@ -42,34 +42,6 @@ class ProductDetailPage extends StatelessWidget {
                   ),
                   tooltip: isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit',
                   onPressed: () {
-                    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-                    if (!authProvider.isAuthenticated) {
-                      _showLoginDialog(context);
-                      return;
-                    }
-
-                    if (isFavorite) {
-                      favoritesProvider.removeFavorite(produk.barcodeId);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Dihapus dari favorit'),
-                          duration: Duration(seconds: 1),
-                        ),
-                      );
-                    } else {
-                      favoritesProvider.addFavorite(produk);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Ditambahkan ke favorit'),
-                          duration: Duration(seconds: 1),
-                        ),
-                      );
-                    }
-                  },
-                ),
-              );
-            },
-          ),
         ],
       ),
       body: SingleChildScrollView(
