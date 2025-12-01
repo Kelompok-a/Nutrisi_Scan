@@ -74,19 +74,88 @@ app.get('/api/produk', async (req, res) => {
     }
 });
 
-app.get('/api/produk/:barcode', async (req, res) => {
+app.get('/api/produk/:barcode', authenticateToken, async (req, res) => {
     const { barcode } = req.params;
+    const userId = req.user.user.id; // Ambil ID user dari token
+
     try {
+        // 1. Ambil Data Produk & Gizi
         const query = `${getProductQuery} WHERE p.barcode_id = ?`;
         const [rows] = await db.query(query, [barcode]);
-        if (rows.length > 0) {
-            res.json({ success: true, message: 'Data produk berhasil diambil', data: rows[0] });
-        } else {
-            res.status(404).json({ success: false, message: 'Produk tidak ditemukan' });
+
+        if (rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Produk tidak ditemukan' });
         }
+
+        const product = rows[0];
+
+        // 2. Ambil Data Alergi User
+        const [userRows] = await db.query('SELECT allergies FROM users WHERE user_id = ?', [userId]);
+        const userAllergies = userRows.length > 0 && userRows[0].allergies ? JSON.parse(userRows[0].allergies) : [];
+
+        // 3. Logika Traffic Light (Lampu Gizi)
+        // Standar Kemenkes/WHO (per 100g/ml approx)
+        const getStatus = (value, low, high) => {
+            if (value > high) return 'red';
+            if (value > low) return 'yellow';
+            return 'green';
+        };
+
+        const nutritionStatus = {
+            gula: getStatus(product.gula || 0, 5, 10),      // >10g Merah
+            lemak: getStatus(product.lemak || 0, 3, 17.5),  // >17.5g Merah
+            garam: getStatus(0, 0.3, 1.5),                  // Placeholder (data garam belum ada)
+            kalori: (product.energi || 0) > 200 ? 'red' : 'green' // Simplifikasi
+        };
+
+        // 4. Logika Cek Alergi
+        // Asumsi kolom 'allergens' di produk berisi JSON array string: '["kacang", "susu"]'
+        // Atau string CSV: "kacang, susu"
+        let productAllergens = [];
+        if (product.allergens) {
+            try {
+                productAllergens = JSON.parse(product.allergens);
+            } catch (e) {
+                productAllergens = product.allergens.split(',').map(s => s.trim().toLowerCase());
+            }
+        }
+
+        const allergenAlerts = [];
+        userAllergies.forEach(allergy => {
+            if (productAllergens.includes(allergy.toLowerCase())) {
+                allergenAlerts.push(allergy);
+            }
+        });
+
+        // 5. Gabungkan Response
+        res.json({
+            success: true,
+            message: 'Data produk berhasil diambil',
+            data: {
+                ...product,
+                nutritionStatus,
+                allergenAlerts,
+                hasAllergenConflict: allergenAlerts.length > 0
+            }
+        });
+
     } catch (error) {
-        console.error('Error saat mengambil produk by barcode:', error.sqlMessage);
-        res.status(500).json({ success: false, message: `Terjadi kesalahan pada server: ${error.sqlMessage}` });
+        console.error('Error saat mengambil produk by barcode:', error);
+        res.status(500).json({ success: false, message: `Terjadi kesalahan pada server: ${error.message}` });
+    }
+});
+
+// Endpoint Update Alergi User
+app.put('/api/profile/allergies', authenticateToken, async (req, res) => {
+    try {
+        const { allergies } = req.body; // Expect array: ["kacang", "udang"]
+        const userId = req.user.user.id;
+
+        await db.query('UPDATE users SET allergies = ? WHERE user_id = ?', [JSON.stringify(allergies), userId]);
+        res.json({ success: true, message: 'Data alergi berhasil diupdate' });
+    } catch (error) {
+        console.error('Update allergies error:', error);
+        res.status(500).json({ success: false, message: 'Gagal update alergi' });
     }
 });
 
@@ -412,6 +481,81 @@ app.get('/api/image-proxy', async (req, res) => {
     } catch (error) {
         console.error('Image proxy error:', error);
         res.status(500).send('Error fetching image');
+    }
+});
+
+// --- ADMIN MIDDLEWARE ---
+const authenticateAdmin = (req, res, next) => {
+    authenticateToken(req, res, () => {
+        // Cek role dari database untuk keamanan ekstra (atau dari token jika sudah ada)
+        // Di sini kita ambil dari token dulu untuk efisiensi, tapi idealnya cek DB
+        // Asumsi: saat login, role dimasukkan ke token payload
+        // Jika token belum ada role, kita harus query DB
+        const userId = req.user.user.id;
+
+        db.query('SELECT role FROM users WHERE user_id = ?', [userId])
+            .then(([rows]) => {
+                if (rows.length > 0 && rows[0].role === 'admin') {
+                    next();
+                } else {
+                    res.status(403).json({ success: false, message: 'Akses Admin diperlukan' });
+                }
+            })
+            .catch(err => {
+                console.error('Admin check error:', err);
+                res.status(500).json({ success: false, message: 'Gagal memverifikasi admin' });
+            });
+    });
+};
+
+// --- ADMIN ENDPOINTS ---
+
+// Get All Users
+app.get('/api/admin/users', authenticateAdmin, async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT user_id, nama, email, role, created_at FROM users ORDER BY created_at DESC');
+        res.json({ success: true, data: rows });
+    } catch (error) {
+        console.error('Get users error:', error);
+        res.status(500).json({ success: false, message: 'Gagal mengambil data user' });
+    }
+});
+
+// Delete User
+app.delete('/api/admin/users/:id', authenticateAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        // Jangan biarkan admin menghapus dirinya sendiri
+        if (parseInt(id) === req.user.user.id) {
+            return res.status(400).json({ success: false, message: 'Tidak bisa menghapus akun sendiri' });
+        }
+
+        await db.query('DELETE FROM users WHERE user_id = ?', [id]);
+        res.json({ success: true, message: 'User berhasil dihapus' });
+    } catch (error) {
+        console.error('Delete user error:', error);
+        res.status(500).json({ success: false, message: 'Gagal menghapus user' });
+    }
+});
+
+// Get Dashboard Stats
+app.get('/api/admin/stats', authenticateAdmin, async (req, res) => {
+    try {
+        const [userCount] = await db.query('SELECT COUNT(*) as total FROM users');
+        const [productCount] = await db.query('SELECT COUNT(*) as total FROM produk');
+        const [scanCount] = await db.query('SELECT COUNT(*) as total FROM history'); // Asumsi history = scan activity
+
+        res.json({
+            success: true,
+            data: {
+                totalUsers: userCount[0].total,
+                totalProducts: productCount[0].total,
+                totalScans: scanCount[0].total
+            }
+        });
+    } catch (error) {
+        console.error('Get stats error:', error);
+        res.status(500).json({ success: false, message: 'Gagal mengambil statistik' });
     }
 });
 

@@ -1,0 +1,876 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Database Image Gallery</title>
+            <style>
+                body { font-family: sans-serif; background: #f0f2f5; padding: 20px; }
+                h1 { text-align: center; color: #333; }
+                .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+                .card { background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+                img { width: 100%; height: 200px; object-fit: contain; border-radius: 4px; }
+                .name { margin-top: 10px; font-size: 14px; font-weight: bold; color: #333; }
+                .barcode { font-size: 12px; color: #666; }
+            </style>
+        </head>
+        <body>
+            <h1>Galeri Gambar Database NutriScan</h1>
+            <p style="text-align: center">Total: 142 Produk</p>
+            <div class="grid">
+        
+                <div class="card">
+                    <img src="https://img.lazcdn.com/g/ff/kf/S81baef235dea45d9857fa1da55da8cc5z.jpg_720x720q80.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Indomie Kuah Kaldu Ayam</div>
+                    <div class="barcode">89686010026</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://c.alfagift.id/product/1/1_A09430002298_20241203160859487_base.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Indomie Kuah Kari Ayam</div>
+                    <div class="barcode">89686010033</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://amazingoriental.com/wp-content/uploads/2024/01/21336_01.png" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Indomie Mi Goreng</div>
+                    <div class="barcode">89686011016</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://indostarmarket.com/351-large_default/indomie-goreng-pedas.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Indomie Mi Goreng Pedas</div>
+                    <div class="barcode">89686011030</div>
+                </div>
+            
+                <div class="card">
+                    <img src="http://www.waroengindo.sg/image/cache/catalog/indomie mi goreng rendang-1200x1200.png" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Indomie Mi Goreng Rendang</div>
+                    <div class="barcode">89686011047</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://m.media-amazon.com/images/I/913h22IfwlL._AC_.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Indomie Mi Goreng Spesial</div>
+                    <div class="barcode">89686011061</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://didwblovvwmoz.cloudfront.net/product_images/3965264/1679500/live/featured_image/55b2b0d2369fc2e6060fe28453bf_900_695.jpeg?format=webp" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Indomie Hype Abis Ayam Geprek</div>
+                    <div class="barcode">89686043130</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://arti-assets.sgp1.digitaloceanspaces.com/renyswalayanku/products/4de00759-0b67-4a5c-8946-422d9e288ff0.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Chiki Balls Crafty Cheese</div>
+                    <div class="barcode">89686590043</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://mitra-asia.com/uploads/img/product/tam_chiki-balls-4507.png" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Chiki Balls Curious Choco</div>
+                    <div class="barcode">89686591019</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://bakulanadelaide.com/wp-content/uploads/2020/05/Chitato-Sapi-Panggang-68gr.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Chitato Sapi Panggang</div>
+                    <div class="barcode">89686598018</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://freebees.id/upload/product/300.png" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Lays Rumput Laut</div>
+                    <div class="barcode">89686621034</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://cdn.happyfresh.com/t/s_wide,c_fit/spree/images/attachments/280ab3c4d02583edcc715b7f349aebe565775dd0-original.JPG" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Chitato Lite Rumput Laut</div>
+                    <div class="barcode">89686732009</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://cdn1.productnation.co/stg/sites/5/5da40ddacdcf0.jpeg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Ichi Ocha Teh Melati</div>
+                    <div class="barcode">89686821086</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://image.astronauts.cloud/product-images/2024/4/KraftAllinOneCheddarCheeseKeju1_4d725c96-2784-4949-bf28-e65b12fdb6b5_900x900.png" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">KRAFT All in One</div>
+                    <div class="barcode">7622210355462</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-7quky-li41mcqkg7154b" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">KRAFT Cheddar</div>
+                    <div class="barcode">7622210431357</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134201-23020-429nudvfglnvb7" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">KRAFT Quick Melt</div>
+                    <div class="barcode">7622210431371</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.bombaydryfruits.com/images/product_gallery/1687442929_698.webp" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">KitKat 4 Finger</div>
+                    <div class="barcode">8850127002013</div>
+                </div>
+            
+                <div class="card">
+                    <img src="http://www.waroengindo.sg/image/cache/catalog/astor-800x800.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Astor Chocolate</div>
+                    <div class="barcode">8886001026025</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/72c70c814b0cc334eb808448c4ee7b74" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">GEMEZ Enaak Snack Mi</div>
+                    <div class="barcode">8886013700104</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://id-test-11.slatic.net/p/f1991e095f0fcbad54d4661e67801258.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Ceres Festive</div>
+                    <div class="barcode">8991001100055</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/catalog-image/92/MTA-93202740/ceres_ceres_220gram_dark_choco_classic_festive_biru_meises_roti_meses_coklat_variasi_rasa_coklat_yang_khas_dan_enak_toping_martabak_full03_oyf03w0p.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Ceres Dark Choco</div>
+                    <div class="barcode">8991001100215</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-7r98z-logo9o8nj7cs63" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Ceres Milk & Dark Choco</div>
+                    <div class="barcode">8991001100222</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/0a958fa9f0e5f6e78fd08fb145ee3f51" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Ceres Classic</div>
+                    <div class="barcode">8991001100239</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-7r991-lob1ji1tim0sed" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Ceres Milk</div>
+                    <div class="barcode">8991001100345</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/sg-11134201-7rbm2-lp422vh9qpg7ba" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Frisian Flag Low Fat Belgian Chocolate</div>
+                    <div class="barcode">8992753018796</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/33f5b91847d592b28afb4e662b294f2a" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Frestea Rasa Madu</div>
+                    <div class="barcode">8992761166205</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/sg-11134201-23020-5d42sco0a4mv40" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Frestea Rasa Apel</div>
+                    <div class="barcode">8992761166212</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-7rasi-m0v1pjop7ol3fe" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Chocolatos RICH Coated Wafer Roll</div>
+                    <div class="barcode">8992775005897</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-23020-bahakj4yztnv78" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Gery Saluut Coconut</div>
+                    <div class="barcode">8992775305126</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://lzd-img-global.slatic.net/g/ff/kf/Sb6e12061908a43c7a8b6f1aacb8299aaR.jpg_720x720q80.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Gery Saluut Chocolate</div>
+                    <div class="barcode">8992775315057</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.indofood.com/images/microsite/product/308_qtela-singkong-rumput-laut_small.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Kusuka Keripik Singkong Rumput Laut</div>
+                    <div class="barcode">8992966111070</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134201-7rask-m5dtt9pkexlk45" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Kusuka Keripik Singkong Ayam Lada Hitam</div>
+                    <div class="barcode">8992966111162</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://cdn-klik.klikindomaret.com/klik-catalog/product/20137603_1.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">INDOMILK Kids Yogurt Original</div>
+                    <div class="barcode">8993007007221</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/catalog-image/112/MTA-181748947/indomilk_indomilk-kids-yogurt-rasa-stroberi-70-g_full01.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">INDOMILK Kids Yogurt Strawberry</div>
+                    <div class="barcode">8993007007245</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://cdn-klik.klikindomaret.com/klik-catalog/product/20137599_1.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">INDOMILK Kids Yogurt Banana Berries</div>
+                    <div class="barcode">8993007007252</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/catalog-image/104/MTA-153754385/happytos_happytos_original_160gr_full01_e492cae6.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Happy Tos Original</div>
+                    <div class="barcode">8993027133207</div>
+                </div>
+            
+                <div class="card">
+                    <img src="http://www.worldwidefoodsupplyinc.com/sites/default/files/styles/product_display/public/Cimory-Yogurt-Drink-Lychee_0.jpg?itok=eYKdHteC" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Cimory Yogurt Drink Lychee</div>
+                    <div class="barcode">8993200661299</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://res-2.cloudinary.com/dk0z4ums3/image/upload/c_scale,h_500,w_500/v1/production/pharmacy/products/1721784295_cimory_straw" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Cimory Yogurt Drink Strawberry</div>
+                    <div class="barcode">8993200661305</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://img.lazcdn.com/g/p/97bbd5b9a8c7a27a44c734d6be4e712c.jpg_720x720q80.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Cimory Yogurt Drink Red Grape</div>
+                    <div class="barcode">8993200661312</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/sg-11134201-7rd74-lukgl0ocp1z460" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Cimory Yogurt Drink Manggo</div>
+                    <div class="barcode">8993200661336</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://c.alfagift.id/product/1/1_A7741890002167_20240920102538122_base.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Cimory Yogurt Mango Sticky Rice</div>
+                    <div class="barcode">8993200661343</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://cdn-klik.klikindomaret.com/klik-catalog/product/20023797_1.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Cimory Yogurt Drink Mixed Fruit</div>
+                    <div class="barcode">8993200661350</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://cimory.com/uploads/products/Preview---Claim-Products-(Indonesia)-CYD-Reguler-250ml-01.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Cimory Yogurt Drink Blueberry</div>
+                    <div class="barcode">8993200661657</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://cimory.com/uploads/products/brand_hero_JAknHh1701332836.png" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Cimory Yogurt Drink Original</div>
+                    <div class="barcode">8993200663064</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//93/MTA-36517006/babay-farm_cimory_lowfat_yogurt_drink_full05_c2x7zrfd.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Cimory Yogurt Drink Low Fat Banana</div>
+                    <div class="barcode">8993200664993</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//93/MTA-36517006/babay-farm_cimory_lowfat_yogurt_drink_full05_c2x7zrfd.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Cimory Yogurt Drink Low Fat Strawberry & Mango</div>
+                    <div class="barcode">8993200665006</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://cimory.com/uploads/products/Preview---Claim-Products-(Indonesia)-CYD-Reguler-250ml-01.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Cimory Yogurt Drink Low Fat Blueberry</div>
+                    <div class="barcode">8993200665013</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://cimory.com/uploads/products/brand_hero_JAknHh1701332836.png" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Cimory Yogurt Original</div>
+                    <div class="barcode">8993200666935</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//100/MTA-81674533/cimory_yogurt-drink-cimory-squeeze-peach-120gr_full01.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Cimory Yogurt Peach</div>
+                    <div class="barcode">8993200667406</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//catalog-image/98/MTA-131863480/cimory_yogurt_drink_cimory_squeze_brown_sugar_120ml_pouch_full01_p7rn2rhm.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Cimory Yogurt Brown Sugar</div>
+                    <div class="barcode">8993200668335</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://img.lazcdn.com/g/p/53ceea826e180219832fc18d6b014e0c.jpg_960x960q80.jpg_.webp" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Hello Panda Strawberry</div>
+                    <div class="barcode">8994504102327</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://tastysnack.id/cdn/shop/files/2_8bb95275-f41b-427d-92a9-24c14d85c62e_1000x1000.png?v=1707990128" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Vanilla</div>
+                    <div class="barcode">8996001300251</div>
+                </div>
+            
+                <div class="card">
+                    <img src="http://shopsuki.ph/cdn/shop/files/102052464_1024x.png?v=1705403463" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Cereal</div>
+                    <div class="barcode">8996001300268</div>
+                </div>
+            
+                <div class="card">
+                    <img src="http://shopsuki.ph/cdn/shop/files/102052464_1024x.png?v=1705403463" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Cokelat</div>
+                    <div class="barcode">8996001300275</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://ukhtiosaka.com/wp-content/uploads/2024/06/Energen-Kacang-Hijau1.webp" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Hijau</div>
+                    <div class="barcode">8996001300282</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/catalog-image/100/MTA-181163638/mayora_energen_rasa_jahe_-10x32g-_full01_47a86ee1.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Jahe</div>
+                    <div class="barcode">8996001300299</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-7qul8-lihg29l0dc6k61" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Jagung</div>
+                    <div class="barcode">8996001300305</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://arti-assets.sgp1.cdn.digitaloceanspaces.com/renyswalayanku/products/47d1eec3-07e3-471c-8ae6-0132f1393d1e.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Pandan</div>
+                    <div class="barcode">8996001300312</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-ph.img.susercontent.com/file/id-11134207-7r991-lqh4nzjvlmsy5b" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Pisang</div>
+                    <div class="barcode">8996001300329</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-7ra0s-mb99vxlahhzz89_tn.webp" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Strawberry</div>
+                    <div class="barcode">8996001300336</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/6b4d3b3ed2dcd7eeb99a0daf097a86ea" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Jahe Instan</div>
+                    <div class="barcode">8996001300343</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://d2j6dbq0eux0bg.cloudfront.net/images/90909572/4084766613.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Oat Milk</div>
+                    <div class="barcode">8996001300794</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://static.wixstatic.com/media/e57616_ef9fb59a92714ad2bb4dc5c490d44b44.jpg/v1/fit/w_500,h_500,q_90/file.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Go Fruit</div>
+                    <div class="barcode">8996001300800</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.tokoindonesia.co.uk/wp-content/uploads/2019/05/energen-health-drink.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Go Fruit Strawberry</div>
+                    <div class="barcode">8996001300817</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-my.img.susercontent.com/file/id-11134207-7ras8-m5ps4fiaa85v31" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Champion</div>
+                    <div class="barcode">8996001301012</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://kartasupermall.com/product/energen-kurma-pouch-cereal-drink-10-sachets-x-30g/2c63076b4397a42d7136c2861a136725.jpeg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Kurma</div>
+                    <div class="barcode">8996001301036</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-7r98p-lw75g512qeuk3f" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Champion (isi 10)</div>
+                    <div class="barcode">8996001301043</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://img.mbizmarket.co.id/products/thumbs/800x800/2025/01/08/eb3b23a859af8b3253b1dd0244b87e53.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Champion (isi 5)</div>
+                    <div class="barcode">8996001301050</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/d68687ad2f18a96dbfc683276919341d" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Kurma (isi 10)</div>
+                    <div class="barcode">8996001301067</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://img.mbizmarket.co.id/products/thumbs/800x800/2025/01/08/eb3b23a859af8b3253b1dd0244b87e53.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Kurma (isi 5)</div>
+                    <div class="barcode">8996001301074</div>
+                </div>
+            
+                <div class="card">
+                    <img src="http://shopsuki.ph/cdn/shop/files/102052464_1024x.png?v=1705403463" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Cokelat (isi 10)</div>
+                    <div class="barcode">8996001301081</div>
+                </div>
+            
+                <div class="card">
+                    <img src="http://shopsuki.ph/cdn/shop/files/102052464_1024x.png?v=1705403463" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Cokelat (isi 5)</div>
+                    <div class="barcode">8996001301098</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://deltadewataonline.com/wp-content/uploads/2022/05/18010805.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Vanilla (isi 10)</div>
+                    <div class="barcode">8996001301104</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://tastysnack.id/cdn/shop/files/2_8bb95275-f41b-427d-92a9-24c14d85c62e_1000x1000.png?v=1707990128" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Vanilla (isi 5)</div>
+                    <div class="barcode">8996001301111</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://filebroker-cdn.lazada.co.id/kf/Sbeca77c0a2d2412a90d8dfc5c451a0baT.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Kacang Hijau (isi 10)</div>
+                    <div class="barcode">8996001301128</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://filebroker-cdn.lazada.co.id/kf/Sbeca77c0a2d2412a90d8dfc5c451a0baT.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Kacang Hijau (isi 5)</div>
+                    <div class="barcode">8996001301135</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/f0065b3df207d056f78f6f0f67ec286b" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Jagung (isi 10)</div>
+                    <div class="barcode">8996001301142</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/3d1299d0ce619bdc508cdd79a5bab0bd" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Jagung (isi 5)</div>
+                    <div class="barcode">8996001301159</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-7r98p-lw75g512qeuk3f" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Cereal (isi 10)</div>
+                    <div class="barcode">8996001301180</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-7r98p-lw75g512qeuk3f" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Cereal (isi 5)</div>
+                    <div class="barcode">8996001301197</div>
+                </div>
+            
+                <div class="card">
+                    <img src="http://shopsuki.ph/cdn/shop/files/102052464_1024x.png?v=1705403463" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Oat Milk (isi 10)</div>
+                    <div class="barcode">8996001301203</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.mayora.com/storage/files/2017-energen.png" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Oat Milk (isi 5)</div>
+                    <div class="barcode">8996001301210</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://static.wixstatic.com/media/e57616_ef9fb59a92714ad2bb4dc5c490d44b44.jpg/v1/fit/w_500,h_500,q_90/file.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Go Fruit (isi 10)</div>
+                    <div class="barcode">8996001301227</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.mayora.com/storage/files/2017-energen.png" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Go Fruit (isi 5)</div>
+                    <div class="barcode">8996001301234</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-7r98p-lw75g512qeuk3f" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Go Fruit Strawberry (isi 10)</div>
+                    <div class="barcode">8996001301241</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://girlstraveler.wordpress.com/wp-content/uploads/2015/01/energen_go_fruit_strawberry_pouch_10x33g.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Go Fruit Strawberry (isi 5)</div>
+                    <div class="barcode">8996001301258</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/MTA-10783385/energen_energen_kacang_hijau_10_s_x_30_gr_full02_h1jqo03m.jpeg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Pandan (isi 10)</div>
+                    <div class="barcode">8996001301265</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.mayora.com/storage/files/2017-energen.png" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Pandan (isi 5)</div>
+                    <div class="barcode">8996001301272</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://i.pinimg.com/originals/cd/4a/bb/cd4abbce01de0991be7b6cb84aa306be.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Pisang (isi 10)</div>
+                    <div class="barcode">8996001301289</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.mayora.com/storage/files/2017-energen.png" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Pisang (isi 5)</div>
+                    <div class="barcode">8996001301296</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-7ra0s-mb99vxlahhzz89_tn.webp" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Strawberry (isi 10)</div>
+                    <div class="barcode">8996001301302</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-7ra0s-mb99vxlahhzz89_tn.webp" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Strawberry (isi 5)</div>
+                    <div class="barcode">8996001301319</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-7r98p-lw75g512qeuk3f" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Jahe Instan (isi 10)</div>
+                    <div class="barcode">8996001301326</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/MTA-10783384/energen_energen_jahe_10_s_x_29_gr-_full02_uwhgtsa2.jpeg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Energen Jahe Instan (isi 5)</div>
+                    <div class="barcode">8996001301333</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-my.img.susercontent.com/file/sg-11134201-7rff1-m3odiqzolmw768" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Danisa Choco Cashew</div>
+                    <div class="barcode">8996001303726</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://cdn.shopify.com/s/files/1/1520/9644/products/1_8412f58d-2def-40db-b85d-cc9053aeaf32_2048x2048.jpg?v=1556655790" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Danisa Raisin</div>
+                    <div class="barcode">8996001303733</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-ph.img.susercontent.com/file/sg-11134201-7rd6y-m78s1dz15ir91b" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Danisa (isi 5)</div>
+                    <div class="barcode">8996001303818</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.goshoppi.ae/libraries/image.php?quality=100&amp;&amp;image=https://www.goshoppi.ae/images/variants/Danisa-Butter-Cookies-750g.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Danisa Butter Cookies</div>
+                    <div class="barcode">8996001303863</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://m.media-amazon.com/images/I/610eJTzW1hL._SL1181_.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Kopiko</div>
+                    <div class="barcode">8996001303870</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://i5.walmartimages.com/seo/Kopiko-Cappuccino-Coffee-Candy-4-23-oz-Bag-1-Pack_6729b919-45ff-4c01-b347-95a4fea01526.a3e278e71d2d6c1681636f53925a68d3.jpeg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Kopiko Cappuccino</div>
+                    <div class="barcode">8996001303887</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://m.media-amazon.com/images/I/91xiLSwRG3L.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Kopiko Blister</div>
+                    <div class="barcode">8996001303894</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-my.img.susercontent.com/file/sg-11134201-7repr-m2hyk28qln7a01" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Kopiko Cappuccino Blister</div>
+                    <div class="barcode">8996001303900</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://i5.walmartimages.com/seo/Kopiko-Coffee-And-Cappuccino-Candy-In-Jar-Variety-Bundle-2-Pack-800G-28-2Oz-In-Bag_a74d8352-69da-438b-9191-c4d54f3f7eec.b5aa0df17881470795bf972122598072.jpeg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Kopiko (isi 50)</div>
+                    <div class="barcode">8996001303917</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://5.imimg.com/data5/SELLER/Default/2023/2/FW/FG/PJ/144328445/20230214-180429-500x500.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Kopiko Cappuccino (isi 50)</div>
+                    <div class="barcode">8996001303924</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://grandlagunashop.com/wp-content/uploads/ROMA-MALKIST-CRACKERS-135G.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Malkist Crackers</div>
+                    <div class="barcode">8996001304211</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.goshoppi.ae/libraries/image.php?quality=100&amp;&amp;image=https://www.goshoppi.ae/images/variants/Danisa-Butter-Cookies-750g.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Danisa Butter Cookies</div>
+                    <div class="barcode">8996001304228</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://img.lazcdn.com/g/p/3f4ecb919d5191c6d8b26947be753307.jpg_720x720q80.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Malkist Abon</div>
+                    <div class="barcode">8996001304235</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://grandlagunashop.com/wp-content/uploads/ROMA-MALKIST-CRACKERS-135G.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Malkist Seaweed</div>
+                    <div class="barcode">8996001304242</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134201-23030-6d9arra2cvov28" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Malkist Chocolate</div>
+                    <div class="barcode">8996001304259</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://m.media-amazon.com/images/I/71mk-RoK1ZL._SL1500_.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Malkist Cheese</div>
+                    <div class="barcode">8996001304266</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://smsupermall.in/product-img/INBISCO-MALKIST-CAPPUCCINO-138-1658389015.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Malkist Cappuccino</div>
+                    <div class="barcode">8996001304273</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://bakulanadelaide.com/wp-content/uploads/2020/05/Gery-Malkist-Coconut-110gr-.jpeg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Malkist Coconut</div>
+                    <div class="barcode">8996001304280</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://grandlagunashop.com/wp-content/uploads/ROMA-MALKIST-CRACKERS-135G.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Malkist Crackers</div>
+                    <div class="barcode">8996001304297</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://grandlagunashop.com/wp-content/uploads/ROMA-MALKIST-CRACKERS-135G.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Malkist Abon</div>
+                    <div class="barcode">8996001304303</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://grandlagunashop.com/wp-content/uploads/ROMA-MALKIST-CRACKERS-135G.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Malkist Seaweed</div>
+                    <div class="barcode">8996001304310</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://m.media-amazon.com/images/I/814y-uxfYfS.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Malkist Chocolate</div>
+                    <div class="barcode">8996001304327</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://5.imimg.com/data5/SELLER/Default/2024/2/394714128/NH/XG/GA/199930806/malkist-cheese-biscuits-500x500.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Malkist Cheese</div>
+                    <div class="barcode">8996001304334</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://m.media-amazon.com/images/I/814y-uxfYfS.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Malkist Cappuccino</div>
+                    <div class="barcode">8996001304341</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.tsemporium.com/media/catalog/product/7/2/723751022359_a.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Danisa (isi 2)</div>
+                    <div class="barcode">8996001305416</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-ph.img.susercontent.com/file/id-11134207-7rasi-m3m67tjf163hb5" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Choki-stix</div>
+                    <div class="barcode">8996001307045</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/MTA-4497097/choki-choki_choki_choki_cokelat_pasta_chococashew_surprise_5_x_9_g_full02_q4os4re.jpeg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Choki-choki Cokelat</div>
+                    <div class="barcode">8996001307779</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-7r98w-llc1dihp48pe71" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Choki-Choki</div>
+                    <div class="barcode">8996001308363</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.tokoindonesia.co.uk/wp-content/uploads/2021/04/20210418_110745-1152x1536.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Choki-choki Cokelat (isi 5)</div>
+                    <div class="barcode">8996001308370</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-7qul1-lftftgnt3wkof3" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Choki-choki Chococashew</div>
+                    <div class="barcode">8996001309322</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/f725d04faa8badab3b4ccc4dd2e4aa88" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Apetito BBQ</div>
+                    <div class="barcode">8996001313695</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/a82656471cc536876c764ff3fa523163" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Better Sandwich Biscuit</div>
+                    <div class="barcode">8996001317020</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/0c5f30ccce9e7fa8626a7ee7b2263b10" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">beng-beng Maxx</div>
+                    <div class="barcode">8996001355756</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/id-11134207-7r98p-lz74ushnr8sl23" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Collagen Susu Steril</div>
+                    <div class="barcode">8996001601051</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//108/MTA-84072869/sosro_fruit_tea__minuman_apel_kotak_250ml_full01_2g7o4m6.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Fruit Tea Apel</div>
+                    <div class="barcode">8996006853387</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://solvent-production.s3.amazonaws.com/media/images/products/2021/03/8996006853394.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Fruit Tea Stroberi</div>
+                    <div class="barcode">8996006853394</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://cdn-klik.klikindomaret.com/klik-catalog/product/20003698_1.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Fruit Tea X-Treme Apel & Blackcurrant</div>
+                    <div class="barcode">8996006853431</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//108/MTA-84072869/sosro_fruit_tea__minuman_apel_kotak_250ml_full01_2g7o4m6.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Fruit Tea Apel</div>
+                    <div class="barcode">8996006858085</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://image.astronauts.cloud/product-images/2024/4/SosroFruitTeaFreezeStrawberryAnggurBotolTeh1_6a2f1eda-e58a-43fb-82d9-089215c36362_900x900.jpeg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Fruit Tea Freeze Stroberi & Anggur</div>
+                    <div class="barcode">8996006858115</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://yoline.co.id/media/products/ProductTeacoffeteablackcurrant_fruit_500ml.png" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Fruit Tea Blackcurrant</div>
+                    <div class="barcode">8996006858160</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://solvent-production.s3.amazonaws.com/media/images/products/2024/03/11.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Fruit Tea Lemon</div>
+                    <div class="barcode">8996006858320</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.kindairy.com/themes/kindairy/img/product-page/bulgarian/bulgarian-lychee-home.png" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">KIN Bulgarian Yogurt Original</div>
+                    <div class="barcode">8997032210609</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/catalog-image/MTA-3357789/kin_kin_bulgarian_yogurt_strawberry_pet_200_ml-_full03_uln5r7o1.jpeg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">KIN Bulgarian Yogurt Strawberry</div>
+                    <div class="barcode">8997032210616</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://theaustralianfoodshop.com/wp-content/uploads/2020/07/french-fries-original-chips-175g-300x300.jpg" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">French Fries Original</div>
+                    <div class="barcode">8997221581055</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://assets.unileversolutions.com/v1/138798609.png" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Buavita Mangga</div>
+                    <div class="barcode">8998009020193</div>
+                </div>
+            
+                <div class="card">
+                    <img src="http://tajgroupholding.com/cdn/shop/products/5_5ca0c0d0-3ab4-4665-8e18-788a72232448_1200x1200.jpg?v=1669898945" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">Choco Mania</div>
+                    <div class="barcode">8998694120208</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://yoline.co.id/media/products/ProductDolcecoffecoffelatte_golda_ml.png" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">GOLDA Coffee Cappuccino</div>
+                    <div class="barcode">8998866202893</div>
+                </div>
+            
+                <div class="card">
+                    <img src="https://down-id.img.susercontent.com/file/sg-11134201-23010-xbcnl3gc4ymv67" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Error'">
+                    <div class="name">GuriBee Layers</div>
+                    <div class="barcode">8998866202978</div>
+                </div>
+            
+            </div>
+        </body>
+        </html>
+        

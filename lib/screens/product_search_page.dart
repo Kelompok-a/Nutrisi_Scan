@@ -247,10 +247,22 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                                     color: theme.primaryColor.withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  child: Icon(
-                                    Icons.fastfood_rounded,
-                                    color: theme.primaryColor,
-                                    size: 32,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: produk.imageProductLink != null && produk.imageProductLink!.isNotEmpty
+                                        ? Image.network(
+                                            'http://localhost:3001/api/image-proxy?url=${Uri.encodeComponent(produk.imageProductLink!)}',
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) => Icon(
+                                              Icons.broken_image_rounded,
+                                              color: theme.primaryColor.withOpacity(0.5),
+                                            ),
+                                          )
+                                        : Icon(
+                                            Icons.fastfood_rounded,
+                                            color: theme.primaryColor,
+                                            size: 32,
+                                          ),
                                   ),
                                 ),
                                 const SizedBox(width: 16),
