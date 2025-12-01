@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/favorites_provider.dart';
-import '../theme/app_theme.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/favorites_provider.dart';
+import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
 import 'product_detail_page.dart';
 import '../widgets/footer.dart';
+import 'login_page.dart';
 
 class FavoritesPage extends StatelessWidget {
   const FavoritesPage({super.key});
@@ -15,8 +13,76 @@ class FavoritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final favoritesProvider = Provider.of<FavoritesProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
     final favorites = favoritesProvider.favorites;
     final theme = Theme.of(context);
+
+    if (!authProvider.isAuthenticated) {
+      return Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        appBar: AppBar(
+          title: const Text('Produk Favorit'),
+          backgroundColor: theme.appBarTheme.backgroundColor,
+          elevation: 0,
+          foregroundColor: theme.textTheme.titleLarge?.color,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(32),
+                decoration: BoxDecoration(
+                  color: theme.primaryColor.withOpacity(0.05),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.lock_outline_rounded,
+                  size: 80,
+                  color: theme.primaryColor,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Login Diperlukan',
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.textTheme.bodyLarge?.color,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Silakan login terlebih dahulu untuk\nmelihat produk favorit Anda',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 32),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.primaryColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: const Text('Login Sekarang'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,

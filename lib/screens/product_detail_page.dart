@@ -487,10 +487,207 @@
 
   // Helper untuk URL proxy gambar (tidak berubah)
   String? _buildProxyUrl(String? originalUrl) {
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: Container(
+            color: Colors.grey[50],
+            child: proxyImageUrl != null
+                ? Image.network(
+                    proxyImageUrl,
+                    fit: BoxFit.contain,
+                    loadingBuilder: (context, child, progress) =>
+                        progress == null ? child : const Center(child: CircularProgressIndicator()),
+                    errorBuilder: (context, error, stack) =>
+                        Icon(Icons.broken_image_rounded, color: AppTheme.kErrorColor.withOpacity(0.5), size: 60),
+                  )
+                : Icon(Icons.hide_image_rounded, color: AppTheme.kSubTextColor.withOpacity(0.5), size: 60),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Widget untuk menampilkan semua informasi teks di sisi kanan
+  Widget _buildProductInfo(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Judul dan Kategori
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: AppTheme.kSecondaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            produk.namaKategori ?? 'Produk',
+            style: TextStyle(color: AppTheme.kSecondaryColor, fontWeight: FontWeight.bold, fontSize: 14),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          produk.namaProduk,
+          style: Theme.of(context).textTheme.displaySmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: AppTheme.kTextColor,
+            height: 1.2,
+          ),
+        ),
+        const SizedBox(height: 32),
+
+        // Sorotan Nutrisi
+        _buildNutritionHighlights(),
+        const SizedBox(height: 40),
+
+        // Tabel Fakta Nutrisi
+        _buildNutritionFactsTable(),
+      ],
+    );
+  }
+
+  // Widget untuk kartu-kartu sorotan nutrisi
+  Widget _buildNutritionHighlights() {
+    return Wrap(
+      spacing: 16,
+      runSpacing: 16,
+      children: [
+        _buildHighlightCard('Kalori', produk.totalCalories, 'kcal', Colors.orange),
+        _buildHighlightCard('Lemak', produk.totalFat, 'g', Colors.red),
+        _buildHighlightCard('Karbohidrat', produk.totalCarbohydrates, 'g', Colors.blue),
+        _buildHighlightCard('Protein', produk.protein, 'g', Colors.green),
+        _buildHighlightCard('Gula', produk.totalSugar, 'g', Colors.pink),
+      ],
+    );
+  }
+
+  // Widget untuk tabel fakta nutrisi
+  Widget _buildNutritionFactsTable() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppTheme.kSurfaceColor,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.kPrimaryColor.withOpacity(0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+        border: Border.all(color: AppTheme.kPrimaryColor.withOpacity(0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.info_outline_rounded, color: AppTheme.kPrimaryColor),
+              const SizedBox(width: 12),
+              const Text(
+                'Fakta Nutrisi',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.kTextColor),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text('Ukuran Sajian 100g', style: TextStyle(color: AppTheme.kSubTextColor)),
+          const Divider(thickness: 1, height: 32),
+          _buildFactRow('Lemak Total', '${produk.totalFat.toStringAsFixed(1)}g', ''),
+          _buildFactRow('  Lemak Jenuh', '${produk.saturatedFat.toStringAsFixed(1)}g', '${produk.akgSaturatedFat.toStringAsFixed(0)}%'),
+          _buildFactRow('Karbohidrat Total', '${produk.totalCarbohydrates.toStringAsFixed(1)}g', '${produk.akgCarbohydrates.toStringAsFixed(0)}%'),
+          _buildFactRow('  Gula', '${produk.totalSugar.toStringAsFixed(1)}g', ''),
+          _buildFactRow('Protein', '${produk.protein.toStringAsFixed(1)}g', '${produk.akgProtein.toStringAsFixed(0)}%'),
+          const Divider(thickness: 1, height: 32),
+          Text(
+            '*Persen AKG berdasarkan pada kebutuhan energi 2150 kkal.',
+            style: TextStyle(fontSize: 12, color: AppTheme.kSubTextColor, fontStyle: FontStyle.italic),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- WIDGET HELPER KECIL ---
+
+  // Helper untuk membuat satu kartu sorotan
+  Widget _buildHighlightCard(String label, double value, String unit, Color color) {
+    return Container(
+      width: 110,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 12),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            value.toStringAsFixed(1),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color),
+          ),
+          Text(
+            unit,
+            style: TextStyle(color: color.withOpacity(0.8), fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Helper untuk membuat satu baris di tabel fakta nutrisi
+  Widget _buildFactRow(String label, String amount, String dailyValue) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 5,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 15,
+                color: AppTheme.kTextColor,
+                fontWeight: label.startsWith('  ') ? FontWeight.normal : FontWeight.w600,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              amount,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.kTextColor),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              dailyValue,
+              textAlign: TextAlign.right,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.kPrimaryColor),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Helper untuk URL proxy gambar (tidak berubah)
+  String? _buildProxyUrl(String? originalUrl) {
     if (originalUrl == null || originalUrl.isEmpty) return null;
     // Asumsi ApiService.baseUrl sudah benar
     return 'http://localhost:3001/api/image-proxy?url=${Uri.encodeComponent(originalUrl)}';
   }
+
+import '../screens/login_page.dart';
 
   void _showLoginDialog(BuildContext context) {
     showDialog(
@@ -545,16 +742,10 @@
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context); // Close dialog
-                      // Navigate to login page (Assuming route name or direct push)
-                      // Since I don't have the route name handy, I'll assume '/login' or similar, 
-                      // but better to just pop for now or ask user to go to login.
-                      // Actually, the user wants it to function.
-                      // Let's try to find the Login Page route.
-                      // Usually it's in main.dart or routes.
-                      // For now, I'll just close the dialog. 
-                      // Wait, the user said "tulisan login terlebih dahulu".
-                      // I will add a button that says "Login" and navigates to LoginPage.
-                      Navigator.pushNamed(context, '/login'); 
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const LoginPage()),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,

@@ -4,14 +4,87 @@ import '../providers/search_history_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/footer.dart';
 
+import '../providers/auth_provider.dart';
+import 'login_page.dart';
+
 class SearchHistoryPage extends StatelessWidget {
   const SearchHistoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final historyProvider = Provider.of<SearchHistoryProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
     final history = historyProvider.history;
     final stats = historyProvider.getStatistics();
+
+    if (!authProvider.isAuthenticated) {
+      return Scaffold(
+        backgroundColor: AppTheme.kBackgroundColor,
+        appBar: AppBar(
+          title: const Text('Riwayat Pencarian'),
+          backgroundColor: AppTheme.kSurfaceColor,
+          elevation: 0,
+          foregroundColor: AppTheme.kTextColor,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(32),
+                decoration: BoxDecoration(
+                  color: AppTheme.kPrimaryColor.withOpacity(0.05),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.lock_outline_rounded,
+                  size: 80,
+                  color: AppTheme.kPrimaryColor,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Login Diperlukan',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.kTextColor,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Silakan login terlebih dahulu untuk\nmelihat riwayat pencarian Anda',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppTheme.kSubTextColor,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 32),
+const SizedBox(height: 32),
+
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.kPrimaryColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: const Text('Login Sekarang'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: AppTheme.kBackgroundColor,
