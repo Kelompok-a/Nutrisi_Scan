@@ -592,6 +592,14 @@ app.get('/api/admin/stats', authenticateAdmin, async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server API berjalan di http://localhost:${port}`);
-});
+// ... (rest of the file)
+
+// Export app for Vercel
+module.exports = app;
+
+// Only listen if run directly (not required by Vercel)
+if (require.main === module) {
+    app.listen(port, () => {
+        console.log(`Server API berjalan di http://localhost:${port}`);
+    });
+}
