@@ -6,6 +6,7 @@ import 'providers/search_history_provider.dart';
 import 'providers/favorites_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/main_screen.dart';
+import 'screens/splash_screen.dart';
 import 'theme/app_theme.dart';
 import 'theme/no_scrollbar_behavior.dart';
 
@@ -44,12 +45,7 @@ class MyApp extends StatelessWidget {
             textTheme: GoogleFonts.poppinsTextTheme(AppTheme.darkTheme.textTheme),
           ),
           themeMode: themeProvider.themeMode,
-import 'screens/splash_screen.dart';
-
-// ... (inside build method)
-          themeMode: themeProvider.themeMode,
           home: const SplashScreen(),
-        );
         );
       },
     );
