@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import '../models/produk.dart';
 import '../providers/product_provider.dart';
 import '../theme/app_theme.dart';
+import '../widgets/hoverable_card.dart';
 
 class NutritionCalculatorPage extends StatefulWidget {
   const NutritionCalculatorPage({super.key});
@@ -303,101 +304,103 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
   }
 
   Widget _buildProductCard(Produk product) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.kPrimaryColor.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
+    return HoverableCard(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          onTap: () => _addProduct(product),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                flex: 3,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                  child: product.imageProductLink != null && product.imageProductLink!.isNotEmpty
-                      ? Image.network(
-                          'http://localhost:3001/api/image-proxy?url=${Uri.encodeComponent(product.imageProductLink!)}',
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.kPrimaryColor.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () => _addProduct(product),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                    child: product.imageProductLink != null && product.imageProductLink!.isNotEmpty
+                        ? Image.network(
+                            'http://localhost:3001/api/image-proxy?url=${Uri.encodeComponent(product.imageProductLink!)}',
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Container(
+                              color: AppTheme.kPrimaryColor.withOpacity(0.1),
+                              child: Icon(
+                                Icons.broken_image_rounded,
+                                color: AppTheme.kPrimaryColor.withOpacity(0.5),
+                                size: 40,
+                              ),
+                            ),
+                          )
+                        : Container(
                             color: AppTheme.kPrimaryColor.withOpacity(0.1),
                             child: Icon(
-                              Icons.broken_image_rounded,
-                              color: AppTheme.kPrimaryColor.withOpacity(0.5),
+                              Icons.fastfood_rounded,
+                              color: AppTheme.kPrimaryColor,
                               size: 40,
                             ),
                           ),
-                        )
-                      : Container(
-                          color: AppTheme.kPrimaryColor.withOpacity(0.1),
-                          child: Icon(
-                            Icons.fastfood_rounded,
-                            color: AppTheme.kPrimaryColor,
-                            size: 40,
-                          ),
-                        ),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        product.namaProduk,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Barcode: ${product.barcodeId}',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '${product.totalCalories.toStringAsFixed(0)} kcal',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.kPrimaryColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                          const Icon(
-                            Icons.add_circle,
-                            color: AppTheme.kPrimaryColor,
-                            size: 24,
-                          ),
-                        ],
-                      ),
-                    ],
                   ),
                 ),
-              ),
-            ],
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          product.namaProduk,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Barcode: ${product.barcodeId}',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '${product.totalCalories.toStringAsFixed(0)} kcal',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.kPrimaryColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const Icon(
+                              Icons.add_circle,
+                              color: AppTheme.kPrimaryColor,
+                              size: 24,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -7,6 +7,7 @@ import 'product_detail_page.dart';
 import 'scanner_page.dart';
 import '../theme/app_theme.dart';
 import '../widgets/footer.dart';
+import '../widgets/hoverable_card.dart';
 
 class ProductSearchPage extends StatefulWidget {
   const ProductSearchPage({super.key});
@@ -217,121 +218,123 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                   itemCount: _filteredProduk.length,
                   itemBuilder: (context, index) {
                     final produk = _filteredProduk[index];
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: theme.cardColor,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: theme.primaryColor.withOpacity(0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
+                    return HoverableCard(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: theme.cardColor,
                           borderRadius: BorderRadius.circular(16),
-                          onTap: () => _navigateToDetail(produk),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: ClipRRect(
-                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                                  child: produk.imageProductLink != null && produk.imageProductLink!.isNotEmpty
-                                      ? Image.network(
-                                          'http://localhost:3001/api/image-proxy?url=${Uri.encodeComponent(produk.imageProductLink!)}',
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (context, error, stackTrace) => Container(
+                          boxShadow: [
+                            BoxShadow(
+                              color: theme.primaryColor.withOpacity(0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: () => _navigateToDetail(produk),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                                    child: produk.imageProductLink != null && produk.imageProductLink!.isNotEmpty
+                                        ? Image.network(
+                                            'http://localhost:3001/api/image-proxy?url=${Uri.encodeComponent(produk.imageProductLink!)}',
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) => Container(
+                                              color: theme.primaryColor.withOpacity(0.1),
+                                              child: Icon(
+                                                Icons.broken_image_rounded,
+                                                color: theme.primaryColor.withOpacity(0.5),
+                                                size: 40,
+                                              ),
+                                            ),
+                                          )
+                                        : Container(
                                             color: theme.primaryColor.withOpacity(0.1),
                                             child: Icon(
-                                              Icons.broken_image_rounded,
-                                              color: theme.primaryColor.withOpacity(0.5),
+                                              Icons.fastfood_rounded,
+                                              color: theme.primaryColor,
                                               size: 40,
                                             ),
                                           ),
-                                        )
-                                      : Container(
-                                          color: theme.primaryColor.withOpacity(0.1),
-                                          child: Icon(
-                                            Icons.fastfood_rounded,
-                                            color: theme.primaryColor,
-                                            size: 40,
-                                          ),
-                                        ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            produk.namaProduk,
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: theme.textTheme.titleMedium?.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            produk.namaKategori ?? 'Umum',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            'Barcode: ${produk.barcodeId}',
-                                            style: TextStyle(
-                                              fontSize: 10,
-                                              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            '${produk.totalCalories.toStringAsFixed(0)} kcal',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: theme.primaryColor,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: const EdgeInsets.all(4),
-                                            decoration: BoxDecoration(
-                                              color: theme.primaryColor,
-                                              borderRadius: BorderRadius.circular(8),
-                                            ),
-                                            child: const Icon(
-                                              Icons.arrow_forward,
-                                              color: Colors.white,
-                                              size: 16,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
                                   ),
                                 ),
-                              ),
-                            ],
+                                Expanded(
+                                  flex: 2,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              produk.namaProduk,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: theme.textTheme.titleMedium?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              produk.namaKategori ?? 'Umum',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              'Barcode: ${produk.barcodeId}',
+                                              style: TextStyle(
+                                                fontSize: 10,
+                                                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              '${produk.totalCalories.toStringAsFixed(0)} kcal',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: theme.primaryColor,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            Container(
+                                              padding: const EdgeInsets.all(4),
+                                              decoration: BoxDecoration(
+                                                color: theme.primaryColor,
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                              child: const Icon(
+                                                Icons.arrow_forward,
+                                                color: Colors.white,
+                                                size: 16,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
