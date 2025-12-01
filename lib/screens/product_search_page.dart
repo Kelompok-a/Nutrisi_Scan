@@ -210,7 +210,7 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                   padding: const EdgeInsets.all(24),
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 250,
-                    childAspectRatio: 0.6,
+                    childAspectRatio: 0.55,
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
                   ),
