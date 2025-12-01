@@ -24,6 +24,12 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
   final double _maxFat = 67; // grams
   final double _maxCarbs = 275; // grams
 
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   void _searchProducts(String query) async {
     if (query.isEmpty) {
       setState(() {
