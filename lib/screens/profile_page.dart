@@ -133,9 +133,10 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final namaPengguna = authProvider.namaPengguna;
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.grey[100], // Light background for contrast
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -148,9 +149,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   clipper: HeaderClipper(),
                   child: Container(
                     height: 250,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFF81D4FA), Color(0xFF29B6F6)], // Light Blue Gradient
+                        colors: [
+                          theme.primaryColor.withOpacity(0.7),
+                          theme.primaryColor,
+                        ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -163,11 +167,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   left: 16,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.8),
+                      color: theme.cardColor.withOpacity(0.8),
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 20),
+                      icon: Icon(Icons.arrow_back_ios_new, color: theme.iconTheme.color, size: 20),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ),
@@ -177,13 +181,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   top: MediaQuery.of(context).padding.top + 20,
                   left: 0,
                   right: 0,
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       'Profile',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: theme.textTheme.bodyLarge?.color,
                       ),
                     ),
                   ),
@@ -198,7 +202,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 4),
+                              border: Border.all(color: theme.cardColor, width: 4),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.1),
@@ -207,11 +211,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               ],
                             ),
-                            child: const CircleAvatar(
+                            child: CircleAvatar(
                               radius: 50,
-                              backgroundColor: Colors.white,
-                              backgroundImage: AssetImage('assets/images/placeholder_profile.png'),
-                              child: Icon(Icons.person, size: 50, color: Colors.grey),
+                              backgroundColor: theme.cardColor,
+                              backgroundImage: const AssetImage('assets/images/placeholder_profile.png'),
+                              child: const Icon(Icons.person, size: 50, color: Colors.grey),
                             ),
                           ),
                           Positioned(
@@ -219,11 +223,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             right: 0,
                             child: Container(
                               padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
+                              decoration: BoxDecoration(
+                                color: theme.cardColor,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.camera_alt, color: AppTheme.kPrimaryColor, size: 20),
+                              child: Icon(Icons.camera_alt, color: theme.primaryColor, size: 20),
                             ),
                           ),
                         ],
@@ -231,17 +235,17 @@ class _ProfilePageState extends State<ProfilePage> {
                       const SizedBox(height: 10),
                       Text(
                         namaPengguna ?? 'User Name',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: theme.textTheme.bodyLarge?.color,
                         ),
                       ),
-                      const Text(
+                      Text(
                         'View full profile',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey,
+                          color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
                         ),
                       ),
                     ],
@@ -257,24 +261,28 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 children: [
                   _buildMenuItem(
+                    context: context,
                     icon: Icons.person_outline,
                     text: 'Account Information',
                     onTap: () => _showEditProfileDialog(context, namaPengguna ?? ''),
                   ),
                   const SizedBox(height: 16),
                   _buildMenuItem(
+                    context: context,
                     icon: Icons.lock_outline,
                     text: 'Password',
                     onTap: () => _showChangePasswordDialog(context),
                   ),
                   const SizedBox(height: 16),
                   _buildMenuItem(
+                    context: context,
                     icon: Icons.settings_outlined,
                     text: 'Settings',
                     onTap: () => _showSettingsDialog(context),
                   ),
                   const SizedBox(height: 16),
                   _buildMenuItem(
+                    context: context,
                     icon: Icons.logout,
                     text: 'Log out',
                     textColor: Colors.red,
@@ -350,15 +358,20 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildMenuItem({
+    required BuildContext context,
     required IconData icon,
     required String text,
     required VoidCallback onTap,
-    Color textColor = Colors.black87,
-    Color iconColor = Colors.black54,
+    Color? textColor,
+    Color? iconColor,
   }) {
+    final theme = Theme.of(context);
+    final effectiveTextColor = textColor ?? theme.textTheme.bodyLarge?.color;
+    final effectiveIconColor = iconColor ?? theme.iconTheme.color;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -369,15 +382,15 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
       child: ListTile(
-        leading: Icon(icon, color: iconColor),
+        leading: Icon(icon, color: effectiveIconColor),
         title: Text(
           text,
           style: TextStyle(
-            color: textColor,
+            color: effectiveTextColor,
             fontWeight: FontWeight.w500,
           ),
         ),
-        trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+        trailing: Icon(Icons.chevron_right, color: theme.iconTheme.color?.withOpacity(0.5)),
         onTap: onTap,
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),

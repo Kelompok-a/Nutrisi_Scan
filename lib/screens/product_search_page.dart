@@ -94,14 +94,14 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
     final theme = Theme.of(context);
     
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Column(
         children: [
           // --- Search Header ---
           Container(
             padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
             decoration: BoxDecoration(
-              color: AppTheme.kSurfaceColor,
+              color: theme.cardColor,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
@@ -117,7 +117,7 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                   'Cari Produk',
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.kTextColor,
+                    color: theme.textTheme.bodyLarge?.color,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -126,31 +126,31 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                   padding: const MaterialStatePropertyAll<EdgeInsets>(
                     EdgeInsets.symmetric(horizontal: 16.0),
                   ),
-                  backgroundColor: MaterialStatePropertyAll(AppTheme.kBackgroundColor),
+                  backgroundColor: MaterialStatePropertyAll(theme.scaffoldBackgroundColor),
                   elevation: const MaterialStatePropertyAll(0),
                   shape: MaterialStatePropertyAll(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
-                      side: BorderSide(color: AppTheme.kSubTextColor.withOpacity(0.2)),
+                      side: BorderSide(color: theme.dividerColor.withOpacity(0.2)),
                     ),
                   ),
-                  leading: const Icon(Icons.search, color: AppTheme.kSubTextColor),
+                  leading: Icon(Icons.search, color: theme.iconTheme.color?.withOpacity(0.7)),
                   hintText: 'Ketik nama produk atau barcode...',
                   hintStyle: MaterialStatePropertyAll(
-                    TextStyle(color: AppTheme.kSubTextColor.withOpacity(0.7)),
+                    TextStyle(color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5)),
                   ),
                   trailing: [
                     Tooltip(
                       message: 'Scan Barcode',
                       child: Container(
                         decoration: BoxDecoration(
-                          color: AppTheme.kPrimaryColor.withOpacity(0.1),
+                          color: theme.primaryColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.qr_code_scanner_rounded,
-                            color: AppTheme.kPrimaryColor,
+                            color: theme.primaryColor,
                           ),
                           onPressed: _openScanner,
                         ),
@@ -176,7 +176,7 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.error_outline, size: 48, color: AppTheme.kErrorColor),
+                        Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
                         const SizedBox(height: 16),
                         Text('Error memuat data: ${snapshot.error}'),
                       ],
@@ -195,11 +195,11 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.search_off_rounded, size: 80, color: AppTheme.kSubTextColor.withOpacity(0.3)),
+                        Icon(Icons.search_off_rounded, size: 80, color: theme.disabledColor.withOpacity(0.3)),
                         const SizedBox(height: 16),
                         Text(
                           'Produk tidak ditemukan',
-                          style: TextStyle(color: AppTheme.kSubTextColor, fontSize: 18),
+                          style: TextStyle(color: theme.disabledColor, fontSize: 18),
                         ),
                       ],
                     ),
@@ -221,11 +221,11 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                     return Container(
                       margin: const EdgeInsets.only(bottom: 16),
                       decoration: BoxDecoration(
-                        color: AppTheme.kSurfaceColor,
+                        color: theme.cardColor,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: AppTheme.kPrimaryColor.withOpacity(0.05),
+                            color: theme.primaryColor.withOpacity(0.05),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -244,12 +244,12 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                                   width: 64,
                                   height: 64,
                                   decoration: BoxDecoration(
-                                    color: AppTheme.kPrimaryColor.withOpacity(0.1),
+                                    color: theme.primaryColor.withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.fastfood_rounded,
-                                    color: AppTheme.kPrimaryColor,
+                                    color: theme.primaryColor,
                                     size: 32,
                                   ),
                                 ),
@@ -262,21 +262,21 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                                         produk.namaProduk,
                                         style: theme.textTheme.titleMedium?.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: AppTheme.kTextColor,
+                                          color: theme.textTheme.bodyLarge?.color,
                                         ),
                                       ),
                                       const SizedBox(height: 4),
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                         decoration: BoxDecoration(
-                                          color: AppTheme.kSubTextColor.withOpacity(0.1),
+                                          color: theme.dividerColor.withOpacity(0.1),
                                           borderRadius: BorderRadius.circular(6),
                                         ),
                                         child: Text(
                                           'Barcode: ${produk.barcodeId}',
                                           style: TextStyle(
                                             fontSize: 12,
-                                            color: AppTheme.kSubTextColor,
+                                            color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -284,7 +284,7 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                                     ],
                                   ),
                                 ),
-                                const Icon(Icons.chevron_right_rounded, color: AppTheme.kSubTextColor),
+                                Icon(Icons.chevron_right_rounded, color: theme.iconTheme.color?.withOpacity(0.5)),
                               ],
                             ),
                           ),

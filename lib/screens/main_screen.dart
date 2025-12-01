@@ -83,7 +83,7 @@ class _MainScreenState extends State<MainScreen> {
               const Spacer(),
 
               // Desktop/Tablet Navigation (Hidden on small screens if needed, but here we keep it)
-              if (MediaQuery.of(context).size.width > 800)
+              if (MediaQuery.of(context).size.width > 1100)
                 Row(
                   children: [
                     _buildNavButton('Beranda', 0, Icons.home_rounded),
@@ -119,23 +119,40 @@ class _MainScreenState extends State<MainScreen> {
                     if (authProvider.isAuthenticated) {
                       return Row(
                         children: [
-                          if (authProvider.isAdmin)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 16.0),
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (context) => const AdminLayout()),
-                                  );
-                                },
-                                icon: const Icon(Icons.admin_panel_settings),
-                                label: const Text('Admin Panel'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.redAccent,
-                                  foregroundColor: Colors.white,
-                                ),
+                            if (authProvider.isAdmin)
+                              Padding(
+                                padding: const EdgeInsets.only(right: 16.0),
+                                child: MediaQuery.of(context).size.width > 600
+                                    ? ElevatedButton.icon(
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(builder: (context) => const AdminLayout()),
+                                          );
+                                        },
+                                        icon: const Icon(Icons.admin_panel_settings),
+                                        label: const Text('Admin Panel'),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.redAccent,
+                                          foregroundColor: Colors.white,
+                                        ),
+                                      )
+                                    : Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.redAccent,
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: IconButton(
+                                          onPressed: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(builder: (context) => const AdminLayout()),
+                                            );
+                                          },
+                                          icon: const Icon(Icons.admin_panel_settings),
+                                          color: Colors.white,
+                                          tooltip: 'Admin Panel',
+                                        ),
+                                      ),
                               ),
-                            ),
                           InkWell(
                             onTap: () {
                               Navigator.of(context).push(
@@ -194,7 +211,7 @@ class _MainScreenState extends State<MainScreen> {
       body: IndexedStack(index: _selectedIndex, children: _pages),
       
       // Mobile Bottom Navigation (Visible only on small screens)
-      bottomNavigationBar: MediaQuery.of(context).size.width <= 800
+      bottomNavigationBar: MediaQuery.of(context).size.width <= 1100
           ? NavigationBar(
               selectedIndex: _getBottomNavIndex(_selectedIndex),
               onDestinationSelected: (index) {

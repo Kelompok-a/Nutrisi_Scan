@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/favorites_provider.dart';
 import '../theme/app_theme.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/favorites_provider.dart';
+import '../theme/app_theme.dart';
 import 'product_detail_page.dart';
 import '../widgets/footer.dart';
 
@@ -12,14 +16,15 @@ class FavoritesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final favoritesProvider = Provider.of<FavoritesProvider>(context);
     final favorites = favoritesProvider.favorites;
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Produk Favorit'),
-        backgroundColor: AppTheme.kSurfaceColor,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
-        foregroundColor: AppTheme.kTextColor,
+        foregroundColor: theme.textTheme.titleLarge?.color,
         actions: [
           if (favorites.isNotEmpty)
             IconButton(
@@ -37,7 +42,7 @@ class FavoritesPage extends StatelessWidget {
                         onPressed: () => Navigator.of(ctx).pop(),
                       ),
                       TextButton(
-                        child: const Text('Hapus', style: TextStyle(color: AppTheme.kErrorColor)),
+                        child: Text('Hapus', style: TextStyle(color: theme.colorScheme.error)),
                         onPressed: () {
                           favoritesProvider.clearFavorites();
                           Navigator.of(ctx).pop();
@@ -61,21 +66,21 @@ class FavoritesPage extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(32),
                     decoration: BoxDecoration(
-                      color: AppTheme.kPrimaryColor.withOpacity(0.05),
+                      color: theme.primaryColor.withOpacity(0.05),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.favorite_border_rounded,
                       size: 80,
-                      color: AppTheme.kPrimaryColor,
+                      color: theme.primaryColor,
                     ),
                   ),
                   const SizedBox(height: 24),
                   Text(
                     'Belum ada produk favorit',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.kTextColor,
+                      color: theme.textTheme.bodyLarge?.color,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -84,7 +89,7 @@ class FavoritesPage extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,
-                      color: AppTheme.kSubTextColor,
+                      color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
                       height: 1.5,
                     ),
                   ),
@@ -99,11 +104,18 @@ class FavoritesPage extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        gradient: AppTheme.kPrimaryGradient,
+                        gradient: LinearGradient(
+                          colors: [
+                            theme.primaryColor,
+                            theme.colorScheme.secondary,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: AppTheme.kPrimaryColor.withOpacity(0.3),
+                            color: theme.primaryColor.withOpacity(0.3),
                             blurRadius: 16,
                             offset: const Offset(0, 8),
                           ),
@@ -164,10 +176,10 @@ class FavoritesPage extends StatelessWidget {
                         final produk = favorites[index];
                         return Card(
                           elevation: 0,
-                          color: AppTheme.kSurfaceColor,
+                          color: theme.cardColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(color: AppTheme.kPrimaryColor.withOpacity(0.1)),
+                            side: BorderSide(color: theme.primaryColor.withOpacity(0.1)),
                           ),
                           child: InkWell(
                             borderRadius: BorderRadius.circular(20),
@@ -188,13 +200,13 @@ class FavoritesPage extends StatelessWidget {
                                       child: Container(
                                         padding: const EdgeInsets.all(24),
                                         decoration: BoxDecoration(
-                                          color: AppTheme.kPrimaryColor.withOpacity(0.05),
+                                          color: theme.primaryColor.withOpacity(0.05),
                                           shape: BoxShape.circle,
                                         ),
-                                        child: const Icon(
+                                        child: Icon(
                                           Icons.fastfood_rounded,
                                           size: 48,
-                                          color: AppTheme.kPrimaryColor,
+                                          color: theme.primaryColor,
                                         ),
                                       ),
                                     ),
@@ -204,10 +216,10 @@ class FavoritesPage extends StatelessWidget {
                                     produk.namaProduk,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
-                                      color: AppTheme.kTextColor,
+                                      color: theme.textTheme.bodyLarge?.color,
                                     ),
                                   ),
                                   const SizedBox(height: 8),
@@ -216,13 +228,13 @@ class FavoritesPage extends StatelessWidget {
                                     children: [
                                       Text(
                                         '${produk.totalCalories.toStringAsFixed(0)} kcal',
-                                        style: const TextStyle(
-                                          color: AppTheme.kPrimaryColor,
+                                        style: TextStyle(
+                                          color: theme.primaryColor,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                       IconButton(
-                                        icon: const Icon(Icons.favorite_rounded, color: AppTheme.kErrorColor),
+                                        icon: Icon(Icons.favorite_rounded, color: theme.colorScheme.error),
                                         onPressed: () {
                                           favoritesProvider.removeFavorite(produk.barcodeId);
                                         },

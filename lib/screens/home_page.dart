@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
     final isDarkMode = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -30,15 +30,15 @@ class HomePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(32),
                         gradient: LinearGradient(
                           colors: [
-                            AppTheme.kPrimaryColor,
-                            AppTheme.kSecondaryColor,
+                            theme.primaryColor,
+                            theme.colorScheme.secondary,
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: AppTheme.kPrimaryColor.withOpacity(0.3),
+                            color: theme.primaryColor.withOpacity(0.3),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
                           ),
@@ -83,7 +83,7 @@ class HomePage extends StatelessWidget {
                       style: theme.textTheme.bodyLarge?.copyWith(
                         height: 1.8,
                         fontSize: 18,
-                        color: AppTheme.kSubTextColor,
+                        color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
                       ),
                     ),
                     const SizedBox(height: 64),
@@ -132,9 +132,9 @@ class HomePage extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 32),
                       decoration: BoxDecoration(
-                        color: AppTheme.kSurfaceColor,
+                        color: theme.cardColor,
                         borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: AppTheme.kPrimaryColor.withOpacity(0.1)),
+                        border: Border.all(color: theme.primaryColor.withOpacity(0.1)),
                       ),
                       child: Column(
                         children: [
@@ -142,14 +142,14 @@ class HomePage extends StatelessWidget {
                             'Siap untuk Hidup Lebih Sehat?',
                             style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.kTextColor,
+                              color: theme.textTheme.bodyLarge?.color,
                             ),
                           ),
                           const SizedBox(height: 16),
                           Text(
                             'Bergabunglah dengan ribuan pengguna lain yang telah beralih ke gaya hidup yang lebih sadar nutrisi.',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: AppTheme.kSubTextColor, fontSize: 16),
+                            style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7), fontSize: 16),
                           ),
                         ],
                       ),
@@ -168,13 +168,14 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildSectionTitle(BuildContext context, String title) {
+    final theme = Theme.of(context);
     return Column(
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+          style: theme.textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.bold,
-            color: AppTheme.kTextColor,
+            color: theme.textTheme.bodyLarge?.color,
           ),
         ),
         const SizedBox(height: 8),
@@ -182,7 +183,7 @@ class HomePage extends StatelessWidget {
           width: 60,
           height: 4,
           decoration: BoxDecoration(
-            color: AppTheme.kPrimaryColor,
+            color: theme.primaryColor,
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -191,15 +192,16 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildFeatureCard({required BuildContext context, required IconData icon, required String title, required String description}) {
+    final theme = Theme.of(context);
     return Container(
       width: 300,
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: AppTheme.kSurfaceColor,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.kPrimaryColor.withOpacity(0.05),
+            color: theme.primaryColor.withOpacity(0.05),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -210,26 +212,26 @@ class HomePage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppTheme.kPrimaryColor.withOpacity(0.1),
+              color: theme.primaryColor.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, size: 32, color: AppTheme.kPrimaryColor),
+            child: Icon(icon, size: 32, color: theme.primaryColor),
           ),
           const SizedBox(height: 24),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: AppTheme.kTextColor,
+              color: theme.textTheme.bodyLarge?.color,
             ),
           ),
           const SizedBox(height: 12),
           Text(
             description,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppTheme.kSubTextColor,
+            style: TextStyle(
+              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
               height: 1.5,
             ),
           ),
@@ -239,17 +241,18 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildStep(BuildContext context, String number, String title, String description) {
+    final theme = Theme.of(context);
     return Row(
       children: [
         Container(
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: AppTheme.kPrimaryColor,
+            color: theme.primaryColor,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.kPrimaryColor.withOpacity(0.3),
+                color: theme.primaryColor.withOpacity(0.3),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -272,17 +275,17 @@ class HomePage extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.kTextColor,
+                  color: theme.textTheme.bodyLarge?.color,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 description,
-                style: const TextStyle(
-                  color: AppTheme.kSubTextColor,
+                style: TextStyle(
+                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
                 ),
               ),
             ],
