@@ -44,7 +44,12 @@ class MyApp extends StatelessWidget {
             textTheme: GoogleFonts.poppinsTextTheme(AppTheme.darkTheme.textTheme),
           ),
           themeMode: themeProvider.themeMode,
-          home: const MainScreen(),
+import 'screens/splash_screen.dart';
+
+// ... (inside build method)
+          themeMode: themeProvider.themeMode,
+          home: const SplashScreen(),
+        );
         );
       },
     );
