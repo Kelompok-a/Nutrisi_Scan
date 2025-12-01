@@ -51,24 +51,48 @@ class Produk {
     return value?.toString() ?? 'N/A';
   }
 
+  String get barcode => barcodeId;
+  String? get gambarUrl => imageProductLink;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'barcode_id': barcodeId,
+      'product_name': namaProduk,
+      'ukuran_nilai': ukuranNilai,
+      'ukuran_satuan': ukuranSatuan,
+      'barcodeUrl': barcodeUrl,
+      'gambarUrl': imageProductLink,
+      'kategori': namaKategori,
+      'energi': totalCalories,
+      'lemak': totalFat,
+      'lemak_jenuh': saturatedFat,
+      'gula': totalSugar,
+      'protein': protein,
+      'akg_protein': akgProtein,
+      'karbohidrat': totalCarbohydrates,
+      'akg_carbohydrates': akgCarbohydrates,
+      'akg_saturated_fat': akgSaturatedFat,
+    };
+  }
+
   factory Produk.fromJson(Map<String, dynamic> json) {
     return Produk(
       barcodeId: _parseToString(json['barcode_id']),
-      namaProduk: _parseToString(json['product_name']), // Changed from nama_produk
+      namaProduk: _parseToString(json['product_name']),
       ukuranNilai: _parseToDouble(json['ukuran_nilai']),
       ukuranSatuan: json['ukuran_satuan'],
-      barcodeUrl: json['barcodeUrl'], // Changed from barcode_url
-      imageProductLink: json['gambarUrl'], // Changed from image_product_link
-      namaKategori: json['kategori'], // Changed from nama_kategori
-      totalCalories: _parseToDouble(json['energi']), // Changed from total_calories
-      totalFat: _parseToDouble(json['lemak']), // Changed from total_fat
-      saturatedFat: _parseToDouble(json['lemak_jenuh']), // Changed from saturated_fat
-      totalSugar: _parseToDouble(json['gula']), // Changed from total_sugar
+      barcodeUrl: json['barcodeUrl'],
+      imageProductLink: json['gambarUrl'],
+      namaKategori: json['kategori'],
+      totalCalories: _parseToDouble(json['energi']),
+      totalFat: _parseToDouble(json['lemak']),
+      saturatedFat: _parseToDouble(json['lemak_jenuh']),
+      totalSugar: _parseToDouble(json['gula']),
       protein: _parseToDouble(json['protein']),
-      akgProtein: _parseToDouble(json['akg_protein']), // Note: These might be missing in backend query
-      totalCarbohydrates: _parseToDouble(json['karbohidrat']), // Changed from total_carbohydrates
-      akgCarbohydrates: _parseToDouble(json['akg_carbohydrates']), // Note: These might be missing
-      akgSaturatedFat: _parseToDouble(json['akg_saturated_fat']), // Note: These might be missing
+      akgProtein: _parseToDouble(json['akg_protein']),
+      totalCarbohydrates: _parseToDouble(json['karbohidrat']),
+      akgCarbohydrates: _parseToDouble(json['akg_carbohydrates']),
+      akgSaturatedFat: _parseToDouble(json['akg_saturated_fat']),
     );
   }
 }

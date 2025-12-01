@@ -39,4 +39,45 @@ class ApiService {
       throw Exception('Kesalahan jaringan: ${e.toString()}');
     }
   }
+
+  Future<bool> addProduk(Produk produk) async {
+    final uri = Uri.parse('$baseUrl/api/produk');
+    try {
+      final response = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(produk.toJson()),
+      );
+      final body = jsonDecode(response.body);
+      return body['success'] == true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> updateProduk(Produk produk) async {
+    final uri = Uri.parse('$baseUrl/api/produk/${produk.barcode}');
+    try {
+      final response = await http.put(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(produk.toJson()),
+      );
+      final body = jsonDecode(response.body);
+      return body['success'] == true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> deleteProduk(String barcode) async {
+    final uri = Uri.parse('$baseUrl/api/produk/$barcode');
+    try {
+      final response = await http.delete(uri);
+      final body = jsonDecode(response.body);
+      return body['success'] == true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

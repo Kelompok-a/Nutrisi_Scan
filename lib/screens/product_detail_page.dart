@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/produk.dart';
 import '../providers/favorites_provider.dart';
+import '../theme/app_theme.dart';
+import '../widgets/footer.dart';
 
 class ProductDetailPage extends StatelessWidget {
   final Produk produk;
@@ -11,68 +13,88 @@ class ProductDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.kBackgroundColor,
       appBar: AppBar(
-        title: Text(produk.namaProduk),
-        backgroundColor: Colors.white,
-        elevation: 1,
+        title: Text(
+          produk.namaProduk,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: AppTheme.kSurfaceColor,
+        elevation: 0,
+        foregroundColor: AppTheme.kTextColor,
         actions: [
           // Favorite Button
           Consumer<FavoritesProvider>(
             builder: (context, favoritesProvider, child) {
               final isFavorite = favoritesProvider.isFavorite(produk.barcodeId);
-              return IconButton(
-                icon: Icon(
-                  isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: isFavorite ? Colors.red : Colors.grey,
+              return Container(
+                margin: const EdgeInsets.only(right: 16),
+                decoration: BoxDecoration(
+                  color: isFavorite ? AppTheme.kErrorColor.withOpacity(0.1) : Colors.transparent,
+                  shape: BoxShape.circle,
                 ),
-                tooltip: isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit',
-                onPressed: () {
-                  favoritesProvider.toggleFavorite(produk);
-                  
-                  // Show snackbar
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        isFavorite 
-                          ? '${produk.namaProduk} dihapus dari favorit'
-                          : '${produk.namaProduk} ditambahkan ke favorit',
+                child: IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                    color: isFavorite ? AppTheme.kErrorColor : AppTheme.kSubTextColor,
+                  ),
+                  tooltip: isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit',
+                  onPressed: () {
+                    favoritesProvider.toggleFavorite(produk);
+                    
+                    // Show snackbar
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          isFavorite 
+                            ? '${produk.namaProduk} dihapus dari favorit'
+                            : '${produk.namaProduk} ditambahkan ke favorit',
+                        ),
+                        backgroundColor: AppTheme.kPrimaryColor,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        duration: const Duration(seconds: 2),
                       ),
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               );
             },
           ),
         ],
       ),
       body: SingleChildScrollView(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1200),
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              // LayoutBuilder untuk membuat tampilan responsif
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  if (constraints.maxWidth > 800) {
-                    // Tampilan untuk layar lebar (web)
-                    return _buildWideLayout();
-                  } else {
-                    // Tampilan untuk layar sempit (mobile)
-                    return _buildNarrowLayout();
-                  }
-                },
+        child: Column(
+          children: [
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1200),
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  // LayoutBuilder untuk membuat tampilan responsif
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth > 800) {
+                        // Tampilan untuk layar lebar (web)
+                        return _buildWideLayout(context);
+                      } else {
+                        // Tampilan untuk layar sempit (mobile)
+                        return _buildNarrowLayout(context);
+                      }
+                    },
+                  ),
+                ),
               ),
             ),
-          ),
+            const Footer(),
+          ],
         ),
       ),
     );
   }
 
   // --- WIDGET UNTUK TAMPILAN LEBAR (2 KOLOM) ---
-  Widget _buildWideLayout() {
+  Widget _buildWideLayout(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -80,22 +102,22 @@ class ProductDetailPage extends StatelessWidget {
           flex: 2,
           child: _buildProductImage(),
         ),
-        const SizedBox(width: 40),
+        const SizedBox(width: 48),
         Expanded(
           flex: 3,
-          child: _buildProductInfo(),
+          child: _buildProductInfo(context),
         ),
       ],
     );
   }
 
   // --- WIDGET UNTUK TAMPILAN SEMPIT (1 KOLOM) ---
-  Widget _buildNarrowLayout() {
+  Widget _buildNarrowLayout(BuildContext context) {
     return Column(
       children: [
         _buildProductImage(),
-        const SizedBox(height: 30),
-        _buildProductInfo(),
+        const SizedBox(height: 32),
+        _buildProductInfo(context),
       ],
     );
   }
@@ -105,47 +127,71 @@ class ProductDetailPage extends StatelessWidget {
   // Widget untuk menampilkan gambar produk
   Widget _buildProductImage() {
     final proxyImageUrl = _buildProxyUrl(produk.imageProductLink);
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: Container(
-          color: Colors.grey[200],
-          child: proxyImageUrl != null
-              ? Image.network(
-                  proxyImageUrl,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, progress) =>
-                      progress == null ? child : const Center(child: CircularProgressIndicator()),
-                  errorBuilder: (context, error, stack) =>
-                      const Icon(Icons.broken_image_outlined, color: Colors.red, size: 60),
-                )
-              : const Icon(Icons.hide_image_outlined, color: Colors.grey, size: 60),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.kPrimaryColor.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: Container(
+            color: Colors.grey[50],
+            child: proxyImageUrl != null
+                ? Image.network(
+                    proxyImageUrl,
+                    fit: BoxFit.contain,
+                    loadingBuilder: (context, child, progress) =>
+                        progress == null ? child : const Center(child: CircularProgressIndicator()),
+                    errorBuilder: (context, error, stack) =>
+                        Icon(Icons.broken_image_rounded, color: AppTheme.kErrorColor.withOpacity(0.5), size: 60),
+                  )
+                : Icon(Icons.hide_image_rounded, color: AppTheme.kSubTextColor.withOpacity(0.5), size: 60),
+          ),
         ),
       ),
     );
   }
 
   // Widget untuk menampilkan semua informasi teks di sisi kanan
-  Widget _buildProductInfo() {
+  Widget _buildProductInfo(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Judul dan Kategori
-        Text(
-          produk.namaKategori ?? 'Produk',
-          style: TextStyle(color: Colors.green.shade700, fontWeight: FontWeight.bold, fontSize: 16),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: AppTheme.kSecondaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            produk.namaKategori ?? 'Produk',
+            style: TextStyle(color: AppTheme.kSecondaryColor, fontWeight: FontWeight.bold, fontSize: 14),
+          ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 16),
         Text(
           produk.namaProduk,
-          style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold, height: 1.2),
+          style: Theme.of(context).textTheme.displaySmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: AppTheme.kTextColor,
+            height: 1.2,
+          ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 32),
 
         // Sorotan Nutrisi
         _buildNutritionHighlights(),
-        const SizedBox(height: 32),
+        const SizedBox(height: 40),
 
         // Tabel Fakta Nutrisi
         _buildNutritionFactsTable(),
@@ -171,27 +217,45 @@ class ProductDetailPage extends StatelessWidget {
   // Widget untuk tabel fakta nutrisi
   Widget _buildNutritionFactsTable() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300, width: 2),
-        borderRadius: BorderRadius.circular(12),
+        color: AppTheme.kSurfaceColor,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.kPrimaryColor.withOpacity(0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+        border: Border.all(color: AppTheme.kPrimaryColor.withOpacity(0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Fakta Nutrisi',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          Row(
+            children: [
+              Icon(Icons.info_outline_rounded, color: AppTheme.kPrimaryColor),
+              const SizedBox(width: 12),
+              const Text(
+                'Fakta Nutrisi',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.kTextColor),
+              ),
+            ],
           ),
-          const Text('Ukuran Sajian 100g'),
-          const Divider(thickness: 2, height: 24),
+          const SizedBox(height: 8),
+          Text('Ukuran Sajian 100g', style: TextStyle(color: AppTheme.kSubTextColor)),
+          const Divider(thickness: 1, height: 32),
           _buildFactRow('Lemak Total', '${produk.totalFat.toStringAsFixed(1)}g', ''),
           _buildFactRow('  Lemak Jenuh', '${produk.saturatedFat.toStringAsFixed(1)}g', '${produk.akgSaturatedFat.toStringAsFixed(0)}%'),
           _buildFactRow('Karbohidrat Total', '${produk.totalCarbohydrates.toStringAsFixed(1)}g', '${produk.akgCarbohydrates.toStringAsFixed(0)}%'),
           _buildFactRow('  Gula', '${produk.totalSugar.toStringAsFixed(1)}g', ''),
           _buildFactRow('Protein', '${produk.protein.toStringAsFixed(1)}g', '${produk.akgProtein.toStringAsFixed(0)}%'),
-          const Divider(thickness: 1, height: 24),
-          const Text('*Persen AKG berdasarkan pada kebutuhan energi 2150 kkal.'),
+          const Divider(thickness: 1, height: 32),
+          Text(
+            '*Persen AKG berdasarkan pada kebutuhan energi 2150 kkal.',
+            style: TextStyle(fontSize: 12, color: AppTheme.kSubTextColor, fontStyle: FontStyle.italic),
+          ),
         ],
       ),
     );
@@ -201,26 +265,30 @@ class ProductDetailPage extends StatelessWidget {
 
   // Helper untuk membuat satu kartu sorotan
   Widget _buildHighlightCard(String label, double value, String unit, Color color) {
-    return SizedBox(
-      width: 120,
-      child: Card(
-        elevation: 0,
-        color: color.withOpacity(0.1),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            children: [
-              Text(label, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Text(
-                value.toStringAsFixed(1),
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color),
-              ),
-              Text(unit, style: TextStyle(color: color)),
-            ],
+    return Container(
+      width: 110,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 12),
           ),
-        ),
+          const SizedBox(height: 8),
+          Text(
+            value.toStringAsFixed(1),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color),
+          ),
+          Text(
+            unit,
+            style: TextStyle(color: color.withOpacity(0.8), fontSize: 12),
+          ),
+        ],
       ),
     );
   }
@@ -228,12 +296,35 @@ class ProductDetailPage extends StatelessWidget {
   // Helper untuk membuat satu baris di tabel fakta nutrisi
   Widget _buildFactRow(String label, String amount, String dailyValue) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          Expanded(flex: 5, child: Text(label, style: const TextStyle(fontSize: 16))),
-          Expanded(flex: 2, child: Text(amount, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
-          Expanded(flex: 2, child: Text(dailyValue, textAlign: TextAlign.right, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+          Expanded(
+            flex: 5,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 15,
+                color: AppTheme.kTextColor,
+                fontWeight: label.startsWith('  ') ? FontWeight.normal : FontWeight.w600,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              amount,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.kTextColor),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              dailyValue,
+              textAlign: TextAlign.right,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.kPrimaryColor),
+            ),
+          ),
         ],
       ),
     );

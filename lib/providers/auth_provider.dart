@@ -8,10 +8,13 @@ class AuthProvider with ChangeNotifier {
 
   String? _token;
   String? _namaPengguna;
+  String? _role;
   bool _isAuthenticated = false;
 
   bool get isAuthenticated => _isAuthenticated;
   String? get namaPengguna => _namaPengguna;
+  String? get role => _role;
+  bool get isAdmin => _role == 'admin';
 
   Future<bool> tryAutoLogin() async {
     final token = await _storage.read(key: 'jwt_token');
@@ -20,6 +23,7 @@ class AuthProvider with ChangeNotifier {
     }
     _token = token;
     _namaPengguna = await _storage.read(key: 'user_nama');
+    _role = await _storage.read(key: 'user_role');
     _isAuthenticated = true;
     notifyListeners();
     return true;
@@ -36,6 +40,7 @@ class AuthProvider with ChangeNotifier {
   Future<void> logout() async {
     _token = null;
     _namaPengguna = null;
+    _role = null;
     _isAuthenticated = false;
     await _authService.logout();
     notifyListeners();

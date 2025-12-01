@@ -5,7 +5,8 @@ import '../models/produk.dart';
 import '../providers/search_history_provider.dart';
 import 'product_detail_page.dart';
 import 'scanner_page.dart';
-import '../theme/app_theme.dart'; // Import theme untuk warna
+import '../theme/app_theme.dart';
+import '../widgets/footer.dart';
 
 class ProductSearchPage extends StatefulWidget {
   const ProductSearchPage({super.key});
@@ -90,112 +91,212 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
-      appBar: AppBar(title: const Text('Cari Produk')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // --- PERUBAHAN DI SINI ---
-            // Scanner dimasukkan ke dalam SearchBar (seperti Google Lens)
-            SearchBar(
-              controller: _searchController,
-              // Jarak padding dalam
-              padding: const MaterialStatePropertyAll<EdgeInsets>(
-                EdgeInsets.symmetric(horizontal: 16.0),
-              ),
-              // Ikon Kaca Pembesar di Kiri
-              leading: const Icon(Icons.search, color: Colors.grey),
-
-              // Placeholder Text
-              hintText: 'Ketik nama produk atau barcode...',
-
-              // Ikon Scanner di Kanan (Trailing)
-              trailing: [
-                Tooltip(
-                  message: 'Scan Barcode',
-                  child: IconButton(
-                    // Ikon Scanner berwarna Biru (sesuai tema)
-                    icon: const Icon(
-                      Icons.qr_code_scanner,
-                      color: AppTheme.kPrimaryColor,
-                    ),
-                    onPressed: _openScanner,
-                  ),
+      backgroundColor: AppTheme.kBackgroundColor,
+      body: Column(
+        children: [
+          // --- Search Header ---
+          Container(
+            padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+            decoration: BoxDecoration(
+              color: AppTheme.kSurfaceColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
               ],
-
-              onChanged: (_) => _onSearchChanged(),
             ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Cari Produk',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.kTextColor,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SearchBar(
+                  controller: _searchController,
+                  padding: const MaterialStatePropertyAll<EdgeInsets>(
+                    EdgeInsets.symmetric(horizontal: 16.0),
+                  ),
+                  backgroundColor: MaterialStatePropertyAll(AppTheme.kBackgroundColor),
+                  elevation: const MaterialStatePropertyAll(0),
+                  shape: MaterialStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(color: AppTheme.kSubTextColor.withOpacity(0.2)),
+                    ),
+                  ),
+                  leading: const Icon(Icons.search, color: AppTheme.kSubTextColor),
+                  hintText: 'Ketik nama produk atau barcode...',
+                  hintStyle: MaterialStatePropertyAll(
+                    TextStyle(color: AppTheme.kSubTextColor.withOpacity(0.7)),
+                  ),
+                  trailing: [
+                    Tooltip(
+                      message: 'Scan Barcode',
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppTheme.kPrimaryColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.qr_code_scanner_rounded,
+                            color: AppTheme.kPrimaryColor,
+                          ),
+                          onPressed: _openScanner,
+                        ),
+                      ),
+                    ),
+                  ],
+                  onChanged: (_) => _onSearchChanged(),
+                ),
+              ],
+            ),
+          ),
 
-            // -------------------------
-            const SizedBox(height: 16),
+          // --- Product List ---
+          Expanded(
+            child: FutureBuilder<List<Produk>>(
+              future: _produkFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.error_outline, size: 48, color: AppTheme.kErrorColor),
+                        const SizedBox(height: 16),
+                        Text('Error memuat data: ${snapshot.error}'),
+                      ],
+                    ),
+                  );
+                }
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
+                    child: Text('Tidak ada produk di database.'),
+                  );
+                }
 
-            Expanded(
-              child: FutureBuilder<List<Produk>>(
-                future: _produkFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error memuat data: ${snapshot.error}'),
-                    );
-                  }
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(
-                      child: Text('Tidak ada produk di database.'),
-                    );
-                  }
+                if (_filteredProduk.isEmpty &&
+                    _searchController.text.isNotEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.search_off_rounded, size: 80, color: AppTheme.kSubTextColor.withOpacity(0.3)),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Produk tidak ditemukan',
+                          style: TextStyle(color: AppTheme.kSubTextColor, fontSize: 18),
+                        ),
+                      ],
+                    ),
+                  );
+                }
 
-                  if (_filteredProduk.isEmpty &&
-                      _searchController.text.isNotEmpty) {
-                    return const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.search_off, size: 60, color: Colors.grey),
-                          SizedBox(height: 16),
-                          Text(
-                            'Produk tidak ditemukan',
-                            style: TextStyle(color: Colors.grey),
+                return ListView.builder(
+                  padding: const EdgeInsets.all(24),
+                  itemCount: _filteredProduk.length + 1, // +1 for Footer
+                  itemBuilder: (context, index) {
+                    if (index == _filteredProduk.length) {
+                      return const Padding(
+                        padding: EdgeInsets.only(top: 48.0),
+                        child: Footer(),
+                      );
+                    }
+
+                    final produk = _filteredProduk[index];
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: AppTheme.kSurfaceColor,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.kPrimaryColor.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
-                    );
-                  }
-
-                  return ListView.builder(
-                    itemCount: _filteredProduk.length,
-                    itemBuilder: (context, index) {
-                      final produk = _filteredProduk[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(12.0),
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.blue.shade50,
-                            child: const Icon(
-                              Icons.fastfood_outlined,
-                              color: AppTheme.kPrimaryColor,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: () => _navigateToDetail(produk),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 64,
+                                  height: 64,
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.kPrimaryColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Icon(
+                                    Icons.fastfood_rounded,
+                                    color: AppTheme.kPrimaryColor,
+                                    size: 32,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        produk.namaProduk,
+                                        style: theme.textTheme.titleMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: AppTheme.kTextColor,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.kSubTextColor.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
+                                        child: Text(
+                                          'Barcode: ${produk.barcodeId}',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: AppTheme.kSubTextColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Icon(Icons.chevron_right_rounded, color: AppTheme.kSubTextColor),
+                              ],
                             ),
                           ),
-                          title: Text(
-                            produk.namaProduk,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text('Barcode: ${produk.barcodeId}'),
-                          onTap: () => _navigateToDetail(produk),
                         ),
-                      );
-                    },
-                  );
-                },
-              ),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

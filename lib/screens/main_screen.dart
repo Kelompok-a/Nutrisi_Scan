@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
+import '../theme/app_theme.dart';
 import 'profile_page.dart';
 import 'home_page.dart';
 import 'article_page.dart';
@@ -12,6 +13,7 @@ import 'register_page.dart';
 import 'product_search_page.dart';
 import 'search_history_page.dart';
 import 'favorites_page.dart';
+import 'admin/admin_layout.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -45,135 +47,225 @@ class _MainScreenState extends State<MainScreen> {
     final isDarkMode = theme.brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(
-          'NutriScan',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface,
-          ),
-        ),
         backgroundColor: theme.appBarTheme.backgroundColor,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: isDarkMode ? Colors.grey[800]! : Colors.grey[200]!,
-                width: 1,
+        toolbarHeight: 80, // Taller AppBar for premium feel
+        titleSpacing: 0,
+        title: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Row(
+            children: [
+              // Logo Area
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: theme.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.health_and_safety,
+                  color: theme.primaryColor,
+                  size: 28,
+                ),
               ),
-            ),
+              const SizedBox(width: 12),
+              Text(
+                'NutriScan',
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.primaryColor,
+                ),
+              ),
+              
+              const Spacer(),
+
+              // Desktop/Tablet Navigation (Hidden on small screens if needed, but here we keep it)
+              if (MediaQuery.of(context).size.width > 800)
+                Row(
+                  children: [
+                    _buildNavButton('Beranda', 0, Icons.home_rounded),
+                    _buildNavButton('Cari', 1, Icons.search_rounded),
+                    _buildNavButton('Favorit', 5, Icons.favorite_rounded),
+                    _buildNavButton('Riwayat', 6, Icons.history_rounded),
+                    _buildNavButton('Artikel', 2, Icons.article_rounded),
+                  ],
+                ),
+            ],
           ),
         ),
         actions: [
-          Container(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.7,
-            ),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildNavButton('Beranda', 0),
-                  _buildNavButton('Cari Produk', 1),
-                  _buildNavButton('Artikel', 2),
-                  _buildNavButton('Tanya Jawab', 3),
-                  _buildNavButton('Tentang', 4),
-                  _buildNavButton('Favorit', 5),
-                  _buildNavButton('Riwayat', 6),
-                  const SizedBox(width: 20),
-                  Consumer<AuthProvider>(
-                    builder: (context, authProvider, child) {
-                      if (authProvider.isAuthenticated) {
-                        return Tooltip(
-                          message: 'Profil',
-                          child: IconButton(
-                            icon: const Icon(Icons.person),
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const ProfilePage(),
+          Padding(
+            padding: const EdgeInsets.only(right: 24),
+            child: Row(
+              children: [
+                // Theme Toggle
+                IconButton(
+                  icon: Icon(
+                    isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                    color: theme.iconTheme.color,
+                  ),
+                  onPressed: () {
+                    Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+                  },
+                ),
+                const SizedBox(width: 16),
+                
+                // Auth Section
+                Consumer<AuthProvider>(
+                  builder: (context, authProvider, child) {
+                    if (authProvider.isAuthenticated) {
+                      return Row(
+                        children: [
+                          if (authProvider.isAdmin)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 16.0),
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (context) => const AdminLayout()),
+                                  );
+                                },
+                                icon: const Icon(Icons.admin_panel_settings),
+                                label: const Text('Admin Panel'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.redAccent,
+                                  foregroundColor: Colors.white,
                                 ),
+                              ),
+                            ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context) => const ProfilePage()),
                               );
                             },
+                            borderRadius: BorderRadius.circular(50),
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: theme.primaryColor.withOpacity(0.2),
+                                  width: 2,
+                                ),
+                              ),
+                              child: CircleAvatar(
+                                radius: 18,
+                                backgroundColor: theme.primaryColor,
+                                child: const Icon(Icons.person, color: Colors.white, size: 20),
+                              ),
+                            ),
                           ),
-                        );
-                      } else {
-                        return Row(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => const LoginPage(),
-                                  ),
-                                );
-                              },
-                              child: const Text('Login'),
-                            ),
-                            const SizedBox(width: 10),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => const RegisterPage(),
-                                  ),
-                                );
-                              },
-                              child: const Text('Daftar'),
-                            ),
-                          ],
-                        );
-                      }
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                    ),
-                    onPressed: () {
-                      Provider.of<ThemeProvider>(context, listen: false)
-                          .toggleTheme();
-                    },
-                  ),
-                  const SizedBox(width: 20),
-                ],
-              ),
+                        ],
+                      );
+                    } else {
+                      return ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => const LoginPage()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: const Text('Masuk'),
+                      );
+                    }
+                  },
+                ),
+              ],
             ),
           ),
         ],
-      ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1200),
-          child: IndexedStack(index: _selectedIndex, children: _pages),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            color: theme.dividerColor.withOpacity(0.1),
+            height: 1,
+          ),
         ),
       ),
+      body: IndexedStack(index: _selectedIndex, children: _pages),
+      
+      // Mobile Bottom Navigation (Visible only on small screens)
+      bottomNavigationBar: MediaQuery.of(context).size.width <= 800
+          ? NavigationBar(
+              selectedIndex: _getBottomNavIndex(_selectedIndex),
+              onDestinationSelected: (index) {
+                // Map bottom nav items to page indices
+                // 0: Home, 1: Search, 2: Favorites, 3: History
+                int targetIndex = 0;
+                if (index == 0) targetIndex = 0;
+                if (index == 1) targetIndex = 1;
+                if (index == 2) targetIndex = 5; // Favorites
+                if (index == 3) targetIndex = 6; // History
+                _onItemTapped(targetIndex);
+              },
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.home_outlined),
+                  selectedIcon: Icon(Icons.home_rounded),
+                  label: 'Beranda',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.search_outlined),
+                  selectedIcon: Icon(Icons.search_rounded),
+                  label: 'Cari',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.favorite_border_rounded),
+                  selectedIcon: Icon(Icons.favorite_rounded),
+                  label: 'Favorit',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.history_rounded),
+                  selectedIcon: Icon(Icons.history_rounded),
+                  label: 'Riwayat',
+                ),
+              ],
+            )
+          : null,
     );
   }
 
-  Widget _buildNavButton(String text, int index) {
-    final theme = Theme.of(context);
-    final isSelected = _selectedIndex == index;
+  int _getBottomNavIndex(int pageIndex) {
+    if (pageIndex == 0) return 0; // Home
+    if (pageIndex == 1) return 1; // Search
+    if (pageIndex == 5) return 2; // Favorites
+    if (pageIndex == 6) return 3; // History
+    return 0; // Default to Home for other pages (Articles, FAQ, About)
+  }
 
+  Widget _buildNavButton(String text, int index, IconData icon) {
+    final isSelected = _selectedIndex == index;
+    final theme = Theme.of(context);
+    
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: TextButton(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: TextButton.icon(
         onPressed: () => _onItemTapped(index),
-        style: TextButton.styleFrom(
-          backgroundColor: isSelected ? theme.primaryColor.withOpacity(0.1) : Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+        icon: Icon(
+          icon,
+          size: 20,
+          color: isSelected ? theme.primaryColor : theme.iconTheme.color?.withOpacity(0.7),
         ),
-        child: Text(
+        label: Text(
           text,
           style: TextStyle(
-            color: isSelected ? theme.primaryColor : theme.colorScheme.onSurface,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            fontSize: 16,
+            color: isSelected ? theme.primaryColor : theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
           ),
+        ),
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          backgroundColor: isSelected ? theme.primaryColor.withOpacity(0.05) : Colors.transparent,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );

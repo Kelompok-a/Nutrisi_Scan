@@ -42,6 +42,8 @@ class AuthService {
         final data = body['data'];
         await _storage.write(key: 'jwt_token', value: data['token']);
         await _storage.write(key: 'user_nama', value: data['user']['nama']);
+        // Simpan role jika ada, default ke 'user' jika tidak ada
+        await _storage.write(key: 'user_role', value: data['user']['role'] ?? 'user');
       }
       return body;
     } catch (e) {
@@ -52,6 +54,7 @@ class AuthService {
   Future<void> logout() async {
     await _storage.delete(key: 'jwt_token');
     await _storage.delete(key: 'user_nama');
+    await _storage.delete(key: 'user_role');
   }
 
   Future<String?> getToken() async {
