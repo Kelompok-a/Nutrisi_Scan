@@ -42,6 +42,38 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
+// Middleware untuk verifikasi token
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Akses ditolak' });
+
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) return res.status(403).json({ success: false, message: 'Token tidak valid' });
+        req.user = user;
+        next();
+    });
+};
+
+// --- ADMIN MIDDLEWARE ---
+const authenticateAdmin = (req, res, next) => {
+    authenticateToken(req, res, () => {
+        const userId = req.user.user.id;
+        db.query('SELECT role FROM users WHERE user_id = ?', [userId])
+            .then(([rows]) => {
+                if (rows.length > 0 && rows[0].role === 'admin') {
+                    next();
+                } else {
+                    res.status(403).json({ success: false, message: 'Akses Admin diperlukan' });
+                }
+            })
+            .catch(err => {
+                console.error('Admin check error:', err);
+                res.status(500).json({ success: false, message: 'Gagal memverifikasi admin' });
+            });
+    });
+};
+
 // --- QUERY SEMENTARA UNTUK DEBUGGING ---
 // Kolom dari 'komposisi_gizi' dinonaktifkan untuk mencegah error.
 const getProductQuery = `
@@ -194,7 +226,7 @@ app.post('/api/login', async (req, res) => {
             return res.status(400).json({ success: false, message: 'Password salah' });
         }
         // Fix: Use correct column names (user_id, nama)
-        const payload = { user: { id: user.user_id, email: user.email, nama: user.nama } };
+        const payload = { user: { id: user.user_id, email: user.email, nama: user.nama, role: user.role } };
         const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
         res.json({ success: true, message: 'Login berhasil', data: { token, user: payload.user } });
     } catch (error) {
@@ -203,18 +235,6 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Middleware untuk verifikasi token
-const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.status(401).json({ success: false, message: 'Akses ditolak' });
-
-    jwt.verify(token, JWT_SECRET, (err, user) => {
-        if (err) return res.status(403).json({ success: false, message: 'Token tidak valid' });
-        req.user = user;
-        next();
-    });
-};
 
 app.put('/api/profile', authenticateToken, async (req, res) => {
     try {
@@ -484,29 +504,6 @@ app.get('/api/image-proxy', async (req, res) => {
     }
 });
 
-// --- ADMIN MIDDLEWARE ---
-const authenticateAdmin = (req, res, next) => {
-    authenticateToken(req, res, () => {
-        // Cek role dari database untuk keamanan ekstra (atau dari token jika sudah ada)
-        // Di sini kita ambil dari token dulu untuk efisiensi, tapi idealnya cek DB
-        // Asumsi: saat login, role dimasukkan ke token payload
-        // Jika token belum ada role, kita harus query DB
-        const userId = req.user.user.id;
-
-        db.query('SELECT role FROM users WHERE user_id = ?', [userId])
-            .then(([rows]) => {
-                if (rows.length > 0 && rows[0].role === 'admin') {
-                    next();
-                } else {
-                    res.status(403).json({ success: false, message: 'Akses Admin diperlukan' });
-                }
-            })
-            .catch(err => {
-                console.error('Admin check error:', err);
-                res.status(500).json({ success: false, message: 'Gagal memverifikasi admin' });
-            });
-    });
-};
 
 // --- ADMIN ENDPOINTS ---
 
