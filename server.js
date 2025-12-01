@@ -572,14 +572,18 @@ app.get('/api/admin/stats', authenticateAdmin, async (req, res) => {
     try {
         const [userCount] = await db.query('SELECT COUNT(*) as total FROM users');
         const [productCount] = await db.query('SELECT COUNT(*) as total FROM produk');
-        const [scanCount] = await db.query('SELECT COUNT(*) as total FROM history'); // Asumsi history = scan activity
+        const [scanCount] = await db.query('SELECT COUNT(*) as total FROM history');
+
+        // Count new users (last 24 hours)
+        const [newUserCount] = await db.query('SELECT COUNT(*) as total FROM users WHERE created_at >= NOW() - INTERVAL 1 DAY');
 
         res.json({
             success: true,
             data: {
                 totalUsers: userCount[0].total,
                 totalProducts: productCount[0].total,
-                totalScans: scanCount[0].total
+                totalScans: scanCount[0].total,
+                newUsers: newUserCount[0].total
             }
         });
     } catch (error) {

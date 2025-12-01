@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../screens/info/about_us_page.dart';
+import '../screens/info/privacy_policy_page.dart';
+import '../screens/info/terms_of_service_page.dart';
 
 class Footer extends StatelessWidget {
   const Footer({super.key});
@@ -37,21 +40,9 @@ class Footer extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildFooterLink('About Us'),
-              _buildFooterLink('Privacy Policy'),
-              _buildFooterLink('Terms of Service'),
-            ],
-          ),
-          const SizedBox(height: 32),
-
-          // Social Media
-          Row(
-            children: [
-              _buildSocialIcon(Icons.camera_alt), // Instagram placeholder
-              const SizedBox(width: 16),
-              _buildSocialIcon(Icons.alternate_email), // Twitter placeholder
-              const SizedBox(width: 16),
-              _buildSocialIcon(Icons.facebook),
+              _buildFooterLink(context, 'About Us', const AboutUsPage()),
+              _buildFooterLink(context, 'Privacy Policy', const PrivacyPolicyPage()),
+              _buildFooterLink(context, 'Terms of Service', const TermsOfServicePage()),
             ],
           ),
           const SizedBox(height: 32),
@@ -68,25 +59,25 @@ class Footer extends StatelessWidget {
     );
   }
 
-  Widget _buildFooterLink(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.w500,
-        fontSize: 14,
+  Widget _buildFooterLink(BuildContext context, String text, Widget page) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => page),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Text(
+          text,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+            fontSize: 14,
+          ),
+        ),
       ),
-    );
-  }
-
-  Widget _buildSocialIcon(IconData icon) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.grey[700]!),
-      ),
-      child: Icon(icon, color: Colors.white, size: 16),
     );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:intl/intl.dart';
 import '../../services/admin_service.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -16,11 +18,31 @@ class _DashboardPageState extends State<DashboardPage> {
     'totalScans': 0,
   };
   bool _isLoading = true;
+  String _currentDate = '';
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
     _loadStats();
+    _updateTime();
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => _updateTime());
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  void _updateTime() {
+    final now = DateTime.now();
+    final formatter = DateFormat('EEEE, d MMMM yyyy HH:mm:ss');
+    if (mounted) {
+      setState(() {
+        _currentDate = formatter.format(now);
+      });
+    }
   }
 
   Future<void> _loadStats() async {
@@ -44,6 +66,8 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
+  // ... (existing _loadStats)
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -54,8 +78,91 @@ class _DashboardPageState extends State<DashboardPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header with Notification
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Dashboard',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              Stack(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.notifications, size: 30),
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            _stats['newUsers'] > 0
+                                ? '${_stats['newUsers']} User baru bergabung dalam 24 jam terakhir!'
+                                : 'Tidak ada notifikasi baru',
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  if (_stats['newUsers'] != null && _stats['newUsers'] > 0)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          '${_stats['newUsers']}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Real-time Date Display
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16.0),
+            margin: const EdgeInsets.only(bottom: 24.0),
+            decoration: BoxDecoration(
+              color: Colors.blueAccent,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Welcome Back, Admin!',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  _currentDate,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
           Row(
             children: [
+              // ... (existing stat cards)
               _buildStatCard(
                 context,
                 'Total Users',
