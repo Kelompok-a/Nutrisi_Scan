@@ -224,30 +224,69 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                 ),
                 const SizedBox(height: 24),
                 
-                // Gauge for Calories
-                _buildGaugeCard(
-                  title: 'Total Kalori',
-                  value: totalCalories,
-                  max: _maxCalories,
-                  unit: 'kcal',
-                ),
-                const SizedBox(height: 16),
-                
-                // Gauge for Sugar
-                _buildGaugeCard(
-                  title: 'Total Gula',
-                  value: totalSugar,
-                  max: _maxSugar,
-                  unit: 'g',
-                ),
-                 const SizedBox(height: 16),
-
-                 // Gauge for Fat
-                _buildGaugeCard(
-                  title: 'Total Lemak',
-                  value: totalFat,
-                  max: _maxFat,
-                  unit: 'g',
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (constraints.maxWidth > 800) {
+                      // Horizontal Layout (Landscape/Desktop)
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: _buildGaugeCard(
+                              title: 'Total Kalori',
+                              value: totalCalories,
+                              max: _maxCalories,
+                              unit: 'kcal',
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildGaugeCard(
+                              title: 'Total Gula',
+                              value: totalSugar,
+                              max: _maxSugar,
+                              unit: 'g',
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildGaugeCard(
+                              title: 'Total Lemak',
+                              value: totalFat,
+                              max: _maxFat,
+                              unit: 'g',
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      // Vertical Layout (Portrait/Mobile)
+                      return Column(
+                        children: [
+                          _buildGaugeCard(
+                            title: 'Total Kalori',
+                            value: totalCalories,
+                            max: _maxCalories,
+                            unit: 'kcal',
+                          ),
+                          const SizedBox(height: 16),
+                          _buildGaugeCard(
+                            title: 'Total Gula',
+                            value: totalSugar,
+                            max: _maxSugar,
+                            unit: 'g',
+                          ),
+                          const SizedBox(height: 16),
+                          _buildGaugeCard(
+                            title: 'Total Lemak',
+                            value: totalFat,
+                            max: _maxFat,
+                            unit: 'g',
+                          ),
+                        ],
+                      );
+                    }
+                  },
                 ),
               ],
             ],
