@@ -131,37 +131,22 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                 ),
               ),
               
-              // Search Results List (Overlay or below)
+              // Search Results Grid
               if (_searchResults.isNotEmpty)
                 Container(
-                  margin: const EdgeInsets.only(top: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade200),
-                  ),
-                  constraints: const BoxConstraints(maxHeight: 200),
-                  child: ListView.builder(
-                    shrinkWrap: true,
+                  margin: const EdgeInsets.only(top: 16),
+                  height: 400, // Fixed height for grid area
+                  child: GridView.builder(
+                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 200,
+                      childAspectRatio: 0.75,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                    ),
                     itemCount: _searchResults.length,
                     itemBuilder: (context, index) {
                       final product = _searchResults[index];
-                      return ListTile(
-                        leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            product.imageProductLink ?? '',
-                            width: 40,
-                            height: 40,
-                            fit: BoxFit.cover,
-                            errorBuilder: (c, e, s) => const Icon(Icons.image_not_supported),
-                          ),
-                        ),
-                        title: Text(product.namaProduk, maxLines: 1, overflow: TextOverflow.ellipsis),
-                        subtitle: Text('${product.totalCalories.toStringAsFixed(0)} kcal'),
-                        trailing: const Icon(Icons.add_circle_outline, color: AppTheme.kPrimaryColor),
-                        onTap: () => _addProduct(product),
-                      );
+                      return _buildProductCard(product);
                     },
                   ),
                 ),
@@ -192,7 +177,9 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                         leading: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: Image.network(
-                            product.imageProductLink ?? '',
+                            product.imageProductLink != null && product.imageProductLink!.isNotEmpty
+                                ? 'http://localhost:3001/api/image-proxy?url=${Uri.encodeComponent(product.imageProductLink!)}'
+                                : '',
                             width: 50,
                             height: 50,
                             fit: BoxFit.cover,
@@ -213,7 +200,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                   },
                 ),
                 const SizedBox(height: 32),
-              ] else 
+              ] else if (_searchResults.isEmpty)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 32),
                   child: Center(
@@ -263,6 +250,100 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                   unit: 'g',
                 ),
               ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductCard(Produk product) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.kPrimaryColor.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => _addProduct(product),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                flex: 3,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  child: product.imageProductLink != null && product.imageProductLink!.isNotEmpty
+                      ? Image.network(
+                          'http://localhost:3001/api/image-proxy?url=${Uri.encodeComponent(product.imageProductLink!)}',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: AppTheme.kPrimaryColor.withOpacity(0.1),
+                            child: Icon(
+                              Icons.broken_image_rounded,
+                              color: AppTheme.kPrimaryColor.withOpacity(0.5),
+                              size: 40,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          color: AppTheme.kPrimaryColor.withOpacity(0.1),
+                          child: Icon(
+                            Icons.fastfood_rounded,
+                            color: AppTheme.kPrimaryColor,
+                            size: 40,
+                          ),
+                        ),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        product.namaProduk,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '${product.totalCalories.toStringAsFixed(0)} kcal',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.kPrimaryColor,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const Icon(
+                            Icons.add_circle,
+                            color: AppTheme.kPrimaryColor,
+                            size: 24,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -373,44 +454,6 @@ class GaugePainter extends CustomPainter {
       paint,
     );
 
-    // Draw colored segments (Gradient look)
-    // 0 - 0.5 (Green)
-    // 0.5 - 0.8 (Blue)
-    // 0.8 - 1.0 (Orange)
-    // > 1.0 (Red)
-    
-    // We draw the active arc based on percentage
-    // Map percentage 0.0 -> 1.0 to angle PI -> 2*PI
-    
-    double sweepAngle = math.pi * percentage;
-    if (sweepAngle > math.pi) sweepAngle = math.pi; // Cap at full semi-circle
-
-    // Gradient for the active part
-    final gradient = SweepGradient(
-      startAngle: math.pi,
-      endAngle: math.pi * 2,
-      colors: const [
-        Colors.green,
-        Colors.blue,
-        Colors.orange,
-        Colors.red,
-      ],
-      stops: const [0.0, 0.5, 0.8, 1.0],
-      transform: GradientRotation(math.pi/2), // Rotate to match arc start
-    );
-    
-    // Actually, simple colored segments might be better for "meter" look
-    // Let's draw segments
-    
-    // Segment 1: Low (Green)
-    _drawSegment(canvas, center, radius, math.pi, math.pi * 0.5, Colors.green);
-    // Segment 2: Normal (Blue)
-    _drawSegment(canvas, center, radius, math.pi + math.pi * 0.5, math.pi * 0.3, Colors.blue);
-    // Segment 3: High (Orange)
-    _drawSegment(canvas, center, radius, math.pi + math.pi * 0.8, math.pi * 0.2, Colors.orange);
-    // Segment 4: Excessive (Red) - technically this would be beyond the main arc, 
-    // but let's just color the whole thing based on value for the "needle" context.
-    
     // Re-draw simple gradient arc for the "track"
     final trackPaint = Paint()
       ..style = PaintingStyle.stroke
@@ -454,15 +497,6 @@ class GaugePainter extends CustomPainter {
     
     // Draw Pivot
     canvas.drawCircle(center, 8, Paint()..color = Colors.black87);
-  }
-
-  void _drawSegment(Canvas canvas, Offset center, double radius, double startAngle, double sweepAngle, Color color) {
-     final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 20
-      ..color = color;
-      
-      // This was for the segmented look, but gradient is nicer. Kept for reference.
   }
 
   @override

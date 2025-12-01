@@ -206,20 +206,18 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                   );
                 }
 
-                return ListView.builder(
+                return GridView.builder(
                   padding: const EdgeInsets.all(24),
-                  itemCount: _filteredProduk.length + 1, // +1 for Footer
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 250,
+                    childAspectRatio: 0.7,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                  ),
+                  itemCount: _filteredProduk.length,
                   itemBuilder: (context, index) {
-                    if (index == _filteredProduk.length) {
-                      return const Padding(
-                        padding: EdgeInsets.only(top: 48.0),
-                        child: Footer(),
-                      );
-                    }
-
                     final produk = _filteredProduk[index];
                     return Container(
-                      margin: const EdgeInsets.only(bottom: 16),
                       decoration: BoxDecoration(
                         color: theme.cardColor,
                         borderRadius: BorderRadius.circular(16),
@@ -236,69 +234,96 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(16),
                           onTap: () => _navigateToDetail(produk),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 64,
-                                  height: 64,
-                                  decoration: BoxDecoration(
-                                    color: theme.primaryColor.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: produk.imageProductLink != null && produk.imageProductLink!.isNotEmpty
-                                        ? Image.network(
-                                            'http://localhost:3001/api/image-proxy?url=${Uri.encodeComponent(produk.imageProductLink!)}',
-                                            fit: BoxFit.cover,
-                                            errorBuilder: (context, error, stackTrace) => Icon(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                flex: 3,
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                                  child: produk.imageProductLink != null && produk.imageProductLink!.isNotEmpty
+                                      ? Image.network(
+                                          'http://localhost:3001/api/image-proxy?url=${Uri.encodeComponent(produk.imageProductLink!)}',
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) => Container(
+                                            color: theme.primaryColor.withOpacity(0.1),
+                                            child: Icon(
                                               Icons.broken_image_rounded,
                                               color: theme.primaryColor.withOpacity(0.5),
+                                              size: 40,
                                             ),
-                                          )
-                                        : Icon(
+                                          ),
+                                        )
+                                      : Container(
+                                          color: theme.primaryColor.withOpacity(0.1),
+                                          child: Icon(
                                             Icons.fastfood_rounded,
                                             color: theme.primaryColor,
-                                            size: 32,
+                                            size: 40,
                                           ),
-                                  ),
+                                        ),
                                 ),
-                                const SizedBox(width: 16),
-                                Expanded(
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        produk.namaProduk,
-                                        style: theme.textTheme.titleMedium?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: theme.textTheme.bodyLarge?.color,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: theme.dividerColor.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(6),
-                                        ),
-                                        child: Text(
-                                          'Barcode: ${produk.barcodeId}',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
-                                            fontWeight: FontWeight.w500,
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            produk.namaProduk,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: theme.textTheme.titleMedium?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                            ),
                                           ),
-                                        ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            produk.namaKategori ?? 'Umum',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            '${produk.totalCalories.toStringAsFixed(0)} kcal',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: theme.primaryColor,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.all(4),
+                                            decoration: BoxDecoration(
+                                              color: theme.primaryColor,
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            child: const Icon(
+                                              Icons.arrow_forward,
+                                              color: Colors.white,
+                                              size: 16,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
                                 ),
-                                Icon(Icons.chevron_right_rounded, color: theme.iconTheme.color?.withOpacity(0.5)),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
