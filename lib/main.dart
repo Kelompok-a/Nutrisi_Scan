@@ -9,6 +9,8 @@ import 'screens/main_screen.dart';
 import 'theme/app_theme.dart';
 import 'theme/no_scrollbar_behavior.dart';
 
+import 'providers/product_provider.dart';
+
 void main() {
   runApp(
     MultiProvider(
@@ -17,6 +19,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => SearchHistoryProvider()),
         ChangeNotifierProvider(create: (context) => FavoritesProvider()),
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => ProductProvider()),
       ],
       child: const MyApp(),
     ),
