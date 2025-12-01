@@ -231,7 +231,7 @@ app.post('/api/login', async (req, res) => {
         res.json({ success: true, message: 'Login berhasil', data: { token, user: payload.user } });
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ success: false, message: 'Kesalahan server saat login' });
+        res.status(500).json({ success: false, message: `Kesalahan server saat login: ${error.message}` });
     }
 });
 
