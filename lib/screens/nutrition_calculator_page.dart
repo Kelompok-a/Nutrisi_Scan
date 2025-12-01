@@ -139,7 +139,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                   child: GridView.builder(
                     gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent: 200,
-                      childAspectRatio: 0.65,
+                      childAspectRatio: 0.6,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
                     ),
