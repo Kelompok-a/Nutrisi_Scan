@@ -1,21 +1,84 @@
 import 'package:flutter/material.dart';
+import '../../services/admin_service.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  final AdminService _adminService = AdminService();
+  Map<String, dynamic> _stats = {
+    'totalUsers': 0,
+    'totalProducts': 0,
+    'totalScans': 0,
+  };
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStats();
+  }
+
+  Future<void> _loadStats() async {
+    try {
+      final stats = await _adminService.getDashboardStats();
+      if (mounted) {
+        setState(() {
+          _stats = stats;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal memuat statistik: $e')),
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              _buildStatCard(context, 'Customers', '36,159', Icons.people, Colors.blue),
+              _buildStatCard(
+                context,
+                'Total Users',
+                '${_stats['totalUsers']}',
+                Icons.people,
+                Colors.blue,
+              ),
               const SizedBox(width: 16),
-              _buildStatCard(context, 'Orders', '3,159', Icons.shopping_cart, Colors.orange),
+              _buildStatCard(
+                context,
+                'Total Products',
+                '${_stats['totalProducts']}',
+                Icons.inventory,
+                Colors.orange,
+              ),
               const SizedBox(width: 16),
-              _buildStatCard(context, 'Earnings', '\$6,159', Icons.attach_money, Colors.green),
+              _buildStatCard(
+                context,
+                'Total Views',
+                '${_stats['totalScans']}',
+                Icons.visibility,
+                Colors.green,
+              ),
             ],
           ),
           const SizedBox(height: 24),
@@ -30,7 +93,10 @@ class DashboardPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('January 2025', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        const Text(
+                          'January 2025',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(height: 16),
                         Container(
                           height: 200,
@@ -51,7 +117,10 @@ class DashboardPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Top Product Sale', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        const Text(
+                          'Top Product Sale',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(height: 16),
                         Container(
                           height: 150,
@@ -70,7 +139,13 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(BuildContext context, String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+    BuildContext context,
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Expanded(
       child: Card(
         elevation: 2,
@@ -83,7 +158,10 @@ class DashboardPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Icon(icon, color: color),
-                  Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text(
+                    value,
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
               const SizedBox(height: 8),

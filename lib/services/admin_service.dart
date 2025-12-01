@@ -12,7 +12,7 @@ class AdminService {
   }
 
   Future<List<User>> getAllUsers() async {
-    final uri = Uri.parse('$_baseUrl/api/users');
+    final uri = Uri.parse('$_baseUrl/api/admin/users');
     final token = await _getToken();
     try {
       final response = await http.get(
@@ -35,7 +35,7 @@ class AdminService {
   }
 
   Future<bool> deleteUser(String id) async {
-    final uri = Uri.parse('$_baseUrl/api/users/$id');
+    final uri = Uri.parse('$_baseUrl/api/admin/users/$id');
     final token = await _getToken();
     try {
       final response = await http.delete(
@@ -43,6 +43,71 @@ class AdminService {
         headers: {
           'Authorization': 'Bearer $token',
         },
+      );
+
+      final body = jsonDecode(response.body);
+      return body['success'] == true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<Map<String, dynamic>> getDashboardStats() async {
+    final uri = Uri.parse('$_baseUrl/api/admin/stats');
+    final token = await _getToken();
+    try {
+      final response = await http.get(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      final body = jsonDecode(response.body);
+      if (response.statusCode == 200 && body['success'] == true) {
+        return body['data'];
+      } else {
+        throw Exception(body['message'] ?? 'Gagal mengambil statistik');
+      }
+    } catch (e) {
+      throw Exception('Kesalahan jaringan: ${e.toString()}');
+    }
+  }
+
+  Future<bool> createUser(String nama, String email, String password) async {
+    final uri = Uri.parse('$_baseUrl/api/register');
+    try {
+      final response = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'nama': nama,
+          'email': email,
+          'password': password,
+        }),
+      );
+      final body = jsonDecode(response.body);
+      return body['success'] == true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> updateUser(String id, String nama, String role, String? password) async {
+    final uri = Uri.parse('$_baseUrl/api/admin/users/$id');
+    final token = await _getToken();
+    try {
+      final response = await http.put(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'nama': nama,
+          'role': role,
+          if (password != null && password.isNotEmpty) 'password': password,
+        }),
       );
 
       final body = jsonDecode(response.body);

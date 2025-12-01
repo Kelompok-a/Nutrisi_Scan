@@ -39,10 +39,11 @@ class _AdminLayoutState extends State<AdminLayout> {
             leading: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'LOGO',
+                'NutriScan',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
+                      letterSpacing: 1.2,
                     ),
               ),
             ),

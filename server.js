@@ -535,6 +535,38 @@ app.delete('/api/admin/users/:id', authenticateAdmin, async (req, res) => {
     }
 });
 
+// Update User (Admin)
+app.put('/api/admin/users/:id', authenticateAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nama, role, password } = req.body;
+
+        // Validasi basic
+        if (!nama || !role) {
+            return res.status(400).json({ success: false, message: 'Nama dan Role harus diisi' });
+        }
+
+        let query = 'UPDATE users SET nama = ?, role = ?';
+        let params = [nama, role];
+
+        // Jika password diisi, update juga
+        if (password && password.trim() !== '') {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            query += ', password = ?';
+            params.push(hashedPassword);
+        }
+
+        query += ' WHERE user_id = ?';
+        params.push(id);
+
+        await db.query(query, params);
+        res.json({ success: true, message: 'User berhasil diupdate' });
+    } catch (error) {
+        console.error('Update user admin error:', error);
+        res.status(500).json({ success: false, message: 'Gagal mengupdate user' });
+    }
+});
+
 // Get Dashboard Stats
 app.get('/api/admin/stats', authenticateAdmin, async (req, res) => {
     try {
