@@ -139,7 +139,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                   child: GridView.builder(
                     gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent: 200,
-                      childAspectRatio: 0.75,
+                      childAspectRatio: 0.65,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
                     ),
@@ -188,7 +188,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                         ),
                         title: Text(product.namaProduk, style: const TextStyle(fontWeight: FontWeight.bold)),
                         subtitle: Text(
-                          '${product.totalCalories.toStringAsFixed(0)} kcal | Gula: ${product.totalSugar}g',
+                          '${product.totalCalories.toStringAsFixed(0)} kcal | Gula: ${product.totalSugar}g\nBarcode: ${product.barcodeId}',
                           style: TextStyle(color: Colors.grey[600], fontSize: 12),
                         ),
                         trailing: IconButton(
@@ -320,6 +320,14 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Barcode: ${product.barcodeId}',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.grey[600],
                         ),
                       ),
                       Row(

@@ -210,7 +210,7 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                   padding: const EdgeInsets.all(24),
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 250,
-                    childAspectRatio: 0.7,
+                    childAspectRatio: 0.65,
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
                   ),
@@ -290,6 +290,14 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                                             style: TextStyle(
                                               fontSize: 12,
                                               color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            'Barcode: ${produk.barcodeId}',
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5),
                                             ),
                                           ),
                                         ],
