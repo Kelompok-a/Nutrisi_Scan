@@ -15,6 +15,8 @@ import 'search_history_page.dart';
 import 'favorites_page.dart';
 import 'admin/admin_layout.dart';
 
+import 'nutrition_calculator_page.dart';
+
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -33,6 +35,7 @@ class _MainScreenState extends State<MainScreen> {
     const AboutPage(),
     const FavoritesPage(),
     const SearchHistoryPage(),
+    const NutritionCalculatorPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -88,6 +91,7 @@ class _MainScreenState extends State<MainScreen> {
                   children: [
                     _buildNavButton('Beranda', 0, Icons.home_rounded),
                     _buildNavButton('Cari', 1, Icons.search_rounded),
+                    _buildNavButton('Kalkulator', 7, Icons.calculate_rounded),
                     _buildNavButton('Favorit', 5, Icons.favorite_rounded),
                     _buildNavButton('Riwayat', 6, Icons.history_rounded),
                     _buildNavButton('Artikel', 2, Icons.article_rounded),
@@ -216,12 +220,13 @@ class _MainScreenState extends State<MainScreen> {
               selectedIndex: _getBottomNavIndex(_selectedIndex),
               onDestinationSelected: (index) {
                 // Map bottom nav items to page indices
-                // 0: Home, 1: Search, 2: Favorites, 3: History
+                // 0: Home, 1: Search, 2: Calculator, 3: Favorites, 4: History
                 int targetIndex = 0;
                 if (index == 0) targetIndex = 0;
                 if (index == 1) targetIndex = 1;
-                if (index == 2) targetIndex = 5; // Favorites
-                if (index == 3) targetIndex = 6; // History
+                if (index == 2) targetIndex = 7; // Calculator
+                if (index == 3) targetIndex = 5; // Favorites
+                if (index == 4) targetIndex = 6; // History
                 _onItemTapped(targetIndex);
               },
               destinations: const [
@@ -234,6 +239,11 @@ class _MainScreenState extends State<MainScreen> {
                   icon: Icon(Icons.search_outlined),
                   selectedIcon: Icon(Icons.search_rounded),
                   label: 'Cari',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.calculate_outlined),
+                  selectedIcon: Icon(Icons.calculate_rounded),
+                  label: 'Hitung',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.favorite_border_rounded),
@@ -254,8 +264,9 @@ class _MainScreenState extends State<MainScreen> {
   int _getBottomNavIndex(int pageIndex) {
     if (pageIndex == 0) return 0; // Home
     if (pageIndex == 1) return 1; // Search
-    if (pageIndex == 5) return 2; // Favorites
-    if (pageIndex == 6) return 3; // History
+    if (pageIndex == 7) return 2; // Calculator
+    if (pageIndex == 5) return 3; // Favorites
+    if (pageIndex == 6) return 4; // History
     return 0; // Default to Home for other pages (Articles, FAQ, About)
   }
 
