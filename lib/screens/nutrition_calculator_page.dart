@@ -5,6 +5,7 @@ import '../models/produk.dart';
 import '../providers/product_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/hoverable_card.dart';
+import '../services/api_service.dart';
 
 class NutritionCalculatorPage extends StatefulWidget {
   const NutritionCalculatorPage({super.key});
@@ -185,7 +186,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                           borderRadius: BorderRadius.circular(8),
                           child: Image.network(
                             product.imageProductLink != null && product.imageProductLink!.isNotEmpty
-                                ? 'http://localhost:3001/api/image-proxy?url=${Uri.encodeComponent(product.imageProductLink!)}'
+                                ? '${ApiService.baseUrl}/api/image-proxy?url=${Uri.encodeComponent(product.imageProductLink!)}'
                                 : '',
                             width: 50,
                             height: 50,
@@ -331,7 +332,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                     child: product.imageProductLink != null && product.imageProductLink!.isNotEmpty
                         ? Image.network(
-                            'http://localhost:3001/api/image-proxy?url=${Uri.encodeComponent(product.imageProductLink!)}',
+                            '${ApiService.baseUrl}/api/image-proxy?url=${Uri.encodeComponent(product.imageProductLink!)}',
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) => Container(
                               color: AppTheme.kPrimaryColor.withOpacity(0.1),

@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'api_service.dart';
 
 class AuthService {
-  static const String _baseUrl = 'http://localhost:3001'; // Gunakan 'http://10.0.2.2:3001' untuk emulator Android
+  // static const String _baseUrl = 'http://localhost:3001'; // Removed in favor of ApiService
   final _storage = const FlutterSecureStorage();
+  
+  String get _baseUrl => ApiService.baseUrl;
 
   // --- FUNGSI REGISTER DIHIDUPKAN KEMBALI ---
   Future<Map<String, dynamic>> register({required String nama, required String email, required String password}) async {

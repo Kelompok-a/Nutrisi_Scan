@@ -9,7 +9,8 @@ import 'product_detail_page.dart';
 import '../theme/app_theme.dart';
 
 class ScannerPage extends StatefulWidget {
-  const ScannerPage({super.key});
+  final bool returnBarcode;
+  const ScannerPage({super.key, this.returnBarcode = false});
 
   @override
   State<ScannerPage> createState() => _ScannerPageState();
@@ -17,8 +18,9 @@ class ScannerPage extends StatefulWidget {
 
 class _ScannerPageState extends State<ScannerPage> {
   final MobileScannerController _controller = MobileScannerController(
-    detectionSpeed: DetectionSpeed.noDuplicates,
+    detectionSpeed: DetectionSpeed.normal,
     facing: CameraFacing.back,
+    formats: [BarcodeFormat.all],
   );
   
   final ImagePicker _picker = ImagePicker();
@@ -45,6 +47,12 @@ class _ScannerPageState extends State<ScannerPage> {
 
   Future<void> _processBarcode(String barcode) async {
     if (_isProcessing) return;
+    
+    // If we just want to return the barcode (e.g. for search)
+    if (widget.returnBarcode) {
+      Navigator.of(context).pop(barcode);
+      return;
+    }
     
     setState(() {
       _isProcessing = true;

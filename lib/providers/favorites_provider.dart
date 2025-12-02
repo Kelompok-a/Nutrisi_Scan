@@ -3,11 +3,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/produk.dart';
+import '../services/api_service.dart';
 
 class FavoritesProvider with ChangeNotifier {
   List<Produk> _favorites = [];
   final _storage = const FlutterSecureStorage();
-  final String _baseUrl = 'http://localhost:3001'; // Sesuaikan dengan URL server
+  final String _baseUrl = ApiService.baseUrl;
 
   List<Produk> get favorites => _favorites;
 

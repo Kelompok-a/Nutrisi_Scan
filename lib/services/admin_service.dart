@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/user.dart';
+import 'api_service.dart';
 
 class AdminService {
-  static const String _baseUrl = 'http://localhost:3001';
+  static String get _baseUrl => ApiService.baseUrl;
   final _storage = const FlutterSecureStorage();
 
   Future<String?> _getToken() async {
