@@ -10,7 +10,16 @@ const app = express();
 const port = 3001;
 const JWT_SECRET = 'RahasiaSuperPentingJanganDisebar';
 
-app.use(cors());
+app.use(cors({
+    origin: '*', // Izinkan semua domain untuk sementara
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Root route untuk cek status server
+app.get('/', (req, res) => {
+    res.send('Backend NutriScan Berjalan! 🚀');
+});
 app.use(express.json());
 
 const db = mysql.createPool({
@@ -597,9 +606,8 @@ app.get('/api/admin/stats', authenticateAdmin, async (req, res) => {
 // Export app for Vercel
 module.exports = app;
 
-// Only listen if run directly (not required by Vercel)
-if (require.main === module) {
-    app.listen(port, () => {
-        console.log(`Server API berjalan di http://localhost:${port}`);
-    });
-}
+// Listen on the port defined by Render or 3001 locally
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+    console.log(`Server API berjalan di port ${PORT}`);
+});

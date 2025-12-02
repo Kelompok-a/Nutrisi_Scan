@@ -6,6 +6,7 @@ import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/footer.dart';
 import 'login_page.dart';
+import '../services/api_service.dart';
 
 class ProductDetailPage extends StatelessWidget {
   final Produk produk;
@@ -343,7 +344,7 @@ class ProductDetailPage extends StatelessWidget {
   String? _buildProxyUrl(String? originalUrl) {
     if (originalUrl == null || originalUrl.isEmpty) return null;
     // Asumsi ApiService.baseUrl sudah benar
-    return 'http://localhost:3001/api/image-proxy?url=${Uri.encodeComponent(originalUrl)}';
+    return '${ApiService.baseUrl}/api/image-proxy?url=${Uri.encodeComponent(originalUrl)}';
   }
 
   void _showLoginDialog(BuildContext context) {
@@ -365,7 +366,7 @@ class ProductDetailPage extends StatelessWidget {
                 ),
               ),
               child: Column(
-                children: [
+              children: [
                   const Text(
                     'Whoops!',
                     style: TextStyle(

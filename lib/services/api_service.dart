@@ -3,7 +3,13 @@ import 'package:http/http.dart' as http;
 import '../models/produk.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://localhost:3001';
+  // Set to true when deploying to Vercel
+  static const bool isProduction = true; 
+  
+  static const String _localUrl = 'http://localhost:3001';
+  static const String _productionUrl = 'https://drappy-cat-nutriscan-backend.hf.space';
+
+  static String get baseUrl => isProduction ? _productionUrl : _localUrl;
 
   Future<List<Produk>> getAllProduk() async {
     final uri = Uri.parse('$baseUrl/api/produk');

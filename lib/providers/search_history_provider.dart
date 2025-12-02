@@ -2,11 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../services/api_service.dart';
 
 class SearchHistoryProvider with ChangeNotifier {
   List<Map<String, dynamic>> _history = [];
   final _storage = const FlutterSecureStorage();
-  final String _baseUrl = 'http://localhost:3001'; // Sesuaikan dengan URL server
+  final String _baseUrl = ApiService.baseUrl;
 
   List<Map<String, dynamic>> get history => _history;
 

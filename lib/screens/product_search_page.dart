@@ -84,10 +84,18 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
     );
   }
 
-  void _openScanner() {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (context) => const ScannerPage()));
+  void _openScanner() async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ScannerPage(returnBarcode: true),
+      ),
+    );
+
+    if (result != null && result is String) {
+      setState(() {
+        _searchController.text = result;
+      });
+    }
   }
 
   @override
@@ -245,7 +253,7 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
                                     borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                                     child: produk.imageProductLink != null && produk.imageProductLink!.isNotEmpty
                                         ? Image.network(
-                                            'http://localhost:3001/api/image-proxy?url=${Uri.encodeComponent(produk.imageProductLink!)}',
+                                            '${ApiService.baseUrl}/api/image-proxy?url=${Uri.encodeComponent(produk.imageProductLink!)}',
                                             fit: BoxFit.cover,
                                             errorBuilder: (context, error, stackTrace) => Container(
                                               color: theme.primaryColor.withOpacity(0.1),
