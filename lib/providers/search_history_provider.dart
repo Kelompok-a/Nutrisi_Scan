@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../services/api_service.dart';
+import '../models/produk.dart';
 
 class SearchHistoryProvider with ChangeNotifier {
   List<Map<String, dynamic>> _history = [];
@@ -35,9 +36,24 @@ class SearchHistoryProvider with ChangeNotifier {
         if (body['success'] == true) {
           final List<dynamic> data = body['data'];
           _history = data.map((item) {
+            
+            // Try parse query if it is a JSON string (for new scan history)
+            dynamic parsedContent = item['query'];
+            if (item['type'] == 'scan') {
+              try {
+                // Check if it looks like JSON before parsing to avoid unnecessary errors
+                if (parsedContent.toString().trim().startsWith('{')) {
+                  parsedContent = jsonDecode(item['query']);
+                }
+              } catch (e) {
+                // If parse fails, keep as original string (backward compatibility)
+                print('Error parsing history content: $e');
+              }
+            }
+
             return {
               'id': item['id_history'],
-              'query': item['query'],
+              'query': parsedContent, // Can be String or Map
               'timestamp': DateTime.parse(item['timestamp']),
               'type': item['type'],
             };
@@ -56,10 +72,16 @@ class SearchHistoryProvider with ChangeNotifier {
     _addToHistory(query, 'search');
   }
 
-  // Tambah hasil scan barcode
-  void addScanResult(String productName) {
-    if (productName.trim().isEmpty) return;
-    _addToHistory(productName, 'scan');
+  // Tambah hasil scan barcode (Updated to store full details)
+  void addScanResult(Produk product) {
+    // Simpan structured data sebagai JSON string
+    final Map<String, dynamic> scanData = {
+      'name': product.namaProduk,
+      'barcode': product.barcode,
+      'image': product.imageProductLink,
+    };
+    
+    _addToHistory(jsonEncode(scanData), 'scan');
   }
 
   // Internal method untuk tambah ke history via API

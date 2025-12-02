@@ -79,18 +79,19 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final totalCalories = _calculateTotal((p) => p.totalCalories);
     final totalSugar = _calculateTotal((p) => p.totalSugar);
     final totalFat = _calculateTotal((p) => p.totalFat);
     final totalCarbs = _calculateTotal((p) => p.totalCarbohydrates);
 
     return Scaffold(
-      backgroundColor: AppTheme.kBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Kalkulator Nutrisi', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: AppTheme.kSurfaceColor,
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
-        foregroundColor: AppTheme.kTextColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -101,7 +102,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
               // Search Section
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.cardColor,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
@@ -113,9 +114,11 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                 ),
                 child: TextField(
                   controller: _searchController,
+                  style: theme.textTheme.bodyMedium,
                   decoration: InputDecoration(
                     hintText: 'Cari produk untuk ditambahkan...',
-                    prefixIcon: const Icon(Icons.search),
+                    hintStyle: TextStyle(color: theme.textTheme.bodyMedium?.color?.withOpacity(0.5)),
+                    prefixIcon: Icon(Icons.search, color: theme.iconTheme.color),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     suffixIcon: _searchController.text.isNotEmpty
@@ -154,7 +157,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                     itemCount: _searchResults.length,
                     itemBuilder: (context, index) {
                       final product = _searchResults[index];
-                      return _buildProductCard(product);
+                      return _buildProductCard(product, theme);
                     },
                   ),
                 ),
@@ -163,9 +166,9 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
 
               // Selected Products List
               if (_selectedProducts.isNotEmpty) ...[
-                const Text(
+                Text(
                   'Produk Dipilih:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color),
                 ),
                 const SizedBox(height: 8),
                 ListView.separated(
@@ -177,9 +180,9 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                     final product = _selectedProducts[index];
                     return Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: theme.cardColor,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppTheme.kPrimaryColor.withOpacity(0.1)),
+                        border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
                       ),
                       child: ListTile(
                         leading: ClipRRect(
@@ -191,13 +194,13 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                             width: 50,
                             height: 50,
                             fit: BoxFit.cover,
-                            errorBuilder: (c, e, s) => const Icon(Icons.image_not_supported),
+                            errorBuilder: (c, e, s) => Icon(Icons.image_not_supported, color: theme.iconTheme.color),
                           ),
                         ),
-                        title: Text(product.namaProduk, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        title: Text(product.namaProduk, style: TextStyle(fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color)),
                         subtitle: Text(
                           '${product.totalCalories.toStringAsFixed(0)} kcal | Gula: ${product.totalSugar}g\nBarcode: ${product.barcodeId}',
-                          style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                          style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7), fontSize: 12),
                         ),
                         trailing: IconButton(
                           icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
@@ -209,14 +212,14 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                 ),
                 const SizedBox(height: 32),
               ] else if (_searchResults.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 32),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 32),
                   child: Center(
                     child: Column(
                       children: [
-                        Icon(Icons.shopping_basket_outlined, size: 64, color: Colors.grey),
-                        SizedBox(height: 16),
-                        Text('Belum ada produk dipilih', style: TextStyle(color: Colors.grey)),
+                        Icon(Icons.shopping_basket_outlined, size: 64, color: theme.disabledColor),
+                        const SizedBox(height: 16),
+                        Text('Belum ada produk dipilih', style: TextStyle(color: theme.disabledColor)),
                       ],
                     ),
                   ),
@@ -226,9 +229,9 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
               if (_selectedProducts.isNotEmpty) ...[
                 const Divider(),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Total Nutrisi:',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color),
                 ),
                 const SizedBox(height: 24),
                 
@@ -245,6 +248,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                               value: totalCalories,
                               max: _maxCalories,
                               unit: 'kcal',
+                              theme: theme,
                             ),
                           ),
                           const SizedBox(width: 16),
@@ -254,6 +258,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                               value: totalSugar,
                               max: _maxSugar,
                               unit: 'g',
+                              theme: theme,
                             ),
                           ),
                           const SizedBox(width: 16),
@@ -263,6 +268,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                               value: totalFat,
                               max: _maxFat,
                               unit: 'g',
+                              theme: theme,
                             ),
                           ),
                         ],
@@ -276,6 +282,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                             value: totalCalories,
                             max: _maxCalories,
                             unit: 'kcal',
+                            theme: theme,
                           ),
                           const SizedBox(height: 16),
                           _buildGaugeCard(
@@ -283,6 +290,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                             value: totalSugar,
                             max: _maxSugar,
                             unit: 'g',
+                            theme: theme,
                           ),
                           const SizedBox(height: 16),
                           _buildGaugeCard(
@@ -290,6 +298,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                             value: totalFat,
                             max: _maxFat,
                             unit: 'g',
+                            theme: theme,
                           ),
                         ],
                       );
@@ -304,15 +313,15 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
     );
   }
 
-  Widget _buildProductCard(Produk product) {
+  Widget _buildProductCard(Produk product, ThemeData theme) {
     return HoverableCard(
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: AppTheme.kPrimaryColor.withOpacity(0.05),
+              color: theme.primaryColor.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -335,19 +344,19 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                             '${ApiService.baseUrl}/api/image-proxy?url=${Uri.encodeComponent(product.imageProductLink!)}',
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) => Container(
-                              color: AppTheme.kPrimaryColor.withOpacity(0.1),
+                              color: theme.primaryColor.withOpacity(0.1),
                               child: Icon(
                                 Icons.broken_image_rounded,
-                                color: AppTheme.kPrimaryColor.withOpacity(0.5),
+                                color: theme.primaryColor.withOpacity(0.5),
                                 size: 40,
                               ),
                             ),
                           )
                         : Container(
-                            color: AppTheme.kPrimaryColor.withOpacity(0.1),
+                            color: theme.primaryColor.withOpacity(0.1),
                             child: Icon(
                               Icons.fastfood_rounded,
-                              color: AppTheme.kPrimaryColor,
+                              color: theme.primaryColor,
                               size: 40,
                             ),
                           ),
@@ -365,9 +374,10 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                           product.namaProduk,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
+                            color: theme.textTheme.bodyLarge?.color,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -375,7 +385,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                           'Barcode: ${product.barcodeId}',
                           style: TextStyle(
                             fontSize: 10,
-                            color: Colors.grey[600],
+                            color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
                           ),
                         ),
                         Row(
@@ -385,13 +395,13 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                               '${product.totalCalories.toStringAsFixed(0)} kcal',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: AppTheme.kPrimaryColor,
+                                color: theme.primaryColor,
                                 fontSize: 14,
                               ),
                             ),
-                            const Icon(
+                            Icon(
                               Icons.add_circle,
-                              color: AppTheme.kPrimaryColor,
+                              color: theme.primaryColor,
                               size: 24,
                             ),
                           ],
@@ -413,6 +423,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
     required double value,
     required double max,
     required String unit,
+    required ThemeData theme,
   }) {
     // Determine status
     String status;
@@ -436,7 +447,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -448,13 +459,13 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
       ),
       child: Column(
         children: [
-          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: theme.textTheme.bodyLarge?.color)),
           const SizedBox(height: 20),
           SizedBox(
             height: 150,
             width: 200,
             child: CustomPaint(
-              painter: GaugePainter(percentage: percentage > 1.2 ? 1.2 : percentage), // Cap visual at 120%
+              painter: GaugePainter(percentage: percentage > 1.2 ? 1.2 : percentage, theme: theme), // Cap visual at 120%
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.only(top: 60),
@@ -471,7 +482,7 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
                       ),
                       Text(
                         '${value.toStringAsFixed(1)} / ${max.toStringAsFixed(0)} $unit',
-                        style: const TextStyle(color: Colors.grey, fontSize: 12),
+                        style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6), fontSize: 12),
                       ),
                     ],
                   ),
@@ -487,8 +498,9 @@ class _NutritionCalculatorPageState extends State<NutritionCalculatorPage> {
 
 class GaugePainter extends CustomPainter {
   final double percentage;
+  final ThemeData theme;
 
-  GaugePainter({required this.percentage});
+  GaugePainter({required this.percentage, required this.theme});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -502,7 +514,10 @@ class GaugePainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     // Draw background arc
-    paint.color = Colors.grey.shade200;
+    paint.color = theme.brightness == Brightness.dark 
+        ? Colors.white.withOpacity(0.1) 
+        : Colors.grey.shade200;
+        
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       math.pi,
@@ -546,14 +561,14 @@ class GaugePainter extends CustomPainter {
     );
 
     final needlePaint = Paint()
-      ..color = Colors.black87
+      ..color = theme.textTheme.bodyLarge?.color ?? Colors.black87
       ..strokeWidth = 4
       ..strokeCap = StrokeCap.round;
 
     canvas.drawLine(center, needleEnd, needlePaint);
     
     // Draw Pivot
-    canvas.drawCircle(center, 8, Paint()..color = Colors.black87);
+    canvas.drawCircle(center, 8, Paint()..color = theme.textTheme.bodyLarge?.color ?? Colors.black87);
   }
 
   @override

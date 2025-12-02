@@ -249,6 +249,25 @@ const SizedBox(height: 32),
           final itemIndex = index - 1;
           final item = history[itemIndex];
           final isScan = item['type'] == 'scan';
+          
+          // Determine if we have rich data (map) or legacy data (string)
+          final queryContent = item['query'];
+          String displayTitle = '';
+          String displaySubtitle = _formatSimpleDate(item['timestamp']);
+          String? imageUrl;
+          String? barcode;
+
+          if (queryContent is Map) {
+            displayTitle = queryContent['name'] ?? 'Unknown Product';
+            barcode = queryContent['barcode'];
+            imageUrl = queryContent['image'];
+            if (barcode != null) {
+              displaySubtitle = "Barcode: $barcode • $displaySubtitle";
+            }
+          } else {
+            // Legacy/Search data
+            displayTitle = queryContent.toString();
+          }
 
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
@@ -265,22 +284,44 @@ const SizedBox(height: 32),
             ),
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              leading: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: isScan
-                      ? Colors.orange.withOpacity(0.1)
-                      : AppTheme.kPrimaryColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  isScan ? Icons.qr_code_rounded : Icons.search_rounded,
-                  color: isScan ? Colors.orange : AppTheme.kPrimaryColor,
-                  size: 24,
-                ),
-              ),
+              leading: imageUrl != null && imageUrl.isNotEmpty
+                  ? Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (ctx, error, stackTrace) => Icon(
+                            Icons.broken_image_rounded,
+                            color: Colors.grey[400],
+                          ),
+                        ),
+                      ),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isScan
+                            ? Colors.orange.withOpacity(0.1)
+                            : AppTheme.kPrimaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        isScan ? Icons.qr_code_rounded : Icons.search_rounded,
+                        color: isScan ? Colors.orange : AppTheme.kPrimaryColor,
+                        size: 24,
+                      ),
+                    ),
               title: Text(
-                item['query'],
+                displayTitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppTheme.kTextColor,
@@ -289,7 +330,7 @@ const SizedBox(height: 32),
               subtitle: Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
-                  _formatSimpleDate(item['timestamp']),
+                  displaySubtitle,
                   style: TextStyle(fontSize: 12, color: AppTheme.kSubTextColor),
                 ),
               ),

@@ -76,7 +76,7 @@ class _ScannerPageState extends State<ScannerPage> {
       // Save to history as "scan"
       if (mounted) {
         final historyProvider = Provider.of<SearchHistoryProvider>(context, listen: false);
-        historyProvider.addScanResult(produk.namaProduk);
+        historyProvider.addScanResult(produk);
       }
 
       // Close loading dialog

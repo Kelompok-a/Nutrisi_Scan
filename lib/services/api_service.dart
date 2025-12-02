@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/produk.dart';
 
 class ApiService {
@@ -10,6 +11,11 @@ class ApiService {
   static const String _productionUrl = 'https://drappy-cat-nutriscan-backend.hf.space';
 
   static String get baseUrl => isProduction ? _productionUrl : _localUrl;
+  final _storage = const FlutterSecureStorage();
+
+  Future<String?> _getToken() async {
+    return await _storage.read(key: 'jwt_token');
+  }
 
   Future<List<Produk>> getAllProduk() async {
     final uri = Uri.parse('$baseUrl/api/produk');
@@ -31,8 +37,16 @@ class ApiService {
 
   Future<Produk> getProdukByBarcode(String barcode) async {
     final uri = Uri.parse('$baseUrl/api/produk/$barcode');
+    final token = await _getToken();
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+    if (token != null) {
+      headers['Authorization'] = 'Bearer $token';
+    }
+
     try {
-      final response = await http.get(uri);
+      final response = await http.get(uri, headers: headers);
       final body = jsonDecode(response.body);
 
       if (response.statusCode == 200 && body['success'] == true) {

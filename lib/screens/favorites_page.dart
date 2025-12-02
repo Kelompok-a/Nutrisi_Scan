@@ -263,18 +263,42 @@ class FavoritesPage extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: Center(
-                                      child: Container(
-                                        padding: const EdgeInsets.all(24),
-                                        decoration: BoxDecoration(
-                                          color: theme.primaryColor.withOpacity(0.05),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Icon(
-                                          Icons.fastfood_rounded,
-                                          size: 48,
-                                          color: theme.primaryColor,
-                                        ),
-                                      ),
+                                      child: (produk.imageProductLink != null && produk.imageProductLink!.isNotEmpty)
+                                          ? Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(16),
+                                                color: theme.primaryColor.withOpacity(0.05),
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.circular(16),
+                                                child: Image.network(
+                                                  produk.imageProductLink!,
+                                                  fit: BoxFit.contain,
+                                                  errorBuilder: (context, error, stackTrace) {
+                                                    return Container(
+                                                      padding: const EdgeInsets.all(24),
+                                                      child: Icon(
+                                                        Icons.broken_image_rounded,
+                                                        size: 48,
+                                                        color: theme.primaryColor.withOpacity(0.5),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            )
+                                          : Container(
+                                              padding: const EdgeInsets.all(24),
+                                              decoration: BoxDecoration(
+                                                color: theme.primaryColor.withOpacity(0.05),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Icon(
+                                                Icons.fastfood_rounded,
+                                                size: 48,
+                                                color: theme.primaryColor,
+                                              ),
+                                            ),
                                     ),
                                   ),
                                   const SizedBox(height: 16),
